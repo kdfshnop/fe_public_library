@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="//dev01.guanaihui.cn/guanaihui/js/lib.min.js"></script>
+    <title>省市区联动插件使用用例</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    
+    p {
+        background: #fc0;
+        color: #c00;
+        font: normal normal normal 12px/30px microsoft yahei, simsun;
+        padding: 10px;
+    }
+
+    select{
+        width: 100px;
+    }
+
+    </style>
+</head>
+
+<body>
+    <p>使用这个插件需要注意的地方：1 . 需要有个select 容器 div#cityList 2 . 还需要三个select 元素，分别是select.prov,select.city,select.dist
+    <div id="cityList">
+        <select class="prov"></select>
+        <select class="city"></select>
+        <select class="dist"></select>
+    </div>
+    <script src="jquery.areaselect.js"></script>
+    <script>
+
+    $("#cityList").areaSelect({
+        url:"data.json",
+        required:false,
+        prov:"北京市",
+        city:"北京市",
+        dist:"东城区",
+        crossDomain:true
+    });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：tabs (标签页)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.tabs {
+    .tabs-handle {
+        border-bottom: 1px solid @tabs-bottom-border-color ;
+        .clearfix() ;
+        li {
+            cursor : pointer ;
+            float : left ;
+            padding : 8px ;
+            &.on {
+                border-top : 2px solid @tabs-handle-on-color ;
+                border-right : 1px solid @tabs-bottom-border-color ;
+	border-bottom : 1px solid #fff ;
+	border-left : 1px solid @tabs-bottom-border-color ;
+                .border-top-radius(@tabs-handle-border-radius) ;
+                position: relative;
+	top: 1px ;
+            }
+        }
+    }
+}

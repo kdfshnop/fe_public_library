@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>通过art.dialog.open打开的页面</title>           
+    </head>
+    <body>
+        <script src="../../51auto/js/lib.min.js"></script>
+        <button id="close-btn">关闭提示框</button>
+        <script type="text/javascript">
+            $("#close-btn").bind("click", function(){
+                $(parent.document.getElementById("close-btn")).trigger("click") ;                
+            });
+            
+        </script>
+    </body>
+</html>

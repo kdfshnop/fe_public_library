@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">       
+        <meta name="viewport" content="width=device-width, initial-scale=1">        
+        <title>动态相册API_使用方法demo</title>        
+    </head>    
+    <body>
+        <div id="album-container"></div>
+        <input id="pictId" type="hidden">
+        <button id="add">添加一张图片</button>
+        <button id="union">最后的图片ID汇总</button>        
+        <script src="http://cdn01.51autoimg.com/51auto/js/lib/jquery.min.js"></script>
+        <script src="http://cdn01.51autoimg.com/51auto/js/util/dynamicalbum.class.min.js"></script>
+        <!--引入artDialog资源-->
+        <script src="http://cdn01.51autoimg.com/51auto/js/util/dialog/jquery.artDialog.js?skin=default"></script>
+        <script src="http://cdn01.51autoimg.com/51auto/js/util/dialog/plugins/iframeTools.js"></script>         
+        <script>
+            var da = new dynamicalbum({
+                container: $("#album-container"),
+                initPictList: [
+                    {"id": "1", "url": "http://www.dynamic-album.me/images/1.jpg"},
+                    {"id": "2", "url": "http://www.dynamic-album.me/images/2.jpg"},
+                    {"id": "3", "url": "http://www.dynamic-album.me/images/3.jpg"},
+                    {"id": "4", "url": "http://www.dynamic-album.me/images/4.jpg"},
+                    {"id": "5", "url": "http://www.dynamic-album.me/images/5.jpg"},
+                    {"id": "6", "url": "http://www.dynamic-album.me/images/6.jpg"},
+                    {"id": "7", "url": "http://www.dynamic-album.me/images/7.jpg"},
+                    {"id": "8", "url": "http://www.dynamic-album.me/images/8.jpg"}
+                ],
+                removeConfirm: true,
+                removeSyncServer: false,
+                removePictApiUrl: "api/removePict.json",
+                onRemove: function() {
+                    da.union($("#pictId"), "&");
+                }
+            });
+            $("#add").on("click", function() {
+                da.add({"id": "9", "url": "images/9.jpg"});
+            });
+            $("#union").on("click", function() {
+                da.union($("#pictId"));
+                art.dialog.alert($("#pictId").val());
+            });
+            $("#toggleUrlBar").on("click", function() {
+                da.toggleUrlBar();
+            });
+        </script>
+    </body>
+</html>

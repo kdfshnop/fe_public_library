@@ -1,0 +1,23 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：background.less(混合 -> 背景类)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.v-gradient(@startColor: #FFFFFF, @endColor: #FFFFFF, @startPercent: 0%, @endPercent: 100%) {
+  background-image : -webkit-gradient(linear, left @startPercent, left @endPercent, from(@startColor), to(@endColor)) ; // Safari 4+, Chrome 2+
+  background-image : -webkit-linear-gradient(top, @startColor, @startPercent, @endColor, @endPercent) ; // Safari 5.1+, Chrome 10+
+  background-image :  -moz-linear-gradient(top, @startColor @startPercent, @endColor @endPercent) ; // FF 3.6+
+  background-image : linear-gradient(to bottom, @startColor @startPercent, @endColor @endPercent) ; // Standard, IE10
+  background-repeat : repeat-x ;
+  filter : e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)", argb(@startColor), argb(@endColor))) ; // for lt IE10
+}
+
+
+// 透明背景
+.transparent-bg(@color: rgba(0, 0, 0, .35)) {
+  background: @color;
+  filter: e(%("progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='%d', EndColorStr='%d')", argb(@color), argb(@color))) ;  
+  &:nth-of-type(1n) { // for gt IE8, 阻止背景叠加
+    filter: none\9;
+  }
+}

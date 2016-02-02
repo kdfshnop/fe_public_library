@@ -1,0 +1,18 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：background.less(混合 -> 字体类)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.font (@color, @fontStyle, @fontVariant, @fontWeight, @fontSize, @lineHeight, @fontFamily) {    
+    /*
+    color : @color ;
+    font-style : @fontStyle ;  // normal | italic | oblique | inherit
+    font-variant : @fontVariant ;  // normal | small-caps | inherit
+    font-weight : @fontWeight ;
+    font-size : @fontSize ;
+    line-height : @lineHeight ;
+    font-family : @fontFamily ;
+    */
+    color : @color ;
+    font : @fontStyle @fontVariant @fontWeight @fontSize/@lineHeight @fontFamily ;
+}

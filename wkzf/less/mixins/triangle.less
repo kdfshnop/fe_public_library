@@ -1,0 +1,41 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：background.less(混合 -> 三角符号类)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.triangle() {       			
+    font-size : 0 ;
+    height : 0 ;
+    .inline-block() ;
+    line-height : 0 ;
+    margin : 0 5px ;
+    width : 0 ;
+}
+
+.triangle-up(@dimension:4px , @color:#444) {
+    .triangle() ;
+    border-left : @dimension solid transparent ;
+    border-right : @dimension solid transparent ; 
+    border-bottom : @dimension solid @color ;
+}
+
+.triangle-down(@dimension:4px , @color:#444) {
+    .triangle() ;
+    border-left : @dimension solid transparent ;
+    border-right : @dimension solid transparent ;
+    border-top : @dimension solid @color ;
+}
+
+.triangle-prev(@dimension:4px , @color:#444) {
+    .triangle() ;
+    border-top : @dimension solid transparent ;
+    border-bottom : @dimension solid transparent ;
+    border-right : @dimension solid @color ;
+}
+
+.triangle-next(@dimension:4px , @color:#444) {
+    .triangle() ;
+    border-top : @dimension solid transparent ;
+    border-bottom : @dimension solid transparent ;
+    border-left : @dimension solid @color ;
+}

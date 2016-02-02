@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <!--下面一行只有IE8认识，如果未安装GCF，浏览器使用最高版本的IE内核进行渲染-->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!--下面一行让部分国产浏览器默认采用高速模式渲染页面，暂时只有360浏览器支持此标签-->
+        <meta name="renderer" content="webkit">
+        <!--针对Chrome 和 Firefox3.5 进行DNS 预解析，如果域名和IP地址对应关系不固定，就不要使用下面两行-->
+        <link rel="dns-prefetch" href="http://www.51auto.com">
+        <link rel="dns-prefetch" href="http://static.51auto.com">
+        <!--让浏览器地址栏里面出现个性图标-->
+        <link href="51auto.ico" mce_href="51auto.ico" rel="icon" type="image/x-icon">
+        <link href="51auto.ico" mce_href="51auto.ico" rel="shortcut icon" type="image/x-icon">
+        <!--对视口的规定，设置宽度为设备宽度，初始缩放比例为1-->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--对于SEO很关键的设置：比如title可以将关键词用如下划线这样的分隔符连起来-->
+        <title>guanaihui_pc页面标准模板_1.0版本</title>
+        <meta name="keywords" content="企业体检,体检团购,体检预约,体检套餐,体检医院">
+        <meta name="description" content="关爱体检通是全国首家知名体检中心指定服务平台，支持爱康国宾、瑞慈、美年大健康、慈铭等体检中心和长海医院、东方医院、曙光医院、瑞金医院等体检医院。低于团购，欢迎企业及个人咨询400-728-7289"> 
+        <!--禁止浏览器在本地计算机缓存当前页面-->
+        <meta http-equiv="pragma" content="no-cache"> 
+        <meta http-equiv="cache-control" content="no-cache"> 
+        <meta http-equiv="expires" content="0"> 
+        <!-- 引入Bootstrap框架的stylesheet资源 -->
+        <link rel="stylesheet" href="http://static.51auto.com/51auto/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://static.51auto.com/51auto/css/bootstrap-theme.min.css">
+        <!--对IE的兼容性处理
+        @bsie css 补丁文件bootstrap-ie6.css
+        @bsie 额外的 css 补丁文件
+        -->
+        <!--[if lte IE 6]>        
+        <link rel="stylesheet" type="text/css" href="http://static.51auto.com/51auto/css/bootstrap-ie6.min.css">        
+        <link rel="stylesheet" type="text/css" href="http://static.51auto.com/51auto/css/ie.min.css">
+        <![endif]-->                 
+    </head>
+    <!--
+    @当用户请求一个页面时，无论如何都会花费200到500毫秒用于后台组织HTML文件。在这期间，浏览器会一直空闲等待数据返回
+    @如果后端语言使用php，在这里加上<?php flush(); ?>，它允许你把已经编译的好的部分HTML响应文件先发送给浏览器，这时浏览器就会可以下载文件中的内容（脚本等）而后台同时处理 剩余的HTML页面。这样做的效果会在后台烦恼或者前台较空闲时更加明显
+    @如果是jsp，可以用<% out.flush(); %>
+    -->
+    <body>
+        <!-- 对IE兼容的处理
+        @DD_belatedPNG_0.0.8a.js用来解决IE低版本下png透明问题，凡是页面中使用了.pngfix这个类的元素都将透明
+        @html5shiv.js主要解决HTML5提出的新的元素不被IE6-8识别
+        @Respond.js用于为 IE6-8 以及其它不支持 CSS3 Media Queries 的浏览器提供媒体查询的 min-width 和 max-width 特性，实现响应式网页设计（Responsive Web Design）
+        @注意：Respond.js在本地文件系统浏览环境下不工作，要在如apache或者nginx等web server下才能工作
+        @下面这段脚本解决IE6下背景图闪烁的问题
+        -->
+        <!--[if IE 6]>
+        <script src="http://static.51auto.com/51auto/js/compatible/DD_belatedPNG_0.0.8a-min.js"></script>
+        <script> DD_belatedPNG.fix('.pngfix'); </script>
+        <script type=”text/javascript”>  
+        // <![CDATA[ 
+        if((window.navigator.appName.toUpperCase().indexOf("MICROSOFT")>=0)&&(document.execCommand)) 
+        try{ 
+        document.execCommand("BackgroundImageCache", false, true); 
+        } 
+        catch(e){} 
+        // ]]>  
+        </script>
+        <![endif]-->
+        <!-- bsie js 补丁只在IE6中才执行 -->
+        <!--[if lte IE 6]>        
+        <script type="text/javascript" src="http://static.51auto.com/51auto/js/compatible/bootstrap-ie.min.js"></script>
+        <![endif]-->
+        <!--[if lt IE 9]>
+        <script src="http://static.51auto.com/51auto/js/compatible/html5shiv.min.js"></script>
+        <script src="http://static.51auto.com/51auto/js/compatible/respond.min.js"></script>        
+        <![endif]-->
+        
+        <!-- 引入jquery | underscore  这3个js的合并体以及require.js -->
+        <script src="http://static.51auto.com/51auto/js/lib.min.js"></script>
+        <!-- 引入bootstrap脚本资源 -->
+        <script src="http://static.51auto.com/51auto/js/bootstrap.min.js"></script>
+        <!-- 在这里引入模块化加载工具requireJS，并设置模块化地址，当然可以使用sea.js，这里根据情况自行选择 -->
+        <script>
+        var JS_MODULE_PATH = "http://static.51auto.com/51auto/js/";
+        </script>
+        <script data-main="http://static.51auto.com/apps/51auto.com/js/app.min.js" src="http://static.51auto.com/51auto/js/require.min.js"></script>
+        <!--引入网站推广用的各个广告平台、统计平台的脚本资源包-->
+        <script src="http://static.51auto.com/apps/51auto.com/js/statistics.min.js"></script>
+    </body>
+</html>

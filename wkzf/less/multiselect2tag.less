@@ -1,0 +1,32 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：multiselect2tag (多选下拉菜单项到tag)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@import "http://cdn01.ttpaicdn.com/ttpai/less/mixins.less" ;
+.multiselect2tag-result-container {
+    .item {
+        background : #fff ;
+        .border-radius(2px) ;
+        border : 1px solid #ccc ;
+        .inline-block() ;
+        margin : 5px 5px 0 0 ;
+        &:hover {
+            border-color : rgba(82, 168, 236 , .8) ;        
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6) ;
+        }
+        .description {
+            font : normal normal normal 12px/25px microsoft yahei, simsun ;
+            .inline-block() ;
+            padding : 0 5px ;
+        }
+        .close {
+            background : #ddd ;
+            font : normal normal normal 14px/25px Arial, Helvetica, sans-serif ;
+            .inline-block() ;
+            padding : 0 5px ;
+            text-align : center ;
+            width : 25px ;
+        }
+    }
+}

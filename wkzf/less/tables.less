@@ -1,0 +1,40 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：tables (表格)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.table {
+    width : 100% ;
+    caption {
+        font-size : @table-caption-font-size ;        
+        text-align : left ;
+    }
+    & > tbody > tr > td, & > tbody > tr > th, & > tfoot > tr > td, & > tfoot > tr > th, & > thead > tr > td, & > thead > tr > th {
+        border-top: 1px solid @table-border-color ;
+        line-height : 1.5 ;
+        padding : @table-padding ;
+        text-align : left ;
+    }    
+    thead {
+        tr {
+            th {
+                border : none ;
+                border-bottom : 1px solid @table-border-color ;                
+            }
+        }
+    }
+    &.table-bordered {
+        border : 1px solid @table-border-color ;
+        border-right : none ;
+        & > tbody > tr > td, & > tbody > tr > th, & > tfoot > tr > td, & > tfoot > tr > th, & > thead > tr > td, & > thead > tr > th {
+            border-right: 1px solid @table-border-color ;
+        } 
+    }
+    &.table-condensed {
+        & > tbody > tr > td, & > tbody > tr > th, & > tfoot > tr > td, & > tfoot > tr > th, & > thead > tr > td, & > thead > tr > th {
+            padding : @table-condensed-padding ;
+        }   
+    }
+    
+    
+}

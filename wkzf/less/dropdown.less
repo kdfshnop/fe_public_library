@@ -1,0 +1,36 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：dropdown (下拉菜单)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.dropdown {    
+    .inline-block() ;
+    position : relative ;    
+    .dropdown-menu {
+        background-color :  @dropdown-background ;
+        border : 1px solid @dropdown-border-color ;
+        .border-radius(4px) ;
+        box-shadow : 0 6px 12px @dropdown-shadow-color ;
+        min-width : 160px ; 
+        _width : ~"expression( this.offsetWidth > 160 ? 'auto' : '160px') ;" ;         
+        padding : 5px 0 ;
+        position : absolute ;
+        visibility : hidden ;
+        z-index : 1000 ;
+        a {
+            display : block ;
+            line-height : 1.5 ;
+            padding : @dropdown-menuitem-padding ;
+            white-space : nowrap ;
+            &:hover {
+                background : @dropdown-menuitem-hover-background ;
+            }
+        }
+        .divider {
+            background-color : @dropdown-divider-color ;
+            height : 1px ;
+            margin : @dropdown-divider-margin ;
+            overflow : hidden ;
+        }
+    }
+}

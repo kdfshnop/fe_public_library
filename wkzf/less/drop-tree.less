@@ -1,0 +1,41 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：droptree (下拉树形菜单)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@import "variables.less" ;
+@import "mixins.less" ;
+.drop-tree {    
+    .border-radius(@drop-tree-border-radius) ;
+    border : 1px solid @drop-tree-border-color ;
+    box-shadow : 0 1px 1px rgba(0, 0, 0, 0.075) inset ;      
+    .inline-block() ;
+    position : relative ;
+    vertical-align : middle ;
+    .tree-handle {
+        cursor : pointer ;
+        float : right ;
+        height : @drop-tree-height ;
+        line-height : @drop-tree-height ;
+        text-align : center ;
+        width : @drop-tree-height ;
+    }
+    .selected-label {
+        line-height : @drop-tree-height ;
+        padding : 0 5px ;
+        .text-ellipsis() ;        
+    }
+    .tree-container {
+        background : #fff ;
+        box-sizing : content-box ;
+        .border-radius(@drop-tree-border-radius) ;
+        box-shadow : 0 6px 12px @drop-tree-shadow-color ;
+        border : 1px solid @drop-tree-border-color ;
+        max-height : @drop-tree-container-maxheight ; 
+        _height : ~"expression( this.offsetHeight > 300 ? '300px' : 'auto') ;" ;  //IE6兼容处理，注意表达式里面的条件不要用<要用>，否则IE6卡死，不知道原因
+        overflow : auto ;
+        position : absolute ;
+        top : @drop-tree-height ;
+        visibility : hidden ;        
+    }   
+}

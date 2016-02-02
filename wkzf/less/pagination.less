@@ -1,0 +1,31 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：pagination (分页)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.pagination {
+    padding : 5px ;
+    span {
+        line-height : @pagination-item-height ;
+    }
+    .item {
+        * {
+            .inline-block() ;
+            line-height : @pagination-item-height ;
+        }
+        a {
+            background : @pagination-item-background ;
+            .border-radius(2px) ;
+            border : 1px solid @pagination-item-border-color ;           
+            min-width : @pagination-item-height ; 
+            _width : ~"expression( this.offsetWidth > 25 ? 'auto' : '25px') ;" ;  //IE6兼容处理，注意表达式里面的条件不要用<要用>，否则IE6卡死，不知道原因
+            padding : 0 3px ;
+            text-align : center ;
+        }
+        .on {
+            background : @pagination-item-on-background ;
+            border-color : @pagination-item-on-background ;
+            color : @pagination-item-on-font-color ;
+        }
+    }
+}

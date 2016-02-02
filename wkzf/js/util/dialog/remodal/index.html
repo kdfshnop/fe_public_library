@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<title>Remodal example</title>
+	<meta name="description" content="Remodal example">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="src/jquery.remodal.css">
+</head>
+<body>
+<div class="remodal-bg">
+    <a href="#modal">Click</a>
+    <br><br>
+
+    <div class="remodal" data-remodal-id="modal">
+        <h1>Remodal</h1>
+        <p>
+            Flat, responsive, lightweight, fast, easy customizable modal window plugin
+            with declarative state notation and hash tracking.
+        </p>
+        <p>
+            Minified version size: ~4kb
+        </p>
+        <br>
+        <a class="remodal-cancel" href="#">Cancel</a>
+        <a class="remodal-confirm" href="#">OK</a>
+    </div>
+</div>
+
+<script src="http://www.jqueryfuns.com/Content/js/jquery-1.8.3.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/vendor/jquery-2.1.0.min.js"><\/script>')</script>
+<script src="src/jquery.remodal.js"></script>
+<script>
+    $(document).on('open', '.remodal', function () {
+        console.log('open');
+    });
+
+    $(document).on('opened', '.remodal', function () {
+        console.log('opened');
+    });
+
+    $(document).on('close', '.remodal', function () {
+        console.log('close');
+    });
+
+    $(document).on('closed', '.remodal', function () {
+        console.log('closed');
+    });
+
+    $(document).on('confirm', '.remodal', function () {
+        alert('confirm');
+    });
+
+    $(document).on('cancel', '.remodal', function () {
+        alert('cancel');
+    });
+</script>
+</body>
+</html>

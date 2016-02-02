@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="http://cdn01.ttpaicdn.com/ttpai/js/lib.min.js"></script>
+        <script src="http://cdn01.ttpaicdn.com/ttpai/js/util/jquery.lazyload.min.js"></script>
+        <style>
+            .lazy {                
+                height : 500px ;
+                width : 800px ;
+            }
+            div {
+                width : 300px ;
+            }
+        </style>
+        <title>图片延迟加载插件的使用实例</title>           
+    </head>
+    <body>
+        <div>
+           <p>新京报讯 敦促“提网速、降网费”一个月后，李克强总理5月13日主持召开国务院常务会议，确定加快建设高速宽带网络促进提速降费措施，助力创业创新和民生改善。</p>
+            <p>会议指出，加快高速宽带网络建设，促进提速降费，既可改善人民生活，又能降低创业创新成本、为“互联网+”行动提供有力支撑，拉动有效投资和消费、培育发展新动能。会议确定五点措施促进提速降费。</p>
+            <p>总理还指出，降低网费和流量费，这不是政府的决定，而是“不降不行”的市场选择。企业降费后，事实上会推动流量消费的增加，实现薄利多销，最终也会提高企业的经营效益。</p>
+            <p>他解释说，当前加快推进信息基础设施建设，一方面可以拉动投资、促进稳增长，另一方面也为发展“互联网+”、推进大众创业万众创新提供了有力的支撑。</p>
+            <p>李克强最后强调，提网速、降网费，不仅需要工信部和通信运营商不懈努力，还需要有关部门通力合作，为电信企业提供良好的营商环境，最终便利亿万网民。</p>
+        </div>
+        <div class="lazy-container">
+            <img data-src="http://picture.51auto.com/car/201503/23/pic820150323221858-pHGJQ.jpg" class="lazy">
+            <img data-src="http://picture.51auto.com/car/201503/23/pic820150323221859-bfoFW.jpg" class="lazy">
+            <img data-src="http://picture.51auto.com/car/201503/23/pic820150323221859-1Z198.jpg" class="lazy">
+            <img data-src="http://picture.51auto.com/car/201503/23/pic820150323221901-t23b4.jpg" class="lazy">
+            <img data-src="http://picture.51auto.com/car/201503/23/pic820150323221902-5rzLj.jpg" class="lazy">
+            <img data-src="http://picture.51auto.com/car/201503/23/pic820150323221953-2baaI.jpg" class="lazy">
+        </div>
+        <img data-src="http://picture.51auto.com/car/201503/23/pic820150323221956-aYjUr.jpg" class="lazy">
+        <img data-src="http://picture.51auto.com/car/201503/23/pic820150323221959-fPnpj.jpg" class="lazy">
+        <script>
+            $(".lazy-container .lazy").lazyload() ;
+        </script>
+    </body>
+</html>

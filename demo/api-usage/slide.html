@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            .container {
+                box-sizing : border-box ;
+                margin : 0 auto ;
+                padding : 50px ;
+                position : relative ;
+                width : 1040px ;
+            }
+            
+            .container .controller {
+                background : #ddd ;
+                cursor : pointer ;
+                height : 50px ;
+                position : absolute ;
+                top : 100px ;
+                width : 50px ; 
+                z-index : 1000 ;
+            }
+            
+            .container .prev {
+                left : 0 ;
+            }
+            
+            .container .next {
+                right : 0 ;
+            }
+            
+            .container  .content {
+                margin : 0 70px ;
+                 *zoom : 1; 
+            }
+            
+            .container  .content:after {
+                content : " " ;      
+                clear : both ;
+                display : block ;
+                height : 0 ;
+                font-size : 0 ;
+                visibility : hidden ;
+            }           
+            
+            .container .item {
+                background : #999 ;
+                color : #fff ;
+                font : normal 80px/300px microsoft yahei, simsun ;
+                float : left ;
+                height : 300px ;
+                margin : 10px ;
+                text-align : center ;
+                width : 300px ;
+            }
+        </style>
+        <title>焦点图插件 - Slide的使用实例</title>           
+    </head>
+    <body>
+        <div class="container">            
+            <div class="controller prev"></div>
+            <div class="controller next"></div>
+            <div class="content">
+                <div class="item">1</div>
+                <div class="item">2</div>
+                <div class="item">3</div>
+                <div class="item">4</div>
+                <div class="item">5</div>
+                <div class="item">6</div>
+                <div class="item">7</div>
+            </div>
+        </div>
+        <script src="http://cdn01.ttpaicdn.com/ttpai/js/lib.min.js"></script>
+        <script src="http://cdn01.ttpaicdn.com/ttpai/js/util/jquery.slide.min.js"></script>
+        <script>
+            $(".container").slide({
+                autoPlay : true ,
+                effect : "leftLoop" ,
+                interTime : 4000 ,
+                vis : 3
+            });
+        </script>
+    </body>
+</html>

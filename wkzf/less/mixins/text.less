@@ -1,0 +1,17 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：background.less(混合 -> 文本类)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.text-ellipsis() {
+    /*
+    *截取文本用省略号追加在后面
+    */
+    overflow : hidden ;
+    white-space : nowrap ;
+    text-overflow : ellipsis ;
+    text-overflow : ellipsis ; //对IE7+ | Safari的兼容
+    -ms-text-overflow : ellipsis;
+    -o-text-overflow : ellipsis ;  //对Opera的兼容
+    -moz-binding : url("ellipsis.xml#ellipsis") ; //对FireFox的兼容 
+}

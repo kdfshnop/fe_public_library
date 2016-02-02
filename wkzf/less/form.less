@@ -1,0 +1,122 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：form (表单)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.form-control {
+    background-color : @form-control-background ;
+    .border-radius(@form-control-border-radius) ;
+    border: 1px solid @form-control-border-color ;
+    box-shadow : 0 1px 1px rgba(0, 0, 0, 0.075) inset ;    
+   .font (@form-control-font-color, normal, normal, normal, @form-control-font-size, @form-control-height, @basic-font-family) ;    
+    padding : @form-control-padding ;
+    transition : border 0.2s linear 0s , box-shadow 0.2s linear 0s ;
+    width : 100% ;
+    &:focus {
+        border-color : rgba(82, 168, 236 , .8) ;        
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px @form-control-focus-glow-color ;
+    }
+    &.input-lg {
+        .font (@form-control-font-color, normal, normal, normal, @large-control-font-size, @large-control-height, @basic-font-family) ;         
+    }
+    &.input-sm {
+        .font (@form-control-font-color, normal, normal, normal, @small-control-font-size, @small-control-height, @basic-font-family) ;         
+    }
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+还要明确指定文本框和select高度
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+input {
+    &.form-control {
+        height : @form-control-height ;   
+        &.input-lg {       
+            height : @large-control-height ;
+        }
+        &.input-sm {       
+            height : @small-control-height ;
+        }
+    }
+    
+}
+
+select {
+    &.form-control {
+        height : @select-control-height ;
+        &.input-lg {       
+            height : @select-large-control-height ;
+        }
+        &.input-sm {       
+            height : @select-small-control-height ;
+        }
+    }
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+表单控件输入组前后addon
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.addon {
+    background : @form-control-addon-background ;               
+    border: 1px solid @form-control-border-color ;
+    .font (@form-control-addon-font-color, normal, normal, normal, @form-control-addon-font-size, @form-control-addon-height, @basic-font-family) ; 
+    height : @form-control-addon-height ;
+    .inline-block() ;
+    min-width : @form-control-addon-min-width ; 
+    _width : ~"expression( this.offsetWidth > 28 ? 'auto' : '28px') ;" ;  //IE6兼容处理，注意表达式里面的条件不要用<要用>，否则IE6卡死，不知道原因
+    padding : 0 3px ;
+    text-align : center ;
+    text-shadow : 0 -1px 0 #fff ;
+}
+.addon-left {
+    .border-left-radius(@form-control-border-radius) ; 
+    border-right : none ;
+}
+.addon-right {
+    .border-right-radius(@form-control-border-radius) ; 
+    border-left : none ;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+表单控件组
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.input-group {    
+    .input-box {
+        .inline-block() ;
+        .form-control {
+            .border-radius(0px) ;
+        }
+    }    
+}
+
+.input-prepend {
+    .input-box {
+        .form-control {
+            .border-right-radius(@form-control-border-radius) ;
+        }
+    }
+}
+
+.input-append {
+    .input-box {
+        .form-control {
+            .border-left-radius(@form-control-border-radius) ;
+        }
+    }
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+内联表单 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.form-inline {
+    .form-group {
+        .inline-block() ;
+        label {
+            .inline-block() ;            
+            font-weight: 700 ;            
+        }
+        .form-control {
+            width : auto ;
+        }
+    }
+    
+}

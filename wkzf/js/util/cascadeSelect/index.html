@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="//dev01.guanaihui.cn/guanaihui/js/lib.min.js"></script>
+    <title>级联选择插件使用用例</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    
+    p {
+        background: #fc0;
+        color: #c00;
+        font: normal normal normal 12px/30px microsoft yahei, simsun;
+        padding: 2px;
+    }
+    
+    select {
+        width: 100px;
+    }
+    
+    div {
+        margin-top: 20px;
+    }
+    </style>
+</head>
+
+<body>
+    <p>1.需要一个包含Select 元素的容器 </p>
+    <p>2.依赖下发的数据格式，需满足 callBack({ "code": 200, "message": "成功", "result": { "cateGoryList": [{ "1": "专科机构", "childrens": [{ "20": "肛肠专科" }, { "21": "眼耳鼻喉" }, { "22": "儿科" }, { "23": "男科" }, { "24": "妇科" }] }, { "2": "美容养生", "childrens": [{ "8": "美容/SPA" }, { "9": "瘦身纤体" }, { "10": "产后塑形" }, { "17": "植发/养护" }, { "18": "足疗按摩" }, { "19": "男子美容" }] }, ] } });这样的格式。
+    </p>
+    <p>3.必须设置级联的级数，默认为三级。如需要改动则可以设置 level 属性</p>
+    <p>4.可以通过classAttrs设置select的class.例如：classAttrs: ["prov", "city", "dist"]</p>
+    <p>5.对于表单提交的情况，需要设置select的name属性。同样可以通过设置nameAttr设置。例如：nameAttrs: ["prov", "city", "dist"]</p>
+    <p>6.可以通过defaultVals设置select的默认值.例如：defaultVals: ["北京市", "北京市", "东城区"]</p>
+    <div id="cityList">
+    </div>
+    <script src="jquery.cascadeselect.min.js"></script>
+    <script>
+    $("#cityList").cascadeSelect({
+        url: "http://admin.guanaihui.cn/category/list?callback=callback&GET&_=1453081151864",
+        // classAttrs: ["prov", "city", "dist"],
+        // defaultVals: ["2", "36", "东城区"],
+        // nameAttrs: ["prov", "city", "dist"],
+        crossDomain: true,
+        dataKey: "cateGoryList",
+        nameAttrs: ["primary", "secondary"],
+        classAttrs: ["form-control input-sm", "form-control input-sm"],
+        level: 2
+    });
+
+    // $("#cityList").cascadeSelect({
+    //     url: "http://192.168.150.163:8080/category/getCategoryTree",
+    //     crossDomain: true,
+    //     level: 2,
+    //     dataKey: "cateGoryList"
+    // });
+    </script>
+</body>
+
+</html>

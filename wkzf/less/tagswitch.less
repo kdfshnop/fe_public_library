@@ -1,0 +1,42 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：tagswitch (tag形式的复选框)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@import "http://cdn01.ttpaicdn.com/ttpai/less/mixins.less" ;
+.tag-switch {
+    background : #fff ;
+    .border-radius(2px) ;
+    border : 1px solid #ccc ;
+    .inline-block() ;
+    margin : 5px 5px 0 0 ;
+    position : relative ;
+    text-decoration : none ;
+    &:hover {
+        border-color : rgba(82, 168, 236 , .8) ;        
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6) ;
+        text-decoration : none ;
+    }
+    &.on {
+        border-color : rgba(0, 153, 0, .8) ;  
+    }
+    .description {
+        font : normal normal normal 12px/22px microsoft yahei, simsun ;
+        .inline-block() ;
+        padding : 0 10px ;
+    }
+    .sign {
+        .border-radius(100%) ;
+        background : rgba(0, 153, 0, .7) ;
+        color : #fff ;
+        font-size : 11px ;
+        height : 16px ;
+        line-height : 16px ;
+        .inline-block() ;
+        right : -8px ;
+        position : absolute ;
+        top : 3px ;
+        visibility : hidden ;
+        width : 16px ;
+    }
+}

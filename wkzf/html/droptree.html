@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">        
+        <link rel="stylesheet" href="http://cdn01.ttpaicdn.com/ttpai/css/ttpai.min.css">
+        <link rel="stylesheet" href="http://cdn01.ttpaicdn.com/ttpai/js/util/ztree/css/zTreeStyle/zTreeStyle.css">
+        <style>
+            body {                
+                margin : 30px ;
+            }
+        </style>
+        <title>下拉树形菜单使用实例</title>           
+    </head>
+    <body> 
+        <div class="drop-tree clearfix"></div>
+        <script src="http://cdn01.ttpaicdn.com/ttpai/js/lib/jquery.min.js"></script>
+        <script src="http://cdn04.ttpaicdn.com/ttpai/js/require.min.js"></script>
+        <script src="http://cdn01.ttpaicdn.com/ttpai/jssrc/jquery.droptree.js"></script>
+        <script>
+            var sourceData = [{
+	"childDeptList": [],
+	"createTime": 1437479723000,
+	"id": 1,
+	"introduce": "\u4EA7\u54C1\u6280\u672F\u4E0Duuuuuuuu",
+	"isDel": 0,
+	"modifyTime": 1437479723000,
+	"name": "\u4EA7\u54C1\u6280\u672F\u90E8",
+	"pId": 0,
+	"path": ",1," ,
+                "open" : true
+            }, {
+                    "childDeptList": [],
+                    "createTime": 1437479735000,
+                    "id": 2,
+                    "introduce": "",
+                    "isDel": 0,
+                    "modifyTime": 1437479736000,
+                    "name": "test1",
+                    "pId": 0,
+                    "path": ",2," ,
+                    "open" : true
+            }, {
+                    "childDeptList": [],
+                    "createTime": 1437479726000,
+                    "id": 3,
+                    "introduce": "",
+                    "isDel": 0,
+                    "modifyTime": 1437479726000,
+                    "name": "test2",
+                    "pId": 2,
+                    "path": ",2,3," ,
+                    "open" : true
+            }, {
+                    "childDeptList": [],
+                    "createTime": 1437479729000,
+                    "id": 4,
+                    "introduce": "",
+                    "isDel": 0,
+                    "modifyTime": 1437479729000,
+                    "name": "\u4EA7\u54C13",
+                    "pId": 1,
+                    "path": ",1,4," ,
+                    "open" : true
+            }, {
+                    "childDeptList": [],
+                    "createTime": 1437479732000,
+                    "id": 5,
+                    "introduce": "test4444444444444",
+                    "isDel": 0,
+                    "modifyTime": 1437479732000,
+                    "name": "test4",
+                    "pId": 3,
+                    "path": ",2,3,5," ,
+                    "open" : true
+            }] ;
+            $(".drop-tree").droptree({                
+                multiSelect : true ,
+                sourceData : sourceData ,
+                treeId : "deptTree" ,
+                idHiddenName : "deptSelectedValue" ,
+                width : "300px"
+            }) ;
+        </script>
+     </body>
+</html>

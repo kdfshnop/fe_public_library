@@ -1,0 +1,94 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：popover (弹出框)
+ 3. 作者：zhaohuagang@guanaihui.com
+ 4. 备注 ： 本插件在bootstrap的基础上进行了优化，修复了以下bug : 
+    1). bootstrap支持IE8 -
+    2). bootstrap弹出框如果箭头在顶部，没有将箭头背景色改成和title一样的颜色，也就是没有和title融为一体
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.popover {
+    background : @popover-background ;
+    .border-radius(4px) ;
+    border : 1px solid @popover-border-color ;
+    box-shadow : 0 6px 12px @popover-shadow-color ;    
+    position : absolute ;     
+    z-index : 1000 ;
+    .arrow, .arrow-inner {
+        border-style : solid ;        
+        font-size : 0 ;
+        height : 0 ;        
+        line-height : 0 ;
+        position : absolute ;        
+        width : 0 ;
+    }    
+    .popover-title {
+        background : @popover-title-background ;
+        border-bottom : 1px solid @popover-title-bottom-border-color ;        
+        line-height : 1.5 ;
+        padding : 5px ;
+    }
+    .popover-content {
+        padding : 9px 14px ;
+    }
+    &.bottom {
+        .arrow {
+            border-color : transparent transparent @popover-border-color ;
+            border-width : 0 9px 9px ;
+            left : 50% ;
+            margin-left : -9px ;  //让箭头彻底水平居中，因为如果left : 50%的话箭头其实像右偏移了，这个属性就是用来修复这个偏移的
+            top : -10px ;
+            .arrow-inner {
+                border-color : transparent transparent @popover-title-background ;                
+                border-width : 0 9px 9px ;
+                left : -9px ;
+                top : 1px ;
+            }
+        }
+    }
+    &.right {
+        .arrow {
+            border-color : transparent @popover-border-color transparent transparent ;
+            border-width : 9px 9px 9px 0 ;
+            left : -10px ;
+            margin-top : -9px ;   //让箭头彻底垂直居中，因为如果 top : 50%的话箭头其实向下偏移了，这个属性就是用来修复这个偏移的
+            top : 50% ;
+            .arrow-inner {
+                border-color : transparent #fff transparent transparent ;                
+                border-width : 9px 9px 9px 0 ;
+                left : 1px ;
+                top : -9px ;
+            }
+        }
+    }
+    &.top {
+        .arrow {
+            border-color : @popover-border-color transparent transparent ;
+            border-width : 9px 9px 0 ;
+            left : 50% ;
+            margin-left : -9px ;
+            bottom : -10px ;
+            .arrow-inner {
+                border-color : #fff transparent transparent ;                
+                border-width : 9px 9px 0 ;
+                left : -9px ;
+                top : -10px ;
+            }
+        }
+    }
+    &.left {
+        .arrow {
+            border-color : transparent transparent transparent @popover-border-color ;
+            border-width : 9px 0 9px 9px ;
+            margin-top : -9px ;
+            right : -10px ;
+            top : 50% ;
+            .arrow-inner {
+                border-color : transparent transparent transparent #fff ;                
+                border-width : 9px 0 9px 9px ;
+                right : 1px ;
+                top : -9px ;
+            }
+        }
+    }
+   
+}

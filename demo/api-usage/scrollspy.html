@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="http://cdn01.ttpaicdn.com/ttpai/js/lib.min.js"></script>
+        <script src="http://cdn01.ttpaicdn.com/ttpai/jssrc/jquery.scrollspy.js"></script>
+        <style>
+            .nav {
+                position : fixed ;
+                left : 0 ; 
+                top : 0 ;
+            }
+            .nav li {
+                background : #fc0 ;
+                display : inline-block ;
+                font : normal normal normal 14px/40px microsoft yahei ;
+                height : 40px ;                
+                text-align : center ;
+                width :100px ;                
+            }
+            .nav li.on {
+                background : #c00 ;
+                color : #fff ;
+            }
+            .content {
+                margin : 20px ;                  
+            }
+            .content div {
+                background : #eee ;
+                margin : 5px 0 ;
+                padding : 20px ;
+            }
+        </style>
+        <title>滚动监听插件的使用实例</title>           
+    </head>
+    <body>
+        <ul class="nav">
+            <li data-target=".content .sport">请您</li>
+            <li data-target=".content .music">拉动</li>
+            <li data-target=".content .junshi">滚动条</li>
+            <li data-target=".content .history">体验</li>
+            <li data-target=".content .house">效果</li>
+        </ul>
+        <div class="content">
+            <div  class="sport">
+                <p>新京报讯 敦促“提网速、降网费”一个月后，李克强总理5月13日主持召开国务院常务会议，确定加快建设高速宽带网络促进提速降费措施，助力创业创新和民生改善。</p>
+                <p>新京报讯 敦促“提网速、降网费”一个月后，李克强总理5月13日主持召开国务院常务会议，确定加快建设高速宽带网络促进提速降费措施，助力创业创新和民生改善。</p>
+                <p>新京报讯 敦促“提网速、降网费”一个月后，李克强总理5月13日主持召开国务院常务会议，确定加快建设高速宽带网络促进提速降费措施，助力创业创新和民生改善。</p>
+                <p>新京报讯 敦促“提网速、降网费”一个月后，李克强总理5月13日主持召开国务院常务会议，确定加快建设高速宽带网络促进提速降费措施，助力创业创新和民生改善。</p>
+            </div>
+            <div class="music">
+                <p>会议指出，加快高速宽带网络建设，促进提速降费，既可改善人民生活，又能降低创业创新成本、为“互联网+”行动提供有力支撑，拉动有效投资和消费、培育发展新动能。会议确定五点措施促进提速降费。</p>
+                <p>会议指出，加快高速宽带网络建设，促进提速降费，既可改善人民生活，又能降低创业创新成本、为“互联网+”行动提供有力支撑，拉动有效投资和消费、培育发展新动能。会议确定五点措施促进提速降费。</p>
+                <p>会议指出，加快高速宽带网络建设，促进提速降费，既可改善人民生活，又能降低创业创新成本、为“互联网+”行动提供有力支撑，拉动有效投资和消费、培育发展新动能。会议确定五点措施促进提速降费。</p>
+                <p>会议指出，加快高速宽带网络建设，促进提速降费，既可改善人民生活，又能降低创业创新成本、为“互联网+”行动提供有力支撑，拉动有效投资和消费、培育发展新动能。会议确定五点措施促进提速降费。</p>
+            </div>
+            <div class="junshi">
+                <p>总理还指出，降低网费和流量费，这不是政府的决定，而是“不降不行”的市场选择。企业降费后，事实上会推动流量消费的增加，实现薄利多销，最终也会提高企业的经营效益。</p>
+                <p>总理还指出，降低网费和流量费，这不是政府的决定，而是“不降不行”的市场选择。企业降费后，事实上会推动流量消费的增加，实现薄利多销，最终也会提高企业的经营效益。</p>
+            </div>
+            <div class="history">
+                <p>他解释说，当前加快推进信息基础设施建设，一方面可以拉动投资、促进稳增长，另一方面也为发展“互联网+”、推进大众创业万众创新提供了有力的支撑。</p>
+                <p>他解释说，当前加快推进信息基础设施建设，一方面可以拉动投资、促进稳增长，另一方面也为发展“互联网+”、推进大众创业万众创新提供了有力的支撑。</p>
+            </div>
+            <div class="house">
+                <p>李克强最后强调，提网速、降网费，不仅需要工信部和通信运营商不懈努力，还需要有关部门通力合作，为电信企业提供良好的营商环境，最终便利亿万网民。</p>
+                <p>李克强最后强调，提网速、降网费，不仅需要工信部和通信运营商不懈努力，还需要有关部门通力合作，为电信企业提供良好的营商环境，最终便利亿万网民。</p>
+            </div>
+        </div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <script>
+            $(".nav").scrollspy() ;
+        </script>
+    </body>
+</html>

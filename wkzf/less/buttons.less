@@ -1,0 +1,188 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：buttons (按钮)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.btn {    
+    background : @default-btn-background ;
+    background-repeat : repeat-x ;
+    .border-radius(@btn-border-radius) ;
+    border-style : solid ;
+    border-width : 1px ;
+    border-color : rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25)  ;
+    box-shadow : 0 1px 1px rgba(255, 255, 255, 0.4) inset, 0 1px 2px rgba(0, 0, 0, 0.1) ;
+    cursor : pointer ;
+    color : @basic-font-color ;
+    font-family : inherit ;  //如果这句不定义，<button>类型节点字体显示并不为默认字体了
+    .inline-block() ;
+    outline : none ;
+    text-align : center ;
+    text-shadow : 0 -1px 0 #fff ;
+    .v-gradient(@default-btn-background-light, @default-btn-background-dark, 0%, 100%) ;
+    &:hover {
+        border-color : rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1)  ;
+        .v-gradient(@default-btn-background-dark, @default-btn-background-light, 0%, 100%) ;        
+    }
+    &.active, &:active {       
+        background : @default-btn-background ;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.05) ;
+        outline : 0 none ;
+    }
+    &.disabled, &:disabled {
+        background : @default-btn-disabled-background ;        
+        box-shadow : none ;
+        color : @btn-disabled-font-size ;
+        cursor : default ;
+        &:hover {
+            border-color : rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25)  ;            
+        }
+    }
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+几种按钮形式
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.btn-outline {
+    background : transparent ;
+    box-shadow : none ;
+    text-shadow : none ;
+    &:hover, &:active {
+        background : transparent ;
+        box-shadow : none ;
+        text-shadow : none ;
+    }
+}
+
+.btn-block {
+    display : block ;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+几种尺寸规格的按钮
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.btn-large {
+    font-size : @large-btn-font-size ;
+    height : @large-btn-height ;
+    line-height : @large-btn-height ;
+    padding : 0 @large-btn-hpadding ;
+}
+
+.btn-default {
+    font-size : @default-btn-font-size ;
+    height : @default-btn-height ;
+    line-height : @default-btn-height ;
+    padding : 0 @default-btn-hpadding ;
+}
+
+.btn-small {
+    font-size : @small-btn-font-size ;
+    height : @small-btn-height ;
+    line-height : @small-btn-height ;
+    padding : 0 @small-btn-hpadding ;
+}
+
+.btn-mini {
+    font-size : @mini-btn-font-size ;
+    height : @mini-btn-height ;
+    line-height : @mini-btn-height ;
+    padding : 0 @mini-btn-hpadding ;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+几种品牌的按钮
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.btn-primary {
+    background-color : @primary-btn-background ;     
+    color : @primary-btn-font-color ;
+    text-shadow : 0 -1px 0 rgba(0, 0, 0, 0.25) ;
+    .v-gradient(@primary-btn-background-light, @primary-btn-background-dark, 0%, 100%) ;
+    &:hover {        
+        .v-gradient(@primary-btn-background-dark, @primary-btn-background-light, 0%, 100%) ;
+    }
+    &.active, &:active {       
+        background : @primary-btn-background ;        
+    }
+    &.glow {
+        box-shadow : 0 1px 1px rgba(255, 255, 255, 0.4) inset, 0 1px 8px 1px @primary-btn-glow-color ;
+    }
+}
+
+.btn-info {
+    background-color : @info-btn-background ;
+    color : @info-btn-font-color ;
+    text-shadow : 0 -1px 0 rgba(0, 0, 0, 0.25) ;
+    .v-gradient(@info-btn-background-light, @info-btn-background-dark, 0%, 100%) ; 
+    &:hover {        
+        .v-gradient(@info-btn-background-dark, @info-btn-background-light, 0%, 100%) ; 
+    }
+    &.active, &:active {       
+        background : @info-btn-background ;        
+    }
+    &.glow {
+        box-shadow : 0 1px 1px rgba(255, 255, 255, 0.4) inset, 0 1px 8px 1px @info-btn-glow-color ;
+    }
+}
+
+.btn-success {
+    background-color : @success-btn-background ;
+    color : @success-btn-font-color ;
+    text-shadow : 0 -1px 0 rgba(0, 0, 0, 0.25);
+    .v-gradient(@success-btn-background-light, @success-btn-background-dark, 0%, 100%) ;
+    &:hover {        
+        .v-gradient(@success-btn-background-dark, @success-btn-background-light, 0%, 100%) ;
+    }
+    &.active, &:active {       
+        background : @success-btn-background ;        
+    }
+    &.glow {
+        box-shadow : 0 1px 1px rgba(255, 255, 255, 0.4) inset, 0 1px 8px 1px @success-btn-glow-color ;
+    }
+}
+
+.btn-warning {
+    background-color : @warning-btn-background ;
+    color : @warning-btn-font-color ;
+    text-shadow : 0 -1px 0 rgba(0, 0, 0, 0.25) ;
+    .v-gradient(@warning-btn-background-light, @warning-btn-background-dark, 0%, 100%) ;
+    &:hover {        
+        .v-gradient(@warning-btn-background-dark, @warning-btn-background-light, 0%, 100%) ;
+    }
+    &.active, &:active {       
+        background : @warning-btn-background ;        
+    }
+    &.glow {
+        box-shadow : 0 1px 1px rgba(255, 255, 255, 0.4) inset, 0 1px 8px 1px @warning-btn-glow-color ;
+    }
+}
+
+.btn-danger {
+    background-color : @danger-btn-background ; 
+    color : @danger-btn-font-color ;
+    text-shadow : 0 -1px 0 rgba(0, 0, 0, 0.25) ;
+    .v-gradient(@danger-btn-background-light, @danger-btn-background-dark, 0%, 100%) ;
+    &:hover {        
+        .v-gradient(@danger-btn-background-dark, @danger-btn-background-light, 0%, 100%) ;
+    }
+    &.active, &:active {       
+        background : @danger-btn-background ;        
+    }
+    &.glow {
+        box-shadow : 0 1px 1px rgba(255, 255, 255, 0.4) inset, 0 1px 8px 1px @danger-btn-glow-color ;
+    }
+}
+
+.btn-inverse {
+    background-color : @inverse-btn-background ;  
+    color : @inverse-btn-font-color  ;
+    text-shadow : 0 -1px 0 rgba(0, 0, 0, 0.25) ;
+    .v-gradient(@inverse-btn-background-light, @inverse-btn-background-dark, 0%, 100%) ;
+    &:hover {        
+        .v-gradient(@inverse-btn-background-dark, @inverse-btn-background-light, 0%, 100%) ;
+    }
+    &.active, &:active {       
+        background : @inverse-btn-background ;        
+    }
+    &.glow {
+        box-shadow : 0 1px 1px rgba(255, 255, 255, 0.4) inset, 0 1px 8px 1px @inverse-btn-glow-color ;
+    }
+}

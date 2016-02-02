@@ -1,0 +1,34 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：guanaihui前端MVC框架
+ 2. 文件名称：background.less(混合 -> 圆角类)
+ 3. 作者：zhaohuagang@guanaihui.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.border-radius(@radius) {
+  -moz-border-radius : @radius ;
+  -webkit-border-radius : @radius ;
+  border-radius : @radius ;
+}
+
+.border-top-radius(@radius) {
+  -moz-border-radius : @radius @radius 0 0;
+  -webkit-border-radius : @radius @radius 0 0;
+  border-radius : @radius @radius 0 0 ;
+}
+
+.border-bottom-radius(@radius) {
+  -moz-border-radius : 0 0 @radius @radius ;
+  -webkit-border-radius : 0 0 @radius @radius ;
+  border-radius : 0 0 @radius @radius ;
+}
+
+.border-left-radius(@radius) {
+  -moz-border-radius : @radius 0 0 @radius ;
+  -webkit-border-radius : @radius 0 0 @radius ;
+  border-radius : @radius 0 0 @radius ;
+}
+
+.border-right-radius(@radius) {
+  -moz-border-radius : 0 @radius @radius 0  ;
+  -webkit-border-radius : 0 @radius @radius 0  ;
+  border-radius : 0 @radius @radius 0  ;
+}

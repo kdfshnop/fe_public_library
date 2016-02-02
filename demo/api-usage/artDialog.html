@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>提示框插件 - artDialog的使用实例</title>           
+    </head>
+    <body>
+        <button id="close-btn">关闭dialog</button>
+        <script src="../../51auto/js/lib.min.js"></script>
+        <script src="../../51auto/js/util/dialog/jquery.artDialog.js?skin=default"></script>
+        <script src="../../51auto/js/util/dialog/plugins/iframeTools.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var dialog = art.dialog.open("dialog-frame.html", { 
+                    id: "loginDialog", 
+                    title: "通过art.dialog.open打开的页面",
+                    width: 570, 
+                    height: 350, 
+                    fixed: true, 
+                    lock: true, 
+                    background: '#333', 
+                    opacity: 0.8 
+                }); 
+                $("#close-btn").bind("click", function(){
+                    dialog.close();
+                });
+            });
+            
+        </script>
+    </body>
+</html>

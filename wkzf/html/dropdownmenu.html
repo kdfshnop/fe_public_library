@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">        
+        <link rel="stylesheet" href="http://cdn01.ttpaicdn.com/ttpai/css/ttpai.min.css">
+        <style>
+            body {                
+                margin : 30px ;
+            }
+        </style>
+        <title>下拉菜单使用实例</title>           
+    </head>
+    <body> 
+        <div class="dropdown" data-toggle-method="click">
+            <a href="#" class="btn btn-default dropdown-toggle">大学计算机课程<i class="triangle-down"></i></a>            
+            <ul class="dropdown-menu">               
+                <li><a href="#">数据结构及原理</a></li>
+                <li><a href="#">嵌入式软件开发</a></li>
+                <li><a href="#">电子商务</a></li>
+                <li class="divider"></li>
+                <li><a href="#">计算机应用</a></li>
+            </ul>            
+        </div>
+        <p>5月份已经完成，cdn地址：  http://cdn01.51autoimg.com/apps/2015.51auto.com/dealers-add-promotion.html </p>
+        <script src="http://cdn01.ttpaicdn.com/ttpai/js/lib/jquery.min.js"></script>
+        <script src="http://cdn01.ttpaicdn.com/ttpai/jssrc/jquery.dropdown.js"></script>
+        <script>            
+            $(".dropdown").dropdown({
+                "trigger" : "hover"
+            }) ;
+        </script>
+     </body>
+</html>
