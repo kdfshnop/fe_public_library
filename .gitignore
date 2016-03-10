@@ -1,0 +1,9 @@
+*.zip
+*.rar
+*.bak
+*.log
+**/.DStore
+**/.DS_Store
+*/node_modules/*
+*:.sass-cache
+*.tmp

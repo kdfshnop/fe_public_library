@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>relate select</title>
+</head>
+<body>
+	<script type="text/javascript">
+		var _data = {
+			0:[
+				{	
+					name:'北京',
+					code:'1'
+				},
+				{
+					name:'上海',
+					code:2
+				},
+				{
+					name:'天津',
+					code:3
+				},
+				{
+					name:'重庆',
+					code:4
+				},
+				{
+					name:'河北',
+					code:5
+				},
+				{
+					name:'湖南',
+					code:6
+				}
+			],
+			1:[
+				{
+					name:'朝阳区',
+					code:101
+				},
+				{
+					name:'丰台区',
+					code:102
+				},
+				{
+					name:'海淀区',
+					code:103
+				}
+			],
+			2:[
+				{
+					name:'闸北区',
+					code:201
+				},
+				{
+					name:'黄浦区',
+					code:202
+				},
+				{
+					name:'杨浦区',
+					code:203
+				}
+			],
+			101:[
+				{
+					name:'八里屯',
+					code:101
+				},
+				{
+					name:'公主坟',
+					code:102
+				},
+				{
+					name:'海淀区',
+					code:103
+				}
+			],
+			102:[
+				{
+					name:'共和新路',
+					code:201
+				},
+				{
+					name:'南京东路',
+					code:202
+				},
+				{
+					name:'五星路',
+					code:203
+				}
+			],
+			201:[
+				{
+					name:'湖南路',
+					code:101
+				},
+				{
+					name:'长沙路',
+					code:102
+				},
+				{
+					name:'虹桥路',
+					code:103
+				}
+			],
+			202:[
+				{
+					name:'栖霞北路',
+					code:201
+				},
+				{
+					name:'华夏东路',
+					code:202
+				},
+				{
+					name:'杨浦区',
+					code:203
+				}
+			]
+
+		}
+
+	</script>
+	<div class="selectWrapper">
+		<select id="one" disabled="true">
+			<option value="1">北京</option>
+			<option value="2">上海</option>
+		</select>
+		<select id="two"></select>
+		<select id="three"></select>
+	</div>
+	
+	<p>
+		<button type="button" id="addSelect">add select</button>
+	</p>
+
+	<div>
+		<label for="">
+			城市<select name="" id="city"></select>
+		</label>
+		<label for="">
+			区域<select name="" id="area"></select>
+		</label>
+		<label for="">
+			门店<select name="" id="store"></select>
+		</label>
+		<label for="">
+			经纪人<select name="" id="agent"></select>
+		</label>
+	</div>
+	<script src="http://static.wkzf.com/lib/jquery-1.11.2.min.js"></script>
+	<script src="./src/relateSelect.js"></script>
+	<script>
+
+		function simpleOptions(val){
+			val = val || 0;
+			var data = _data[val] || [],
+		 		i = 0,
+		 		len = data.length,
+		 		html = '' // '<option vlaue="">请选择</option>';
+		 	while(i < len){
+		 		html += '<option value="'+data[i].code+'">'+data[i].name+'</option>';
+		 		i++;
+		 	}
+
+		 	this.html(html)
+		 		.trigger('change');
+		}
+
+		$('#one').relateSelect(simpleOptions)
+				 .add('#two',simpleOptions)
+				 .add('#three',simpleOptions);
+
+
+		var _inx = 0;
+		$('#addSelect').click(function(){
+			$('.selectWrapper').append('<select id="select_'+_inx+'"></select>');
+			$('#one').relateSelect().add('#select_'+_inx,simpleOptions);
+			_inx++;
+		});
+
+		function loadData(url,params,succFn){
+			$.ajax({
+	            url: url,
+	            data:params,
+	            type: 'GET',
+	            dataType: 'jsonp',
+	            timeout: 30000, 
+	            cache: true,
+	            success: succFn,
+	            error: function (res) {
+	            	console.log(res)
+	            }
+	        });
+		}
+
+		function renderOption (res){
+			if(res.status == 200){
+				var data = res.data || [],
+			 		i = 0,
+			 		len = data.length,
+			 		html = '' // '<option vlaue="">请选择</option>';
+			 	while(i < len){
+			 		html += '<option value="'+data[i].id+'">'+data[i].name+'</option>';
+			 		i++;
+			 	}
+
+			 	this.html(html)
+			 		.trigger('change');
+			}
+		}
+
+
+		var cityId,
+			storeId;
+		$('#city').relateSelect(function(val){
+			var that = this;
+			loadData('http://10.0.18.192:8133/bzsm/areaorg/getCityListByUserId.action',{},function(res){
+				renderOption.call(that,res);
+			});
+		}).add('#area',function(val){
+			var that = this;
+			cityId = val;
+			loadData('http://10.0.18.192:8133/bzsm/areaorg/getPartnerByCityId.action',{
+				cityId:val
+			},function(res){
+				renderOption.call(that,res);
+			});	
+		}).add('#store',function(val){
+			var that = this;
+			storeId = val;
+			loadData('http://10.0.18.192:8133/bzsm/areaorg/deptListByPartnerId.action',{
+				cityId:cityId,
+				partnerId:val
+			},function(res){
+				renderOption.call(that,res);
+			});	
+		}).add('#agent',function(val){
+			var that = this;
+			loadData('http://10.0.18.192:8133/bzsm/agent/getAgentByAreaOrg.action',{
+				cityId:cityId,
+				partnerId:val,
+				storeId:storeId
+			},function(res){
+				renderOption.call(that,res);
+			});	
+		});
+		//http://10.0.18.192:8133/bzsm/agent/getAgentByAreaOrg.action?areaId=1010&cityId=999&storeId=241
+	</script>
+</body>
+</html>
