@@ -1,12 +1,38 @@
 <!Doctype html>
 <html>
+
 <body>
     AppDownload
 </body>
-<script src="http://dev.01.wkzf/fe_public_library/wkzf/js/lib/jQuery/jquery-2.1.4.min.js"></script>
+<!--<script src="http://dev.01.wkzf/fe_public_library/wkzf/js/lib/jQuery/jquery-2.1.4.min.js"></script>
 <script src="download.js"></script>
 <script>
 $.fn.downloadApp();
+</script>-->
+<script language="javascript">
+if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+    var loadDateTime = new Date();
+    window.setTimeout(function() {
+            var timeOutDateTime = new Date();
+            if (timeOutDateTime - loadDateTime < 5000) {
+                window.location = "http://10.0.91.159/wechat/wukong/page/smartCityM.php";
+            } else {
+                window.close();
+            }
+        },
+        2500);
+    window.location = "wkzf://xxx";
+} else if (navigator.userAgent.match(/android/i)) {
+    var state = null;
+    try {
+        state = window.open("wkzf://group_chat/parameter?groupId=1000&userId=22332", '_blank');
+    } catch (e) {}
+    if (state) {
+        window.close();
+    } else {
+        window.location = "http://10.0.91.159/wechat/wukong/page/smartCityM.php";
+    }
+}
 </script>
 
 </html>
