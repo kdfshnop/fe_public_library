@@ -88,6 +88,9 @@ AppDownload.prototype.openDownloadLink = function() {
         }
         if (!this.hasApp) {
             top.window.location = downloadUrl;
+            console.log("未安装");
+        } else {
+            console.log("已安装");
         }
     }, 2000);
 };
