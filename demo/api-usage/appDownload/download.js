@@ -2,6 +2,8 @@
  1. 项目名称：悟空找房app下载
  2. 页面名称：AppDownload
  3. 作者：yinqin@lifang.com
+ 4. 如果安装app 的情况下，打开链接会让window失去焦点，于是清除了计时器
+    如果没有安装app计时器里面的代码会执行，所以跳向了下载页
  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 function AppDownload(options) {
     /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -103,13 +105,9 @@ AppDownload.prototype.isHasApp = function() {
         browser = classSelf.browser();
     t1 = Date.now();
     if (browser == "ios") {
-        console.log("ios");
         ifr.attr('src', classSelf.opts.isoSchemes);
-        console.log(classSelf.opts.isoSchemes);
     } else if (browser == "android") {
-        console.log("android");
         ifr.attr('src', classSelf.opts.androidSchemes);
-        console.log(classSelf.opts.androidSchemes);
     }
     $('body').append(ifr);
     timeout = setTimeout(function() {
