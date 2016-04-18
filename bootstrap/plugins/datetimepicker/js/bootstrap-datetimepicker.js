@@ -500,8 +500,8 @@
 				top = offset.top + this.height;
 			}
 
-			top = top - containerOffset.top;
-			left = left - containerOffset.left;
+			top = top; //- containerOffset.top;
+			left = left ;//- containerOffset.left;
 
 			if(this.container != 'body') top = top + document.body.scrollTop
 
