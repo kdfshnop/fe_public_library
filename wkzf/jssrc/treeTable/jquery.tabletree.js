@@ -1,5 +1,13 @@
 /*-----------------------------------------------------------------------------------------------------------
-插件
+1. 插件名称：tabletree
+2. 插件描述：树形表格
+3. 版本：1.0
+4. 注意事项: 
+    缩紧样式需要自行增加
+    .tabletree-indent {
+        margin: 0 10px;
+    }
+5. 作者：luwei@lifang.com
 -----------------------------------------------------------------------------------------------------------*/
 ;
 (function(factory) {
@@ -167,7 +175,7 @@
                     $tr.find('td:first').prepend('<i class="' + opts.expendIcon + '"></i>');
                 }
                 for (var i = level - 1; i > 0; i--) {
-                    $tr.find('td:first').prepend('<span class="indent"></span>');
+                    $tr.find('td:first').prepend('<span class="tabletree-indent"></span>');
                 }
                 tbodyHtml.push($tr[0]);
                 if (!val.children)
