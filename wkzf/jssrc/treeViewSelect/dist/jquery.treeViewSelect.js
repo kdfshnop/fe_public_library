@@ -22,19 +22,19 @@
             "sourceUrl": '',
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        	请求的数据类型
-        	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            请求的数据类型
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             "dataType": "jsonp",
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        	获取渲染tree数据的异步请求地址
-        	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            获取渲染tree数据的异步请求地址
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             "apiUrl": '',
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        	异步请求报文
-        	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            requestData: null,
+            异步请求报文
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            "requestData": null,
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             是否显示搜索框
@@ -42,9 +42,9 @@
             "showSearch": true,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-             是否在节点上显示checkboxes。
+             是否多行显示选中项
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "showCheckbox": false,
+            "multiRow": false,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             接口请求出错时候的接口方法 
@@ -70,7 +70,18 @@
             勾选节点的事件
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             onNodeChecked: undefined,
-
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            选中节点的事件
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            onNodeSelected: undefined,
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            去除选中节点的事件
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            onNodeUnselected: undefined,
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            勾选或者选中，选中项生成好了，回调事件
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            onCompleted: undefined,
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
              bootstrap-treeview 参数配置
              --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -79,32 +90,20 @@
                 设置继承树默认展开的级别,默认为2级
                 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
                 "levels": 2,
-
-                /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                是否在节点上显示checkboxes
-                --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-                showCheckbox: true,
-
                 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 是否可以同时选择多个节点
                 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-                multiSelect: true,
-
-                /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                当选择节点时是否高亮显示
-                --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-                highlightSelected: false
+                multiSelect: false,
             }
         };
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     * ***************************************
     *
-    *	构造函数与私有函数定义
+    *   构造函数与私有函数定义
     *
     *****************************************
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     定义treeNode Array containes
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -282,8 +281,6 @@
             }
         }
 
-
-
         console.log(toShowNodeArr);
         return toShowNodeArr;
     }
@@ -339,7 +336,10 @@
     TreeViewSelect.prototype.unsubscribeEvents = function() {
         this.element.off('nodeChecked');
         this.element.off('nodeUnchecked');
+        this.element.off('nodeSelected');
+        this.element.off('nodeUnselected');
         this.element.off('nodeAllUnchecked');
+        this.element.off('completed');
     };
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -349,12 +349,12 @@
 
         this.unsubscribeEvents();
 
-        //节点选中事件
+        //节点勾选事件
         if (typeof(this.settings.onNodeChecked) === 'function') {
             this.$element.on('nodeChecked', this.settings.onNodeChecked);
         }
 
-        //节点选中去除事件
+        //节点勾选去除事件
         if (typeof(this.settings.onNodeUnchecked) === 'function') {
             this.$element.on('nodeUnchecked', this.settings.onNodeUnchecked);
         }
@@ -363,6 +363,20 @@
         //勾选掉所有的选中的节点的事件
         if (typeof(this.settings.onNodeAllUnchecked) === 'function') {
             this.element.on('nodeAllUnchecked', this.settings.onNodeAllUnchecked);
+        }
+
+        //节点选中
+        if (typeof(this.settings.onNodeUnselected) === 'function') {
+            this.element.on('nodeUnselected', this.settings.onNodeUnselected);
+        }
+
+        //节点去除选中事件
+        if (typeof(this.settings.onNodeSelected) === 'function') {
+            this.element.on('nodeSelected', this.settings.onNodeSelected);
+        }
+
+        if (typeof(this.settings.onCompleted) === 'function') {
+            this.element.on('completed', this.settings.onCompleted);
         }
     }
 
@@ -384,10 +398,11 @@
         _.element.append($(_.template.listGroup));
         _.element.append($(_.template.listOpGroup));
 
+
         //添加向下箭头
         _.element.find('.treeviewselect-listOpGroup').css({
             'line-height': _.element.height() + 'px'
-        });
+        }).attr('data-height', _.element.height() + 'px');
         _.element.find('.treeviewselect-listOpGroup ul').append($(_.template.bottomArrowItem));
 
         _.element.on('click', function() {
@@ -424,6 +439,7 @@
             }
         });
     }
+
 
     TreeViewSelect.prototype.addListenersToHanlder = function() {
         var _ = this;
@@ -534,6 +550,8 @@
         var _ = this;
         var tConfig = _.settings.bootstrapTreeParams;
         tConfig.data = flatToHierarchy(data);
+        tConfig.showCheckbox = _.settings.bootstrapTreeParams.multiSelect;
+        tConfig.highlightSelected = !_.settings.bootstrapTreeParams.multiSelect;
 
         if (_.settings.showSearch) {
             _.treeContainer.append(_.searchInput);
@@ -575,12 +593,8 @@
         });
 
         //tree Node
-        _.tree.on('nodeSelected nodeChecked', function(event, node) {
-            _.setCheckedState(node, 'checkNode');
-        });
-
-        _.tree.on('nodeUnselected nodeUnchecked', function(event, node) {
-            _.setCheckedState(node, 'uncheckNode');
+        _.tree.on('nodeSelected nodeChecked nodeUnselected nodeUnchecked', function(event, node) {
+            _.setNodeState(event.type, node);
         });
     }
 
@@ -588,19 +602,28 @@
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     设置Tree 节点的选中状态
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.setCheckedState = function(node, eventType) {
-        up(this.tree, node, eventType);
+    TreeViewSelect.prototype.setNodeState = function(eventType, node) {
+        //如果支持多选
+        if (this.settings.bootstrapTreeParams.multiSelect) {
 
-        down(this.tree, node, eventType);
+            if (eventType === 'nodeChecked' || eventType === 'nodeSelected') {
+                up(this.tree, node, 'checkNode');
+
+                down(this.tree, node, 'checkNode');
+            } else {
+                up(this.tree, node, 'uncheckNode');
+
+                down(this.tree, node, 'uncheckNode');
+            }
+
+            this.element.trigger(eventType, $.extend(true, {}, node));
+
+        } else {
+            this.element.trigger(eventType, $.extend(true, {}, node));
+        }
 
         //根据选中的节点生成选中项
         this.setTreeSelectItem();
-
-        if (eventType === 'checkNode') {
-            this.element.trigger('nodeChecked', $.extend(true, {}, node));
-        } else {
-            this.element.trigger('nodeUnchecked', $.extend(true, {}, node));
-        }
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -624,21 +647,37 @@
     TreeViewSelect.prototype.setTreeSelectItem = function() {
         var _ = this;
 
-        var checkedNodes = _.tree.treeview('getChecked');
-        var listNodes = getSelectedNode(_.tree, checkedNodes);
-        var clearItem = $(_.template.clearItem);
-        var selectedItem;
+        var checkedNodes, listNodes, totalWidth;
+        var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
 
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            checkedNodes = _.tree.treeview('getChecked');
+            listNodes = getSelectedNode(_.tree, checkedNodes);
+        } else {
+            listNodes = _.tree.treeview('getSelected');
+        }
 
-        _.element.find('.treeviewselect-listGroup ul').empty();
+        totalWidth = 0;
+
+        $clearItem = $(_.template.clearItem);
+        $ellipsisItem = $(_.template.ellipsisItem);
+        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
+
+        $itemLisGroup.empty();
 
         if (listNodes && listNodes.length > 0) {
             for (var i = 0; i < listNodes.length; i++) {
-                selectedItem = $(_.template.item);
-                selectedItem.attr('nodeid', listNodes[i].nodeId);
-                selectedItem.find('span').html(listNodes[i].text);
+                //判断是否支持多选
+                if (_.settings.bootstrapTreeParams.multiSelect) {
+                    $selectedItem = $(_.template.item);
+                } else {
+                    $selectedItem = $(_.template.singleItem);
+                }
 
-                selectedItem.find('.glyphicon-remove').on('click', function() {
+                $selectedItem.attr('nodeid', listNodes[i].nodeId);
+                $selectedItem.find('span').html(listNodes[i].text);
+
+                $selectedItem.find('.glyphicon-remove').on('click', function() {
                     var _this = $(this);
                     var node = _.tree.treeview('getNode', _this.parent().attr('nodeid'));
 
@@ -649,16 +688,31 @@
                     return false;
                 });
 
-                _.element.find('.treeviewselect-listGroup ul').append(selectedItem);
+                $itemLisGroup.append($selectedItem);
+            }
+            //添加ellipsisItem
+            $itemLisGroup.append($ellipsisItem);
+        }
+
+        //如果支持多选但是不支持多行，则超出部分显示省略号
+        if (_.settings.bootstrapTreeParams.multiSelect && !_.settings.multiRow) {
+            $itemLisGroup.find('li').each(function(index, el) {
+                totalWidth += $(el).width() + 2 * parseInt($(el).css('padding-left').replace('px', '')) + 2;
+            });
+
+            if (totalWidth > $itemLisGroup.width()) {
+                $itemLisGroup.find('.treeviewselect-selected-item:last').remove();
+                $ellipsisItem.css('visibility', 'visible');
             }
         }
 
-        if (!_.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').length) {
+        //支持多选则添加清空按钮
+        if (_.settings.bootstrapTreeParams.multiSelect && !_.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').length) {
             //重置筛选条件按钮绑定事件
-            clearItem.find('.glyphicon-remove').on('click', function() {
+            $clearItem.find('.glyphicon-remove').on('click', function() {
                 var checkedNodes = _.tree.treeview('getChecked');
 
-                _.element.find('.treeviewselect-listGroup ul').empty();
+                $itemLisGroup.empty();
                 _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
                 _.tree.treeview('uncheckAll', {
@@ -667,14 +721,22 @@
 
                 _.element.trigger('nodeAllUnchecked', $.extend(true, {}, checkedNodes));
 
-                _.setTreePosition();
+                //如果不是多行显示，无需计算位置
+                if (_.settings.multiRow) {
+                    _.setTreePosition();
+                }
             });
+
             //添加重置筛选条件        
-            _.element.find('.treeviewselect-listOpGroup ul').prepend(clearItem);
+            _.element.find('.treeviewselect-listOpGroup ul').prepend($clearItem);
         }
 
+        //如果支持多行显示选中项
+        if (_.settings.multiRow) {
+            _.setTreePosition();
+        }
 
-        _.setTreePosition();
+        _.element.trigger('completed', $.extend(true, {}, listNodes));
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -689,13 +751,16 @@
         var sPaddingLeft = _.element.css('padding-left').replace('px', '');
         var sPaddingRight = _.element.css('padding-right').replace('px', '');
 
-        var tHeight = 300; //treeView的高度,默认为300px
+        var tHeight = 250; //treeView的高度,默认为300px
         var tWidth = _.element.width() + parseInt(sPaddingLeft) + parseInt(sPaddingRight); //treeView的宽度
         var tTop = sOffset.top + _.element.height() + parseInt(sPaddingTop) + parseInt(sPaddingBottom); + 5;
         var tLeft = sOffset.left;
 
-        tHeight = _.treeContainer.find('li.list-group-item').length * 40 * 0.3;
-        tWidth = tWidth < 300 ? 300 : tWidth;
+        tHeight = _.treeContainer.find('li.list-group-item').length * 40 * 0.2;
+        tWidth = tWidth < 250 ? 250 : tWidth;
+
+        //重置Line-height
+        _.element.find('.treeviewselect-listOpGroup').css('line-height', _.element.find('.treeviewselect-listOpGroup').attr('data-height'));
 
         _.treeContainer.css({
             'top': tTop,
@@ -704,11 +769,14 @@
             'width': tWidth,
         });
 
-        _.element.find('.treeviewselect-listOpGroup').css({
-            'line-height': _.element.height() + 'px'
-        });
-    }
+        _.element.css('width', tWidth);
 
+        if (_.settings.multiRow) {
+            _.element.find('.treeviewselect-listOpGroup').css({
+                'line-height': _.element.height() + 'px'
+            });
+        }
+    }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     重置控件相关设置
@@ -748,6 +816,8 @@
         listOpGroup: '<li class="treeviewselect-listOpGroup"><ul></ul></li>',
         item: '<li class="treeviewselect-selected-item"><i class="glyphicon glyphicon-remove"></i><span></span></li>',
         clearItem: '<li class="treeviewselect-clear"><i class="glyphicon glyphicon-remove"></i></li>',
+        ellipsisItem: '<li class="treeviewselect-ellipsis-item">....</li>',
+        singleItem: '<li><span></span></li>',
         bottomArrowItem: '<li class="treeviewselect-arrow"><i class="glyphicon glyphicon-triangle-bottom"></i></li>',
         inlineInput: '<li><input type="text" class="treeviewSelect-inline-input"></li>',
         treeContainer: '<ul class="treeviewSelect-container"></ul>',
