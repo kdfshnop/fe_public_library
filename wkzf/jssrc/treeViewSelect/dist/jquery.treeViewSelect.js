@@ -295,10 +295,6 @@
         this.defaults = defaults;
         this.name = pluginName;
 
-        this.treeContainer = $(this.template.treeContainer);
-        this.tree = $(this.template.tree);
-        this.searchInput = $(this.template.searchInput);
-
         this.init(options);
 
         return {
@@ -318,6 +314,10 @@
         } else {
             this.settings = $.extend({}, this.defaults, options);
         }
+
+        this.treeContainer = $(this.template.treeContainer);
+        this.tree = $(this.template.tree);
+        this.searchInput = $(this.template.searchInput);
 
         /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         reset element state
@@ -363,15 +363,14 @@
             _.element.addClass('treeviewSelect-selection');
         }
 
-
         _.element.append($(_.template.listGroup));
         _.element.append($(_.template.listOpGroup));
 
 
         //添加向下箭头
-        _.element.find('.treeviewselect-listOpGroup').css({
-            'line-height': _.element.height() + 'px'
-        }).attr('data-height', _.element.height() + 'px');
+        // _.element.find('.treeviewselect-listOpGroup').css({
+        //     'line-height': _.element.height() + 'px'
+        // }).attr('data-height', _.element.height() + 'px');
         _.element.find('.treeviewselect-listOpGroup ul').empty().append($(_.template.bottomArrowItem));
 
         _.element.on('click', function() {
@@ -404,7 +403,7 @@
             var $el = $(event.target);
 
             if (!$el.hasClass('list-group-item') && !$el.hasClass('check-icon') && !$el.hasClass('treeview-search-input') && !$el.hasClass('expand-icon') && !$el.hasClass('treeviewSelect-container')) {
-                _.treeContainer.addClass('hide');
+                $('.treeviewSelect-container').addClass('hide');
             }
         });
     }
@@ -550,6 +549,7 @@
         _.searchInput.keyup(function(event) {
             var _this = $(this);
 
+
             var sNodes = _.searchNodes($.trim(_this.val()));
 
             if (sNodes && sNodes.length > 0) {
@@ -572,6 +572,7 @@
 
         } else {
             _.tree.on('nodeSelected', function(event, node) {
+                _.treeContainer.addClass('hide');
                 _.setNodeState(event.type, node);
             });
         }
@@ -626,7 +627,7 @@
     TreeViewSelect.prototype.setTreeSelectItem = function() {
         var _ = this;
 
-        var checkedNodes, listNodes, totalWidth;
+        var checkedNodes, listNodes, totalWidth,pNodesArr;
         var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -636,7 +637,6 @@
             listNodes = _.tree.treeview('getSelected');
         }
 
-        totalWidth = 0;
 
         $clearItem = $(_.template.clearItem);
         $ellipsisItem = $(_.template.ellipsisItem);
@@ -646,12 +646,18 @@
 
         if (listNodes && listNodes.length > 0) {
             for (var i = 0; i < listNodes.length; i++) {
+                totalWidth = 0;
+                pNodesArr=new Array();
+                
                 //判断是否支持多选
                 if (_.settings.bootstrapTreeParams.multiSelect) {
                     $selectedItem = $(_.template.item);
                 } else {
                     $selectedItem = $(_.template.singleItem);
                 }
+
+                getParentNodes(_.tree, listNodes[i], pNodesArr);
+                listNodes[i].level = pNodesArr.length;
 
                 $selectedItem.attr('nodeid', listNodes[i].nodeId);
                 $selectedItem.find('span').html(listNodes[i].text);
@@ -668,22 +674,22 @@
                 });
 
                 $itemLisGroup.append($selectedItem);
+
+                //如果支持多选但是不支持多行，则超出部分显示省略号
+                if (_.settings.bootstrapTreeParams.multiSelect && !_.settings.multiRow) {
+                    $itemLisGroup.find('li').each(function(index, el) {
+                        totalWidth += $(el).width() + 2 * parseInt($(el).css('padding-left').replace('px', '')) + 2;
+                    });
+
+                    if (totalWidth > $itemLisGroup.parent().parent().width() - 28) {
+                        //添加ellipsisItem
+                        $itemLisGroup.append($ellipsisItem);
+                        $ellipsisItem.css('visibility', 'visible');
+                    }
+                }
             }
-            //添加ellipsisItem
-            $itemLisGroup.append($ellipsisItem);
         }
 
-        //如果支持多选但是不支持多行，则超出部分显示省略号
-        if (_.settings.bootstrapTreeParams.multiSelect && !_.settings.multiRow) {
-            $itemLisGroup.find('li').each(function(index, el) {
-                totalWidth += $(el).width() + 2 * parseInt($(el).css('padding-left').replace('px', '')) + 2;
-            });
-
-            if (totalWidth > $itemLisGroup.parent().parent().width() - 28) {
-                $itemLisGroup.find('.selected-item:last').remove();
-                $ellipsisItem.css('visibility', 'visible');
-            }
-        }
 
         //支持多选则添加清空按钮
         if (_.settings.bootstrapTreeParams.multiSelect && !_.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').length) {
@@ -739,8 +745,6 @@
         // tWidth = tWidth < 250 ? 250 : tWidth;
         tHeight = tHeight < 250 ? 250 : tHeight;
 
-        //重置Line-height
-        _.element.find('.treeviewselect-listOpGroup').css('line-height', _.element.find('.treeviewselect-listOpGroup').attr('data-height'));
 
         _.treeContainer.css({
             'top': tTop,
@@ -752,6 +756,9 @@
         _.element.css('width', tWidth);
 
         if (_.settings.multiRow) {
+            //重置Line-height
+            _.element.find('.treeviewselect-listOpGroup').css('line-height', _.element.find('.treeviewselect-listOpGroup').attr('data-height'));
+
             _.element.find('.treeviewselect-listOpGroup').css({
                 'line-height': _.element.height() + 'px'
             });
