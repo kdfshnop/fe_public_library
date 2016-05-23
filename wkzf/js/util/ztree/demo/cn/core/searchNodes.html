@@ -101,6 +101,7 @@
 			var zTree = $.fn.zTree.getZTreeObj("treeDemo");
 			for( var i=0, l=nodeList.length; i<l; i++) {
 				nodeList[i].highlight = highlight;
+				zTree.expandNode(nodeList[i].getParentNode(), true, false, false); //搜索到的节点的父节点展开
 				zTree.updateNode(nodeList[i]);
 			}
 		}
