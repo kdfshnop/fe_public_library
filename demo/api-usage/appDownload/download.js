@@ -105,7 +105,7 @@ AppDownload.prototype.isHasApp = function() {
         browser = classSelf.browser();
     t1 = Date.now();
     if (browser == "ios") {
-        window.location.href = classSelf.opts.isoSchemes;
+        ifr.attr('src', classSelf.opts.isoSchemes);
     } else if (browser == "android") {
         ifr.attr('src', classSelf.opts.androidSchemes);
     }
