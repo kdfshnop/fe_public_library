@@ -8,41 +8,29 @@
     <link rel="stylesheet" type="text/css" href="css/treeviewSelect.min.css">
     <script src="lib/jquery-2.0.3.min.js"></script>
     <script src="lib/bootstrap.min.js"></script>
-    <script src="dist/jquery.treeViewSelect.js"></script>
+    <script src="jquery.treeViewSelect.js"></script>
     <script data-main="js/demo.js" src="lib/require.min.js"></script>
     <style>
     .container {
         margin: 100px;
-    }
-    
-    .treeviewSelect-selection {
-        width: 300px;
     }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="col-md-2">
-                    <label for="areaTree">区域:</label>
-                </div>
-                <div class="col-md-9">
-                    <ul id="area">
-                    </ul>
-                </div>
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="areaTree">区域:</label>
+                <ul class="treeviewSelect-selection" id="area">
+                </ul>
             </div>
-            <div class="col-md-4">
-                <div class="col-md-3">
-                    <label for="areaTree">区域:</label>
-                </div>
-                <div class="col-md-9">
-                    <select id="select-demo1" class="js-data-example-ajax form-control">
-                    </select>
-                </div>
+        </form>
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="#" id="btnTest"> aaa</a>
             </div>
-        </div>
+        </form>
     </div>
 </body>
 
