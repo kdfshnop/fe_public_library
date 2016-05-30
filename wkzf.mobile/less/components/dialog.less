@@ -1,0 +1,40 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：悟空找房移动端FE-MVC框架
+ 2. 文件名称：dialog.less (dialog框)
+ 3. 作者：zhaohuagang@lifang.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.wkzf-dialog {
+    background-color : @dialog-bg-color ;
+    box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.15) ;
+    .border-radius(3px) ;
+    left : 32.5% ;
+    position : absolute ;
+    top : 30% ;
+    width : 35% ;
+    z-index : 9998 ;
+    .dialog-header {
+        font-size : 1.2rem ;
+        line-height : 2rem ;
+        padding : 1.2rem 0 .5rem ;
+        text-align : center ;
+    }
+    .dialog-body {
+        color : @light-font-color ;
+        font-color : 1.0rem ;
+        text-align : center ;
+    }
+    .dialog-footer {
+        border-top : 1px solid @light-line-gray-color ;
+        margin-top : 1rem ;
+    }
+}
+
+.wkzf-dialog-mask {
+    background-color : @dialog-mask-bg-color ;
+    height : 100% ;
+    left : 0 ;
+    position : fixed ;
+    top : 0 ;
+    width : 100% ;
+    z-index : 9997 ;
+}
