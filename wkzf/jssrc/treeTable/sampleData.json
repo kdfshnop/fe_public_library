@@ -4,7 +4,8 @@
         "area_name": "上海",
         "quantity": 100,
         "price": 40000,
-        "parent_area_id": 0
+        "parent_area_id": 0,
+        "expendRow": true
     }, {
         "area_id": 11,
         "area_name": "浦东新区",

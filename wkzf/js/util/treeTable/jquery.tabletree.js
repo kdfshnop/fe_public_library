@@ -188,7 +188,7 @@
                 if (!val.children)
                     return;
                 else {
-                    me.buildTr(tbodyHtml, val.children, opts, level, true);
+                    me.buildTr(tbodyHtml, val.children, opts, level, !val.expendRow);
                 }
             });
         }
