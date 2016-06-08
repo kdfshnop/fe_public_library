@@ -1,5 +1,12 @@
 /*-----------------------------------------------------------------------------------------------------------
-插件
+1. 插件名称：treeTable
+2. 插件描述：树形表哥
+3. 版本：1.0
+4. 原理：
+5. 使用范例：  
+    
+6. 未尽事宜：
+7. 作者：luwei@lifang.com
 -----------------------------------------------------------------------------------------------------------*/
 ;
 (function(factory) {
@@ -84,7 +91,11 @@
         /*-----------------------------------------------------------------------------------------------------------
         table class
         -----------------------------------------------------------------------------------------------------------*/
-        tableClass: 'table-bordered'
+        tableClass: 'table-bordered',
+        /*-----------------------------------------------------------------------------------------------------------
+        默认展开
+        -----------------------------------------------------------------------------------------------------------*/
+        defaultexpend: null,
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -98,11 +109,11 @@
             var columns = opts.colmodel,
                 tableHtml = [];
             if (!columns) return;
-            tableHtml.push('<table class="table ' + opts.tableClass + ' table-tree">');
+            tableHtml.push('<table class="table table-tree ' + opts.tableClass + '">');
             tableHtml.push('<thead><tr>');
             $.each(columns, function(index, el) {
                 var width = el.width || 50;
-                tableHtml.push('<th name="' + el.name + '">' + el.display_name + '</th>');
+                tableHtml.push('<th name="' + el.name + '" style="width:' + width + 'px">' + el.display_name + '</th>');
             });
             tableHtml.push('</tr></thead>');
             tableHtml.push('<tbody></tbody>')
@@ -190,8 +201,18 @@
     Plugin.prototype = {
         //初始化插件
         init: function() {
+            var classSelf = this;
             privateMethod.renderHeader(this.$element, this.options);
             privateMethod.renderData(this.$element, this.options);
+            if (Array.isArray(this.options.defaultexpend) || Object.prototype.toString.call(this.options.defaultexpend) === '[object Array]') {
+                $.each(this.options.defaultexpend, function(index, val) {
+                    /* iterate through array or object */
+                    var $expendedRow = $('tr[data-id="' + val + '"]').first();
+                    if ($expendedRow.length > 0) {
+                        classSelf.expendRow($expendedRow);
+                    };
+                });
+            }
             this.bindEvent();
         },
         /*-----------------------------------------------------------------------------------------------------------
