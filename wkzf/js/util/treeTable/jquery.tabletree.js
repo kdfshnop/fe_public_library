@@ -84,7 +84,7 @@
         /*-----------------------------------------------------------------------------------------------------------
         table class
         -----------------------------------------------------------------------------------------------------------*/
-        tableClass: 'table-bordered',
+        tableClass: 'table-bordered'
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -98,11 +98,11 @@
             var columns = opts.colmodel,
                 tableHtml = [];
             if (!columns) return;
-            tableHtml.push('<table class="table table-tree ' + opts.tableClass + '">');
+            tableHtml.push('<table class="table ' + opts.tableClass + ' table-tree">');
             tableHtml.push('<thead><tr>');
             $.each(columns, function(index, el) {
                 var width = el.width || 50;
-                tableHtml.push('<th name="' + el.name + '" style="width:' + width + 'px">' + el.display_name + '</th>');
+                tableHtml.push('<th name="' + el.name + '">' + el.display_name + '</th>');
             });
             tableHtml.push('</tr></thead>');
             tableHtml.push('<tbody></tbody>')
