@@ -54,10 +54,18 @@
             "text": "河北省",
             "pId": 1,
             "t": "id=105",
+            "state": {
+                "checked": true,
+                "expanded":true
+            },
             "nodes": [{
                 "id": 106,
                 "text": "邯郸市",
                 "pId": 105,
+                "state":{
+                    "checked":true,
+                    "expanded":true
+                },
                 "t": "id=106"
             }, {
                 "id": 126,

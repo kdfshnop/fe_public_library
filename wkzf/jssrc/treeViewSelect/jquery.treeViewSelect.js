@@ -272,8 +272,6 @@
             }
         }
 
-
-
         console.log(toShowNodeArr);
         return toShowNodeArr;
     }
@@ -303,7 +301,7 @@
         if (this.settings) {
             this.settings = $.extend({}, this.settings, options);
         } else {
-            this.settings = $.extend({}, this.defaults, options);
+            this.settings = $.extend(true, this.defaults, options);
         }
 
         /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -320,7 +318,6 @@
 
     TreeViewSelect.prototype.setElement = function() {
         var _ = this;
-
         //add class
         if (!_.element.hasClass('treeviewSelect-selection')) {
             _.element.addClass('treeviewSelect-selection');
@@ -433,9 +430,7 @@
                         if (resp.data) {
                             require([_.settings.sourceUrl], function() {
                                 _.initialized = true;
-
                                 _.addListenersToHanlder();
-
                                 _.renderTree(resp.data);
                                 _.addListenersToTree();
                             });
