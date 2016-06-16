@@ -19,42 +19,49 @@
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             bootrap-treeview.js 引用路径
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "sourceUrl": '',
+            sourceUrl: '',
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             请求的数据类型
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "dataType": "jsonp",
+            dataType: "jsonp",
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             获取渲染tree数据的异步请求地址
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "apiUrl": '',
+            apiUrl: '',
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             异步请求报文
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "data": null,
+            data: null,
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             是否显示搜索框
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "showSearch": true,
+            showSearch: true,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            默认值:false 
+            表示：当勾选一个子节点时候，所有的父节点需要勾选. 
+            以及当去除所有子节点的勾选的时候，父节点去除勾选.
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            stateSynch: false,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
              是否多行显示选中项
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "multiRow": false,
+            multiRow: false,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             接口请求出错时候的接口方法 
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "onErrorInterface": null,
+            onErrorInterface: null,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             当接口返回结果码不为200时候，调用的接口方法 
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            "onExceptionInterface": null,
+            onExceptionInterface: null,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             勾选掉所有的选中的节点的事件
@@ -94,6 +101,15 @@
                 是否可以同时选择多个节点
                 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
                 multiSelect: false,
+                /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                设置处于checked状态的复选框图标。
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+                checkedIcon: "glyphicon glyphicon-stop",
+
+                /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                是否在节点上显示边框
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+                showBorder: false
             }
         };
 
@@ -283,7 +299,7 @@
             }
         }
 
-        console.log(toShowNodeArr);
+        //console.log(toShowNodeArr);
         return toShowNodeArr;
     }
 
@@ -301,6 +317,11 @@
             settings: this.settings,
 
             init: $.proxy(this.init, this),
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            获取所有的选中项或选择项
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            getChecked: $.proxy(this.getChecked, this)
         };
     }
 
@@ -312,7 +333,7 @@
         if (this.settings) {
             this.settings = $.extend({}, this.settings, options);
         } else {
-            this.settings = $.extend({}, this.defaults, options);
+            this.settings = $.extend(true, this.defaults, options);
         }
 
         this.treeContainer = $(this.template.treeContainer);
@@ -330,9 +351,14 @@
         this.subscribeEvents();
 
         /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        生成tree
+        --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+        this.initTree();
+
+        /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         初始化Handler
         --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-        this.setHandler();
+        this.initHandler();
     }
 
 
@@ -352,431 +378,6 @@
         this.initialized = false;
     }
 
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    初始化Hanlder 相关事件
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.setHandler = function() {
-        var _ = this;
-
-        //add class
-        if (!_.element.hasClass('treeviewSelect-selection')) {
-            _.element.addClass('treeviewSelect-selection');
-        }
-
-        _.element.append($(_.template.listGroup));
-        _.element.append($(_.template.listOpGroup));
-
-
-        //添加向下箭头
-        // _.element.find('.treeviewselect-listOpGroup').css({
-        //     'line-height': _.element.height() + 'px'
-        // }).attr('data-height', _.element.height() + 'px');
-        _.element.find('.treeviewselect-listOpGroup ul').empty().append($(_.template.bottomArrowItem));
-
-        _.element.on('click', function() {
-            if (!_.initialized) {
-                _.setTree();
-                _.element.find('.treeviewselect-arrow').find('.glyphicon-triangle-bottom')
-                    .removeClass('glyphicon-triangle-bottom')
-                    .addClass('glyphicon-triangle-top');
-                _.treeContainer.removeClass('hide');
-            } else {
-                if (_.treeContainer.hasClass('hide')) {
-                    //设置箭头向上显示
-                    _.element.find('.treeviewselect-arrow').find('.glyphicon-triangle-bottom')
-                        .removeClass('glyphicon-triangle-bottom')
-                        .addClass('glyphicon-triangle-top');
-                    _.treeContainer.removeClass('hide');
-                } else {
-                    _.element.find('.treeviewselect-arrow').find('.glyphicon-triangle-top')
-                        .removeClass('glyphicon-triangle-top')
-                        .addClass('glyphicon-triangle-bottom');
-                    _.treeContainer.addClass('hide');
-                }
-            }
-
-            return false;
-        });
-
-        //outside click hide the treecontainer
-        $('html').on('click', function(eventObject) {
-            var $el = $(event.target);
-
-            if (!$el.hasClass('list-group-item') && !$el.hasClass('check-icon') && !$el.hasClass('treeview-search-input') && !$el.hasClass('expand-icon') && !$el.hasClass('treeviewSelect-container')) {
-                $('.treeviewSelect-container').addClass('hide');
-            }
-        });
-    }
-
-
-    TreeViewSelect.prototype.addListenersToHanlder = function() {
-        var _ = this;
-
-        _.element.on('click', function() {
-
-            var firstNodeId, $firstNode;
-
-            //重置搜索框
-            _.searchInput.val('');
-            _.tree.treeview('clearSearch');
-
-
-            if (!_.treeContainer.hasClass('hide')) {
-                //折叠所有的节点，折叠整个树。
-                _.tree.treeview('collapseAll', {
-                    silent: true
-                });
-
-                //展开到第二级
-                _.tree.treeview('expandAll', {
-                    levels: 1,
-                    silent: true
-                });
-
-
-                //循环遍历所有选中项，勾选对应节点，并展开
-                _.element.find('.treeviewselect-item').each(function(index, el) {
-                    if (!$(el).hasClass('ellipsis-item')) {
-                        var nodeId = $(el).attr('nodeid');
-                        var node = _.tree.treeview('getNode', nodeId);
-
-                        if (node['nodes']) {
-                            _.tree.treeview('expandNode', [node, {
-                                levels: 1,
-                                silent: true
-                            }]);
-                        } else {
-                            var pNode = _.tree.treeview('getParent', node);
-                            if (pNode.nodeId) {
-                                _.tree.treeview('expandNode', [pNode, {
-                                    levels: 1,
-                                    silent: true
-                                }]);
-                            }
-                        }
-
-                        if (index === 0) {
-                            firstNodeId = nodeId;
-                        }
-                    }
-                });
-
-                //scroll to first checked node postion
-                $firstNode = _.tree.find('li[data-nodeid=' + firstNodeId + ']');
-                if ($firstNode.length > 0) {
-                    //console.log($firstNode.position().top);
-                    _.treeContainer.scrollTop($firstNode.position().top - 60);
-                } else {
-                    _.treeContainer.scrollTop(0);
-                }
-            }
-        });
-    }
-
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    请求接口地址
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.setTree = function(data) {
-        var _ = this;
-
-        try {
-            $.ajax({
-                url: _.settings.apiUrl,
-                type: 'GET',
-                dataType: _.settings.dataType,
-                data: _.settings.data,
-                success: function(resp) {
-                    if (resp && resp.status == '200') {
-                        if (resp.data) {
-                            require([_.settings.sourceUrl], function() {
-                                _.initialized = true;
-
-                                _.addListenersToHanlder();
-
-                                _.renderTree(resp.data);
-                                _.addListenersToTree();
-                            });
-                        }
-                    } else {
-                        if (_.settings.onExceptionInterface) {
-                            _.settings.onExceptionInterface();
-                        }
-                    }
-                },
-                error: function() {
-                    if (_.settings.onErrorInterface) {
-                        _.settings.onErrorInterface();
-                    }
-                }
-            })
-        } catch (e) {
-            logError(e);
-        }
-    }
-
-
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    渲染tree View 
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.renderTree = function(data) {
-        var _ = this;
-        var tConfig = _.settings.bootstrapTreeParams;
-        tConfig.data = flatToHierarchy(data);
-        tConfig.showCheckbox = _.settings.bootstrapTreeParams.multiSelect;
-        tConfig.highlightSelected = !_.settings.bootstrapTreeParams.multiSelect;
-
-        if (_.settings.showSearch) {
-            _.treeContainer.append(_.searchInput);
-        }
-
-        _.tree.treeview(tConfig);
-        _.treeContainer.append(_.tree);
-
-        _.treeContainer.removeClass('hide');
-
-        _.element.parent().append(_.treeContainer);
-
-        _.setTreePosition();
-    }
-
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    给tree 绑定事件
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.addListenersToTree = function() {
-        var _ = this;
-
-        //搜索框绑定相关事件
-        _.searchInput.keyup(function(event) {
-            var _this = $(this);
-
-
-            var sNodes = _.searchNodes($.trim(_this.val()));
-
-            if (sNodes && sNodes.length > 0) {
-                //scroll to first checked node postion
-                var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
-                if ($firstNode.length > 0) {
-                    //console.log($firstNode.position().top);
-                    _.treeContainer.scrollTop($firstNode.position().top - 60);
-                } else {
-                    _.treeContainer.scrollTop(0);
-                }
-            }
-
-        });
-
-        if (_.settings.bootstrapTreeParams.multiSelect) {
-            _.tree.on('nodeSelected nodeChecked nodeUnselected nodeUnchecked', function(event, node) {
-                _.setNodeState(event.type, node);
-            });
-
-        } else {
-            _.tree.on('nodeSelected', function(event, node) {
-                _.treeContainer.addClass('hide');
-                _.setNodeState(event.type, node);
-            });
-        }
-    }
-
-
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    设置Tree 节点的状态
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.setNodeState = function(eventType, node) {
-        //如果支持多选
-        if (this.settings.bootstrapTreeParams.multiSelect) {
-
-            if (eventType === 'nodeChecked' || eventType === 'nodeSelected') {
-                up(this.tree, node, 'checkNode');
-
-                down(this.tree, node, 'checkNode');
-            } else {
-                up(this.tree, node, 'uncheckNode');
-
-                down(this.tree, node, 'uncheckNode');
-            }
-
-            this.element.trigger(eventType, $.extend(true, {}, node));
-
-        } else {
-            this.element.trigger(eventType, $.extend(true, {}, node));
-        }
-
-        //根据选中的节点生成选中项
-        this.setTreeSelectItem();
-    }
-
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    搜索节点
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.searchNodes = function(sText) {
-        var options = {
-            ignoreCase: true,
-            exactMatch: false,
-            revealResults: true
-        };
-
-        var sResults = this.tree.treeview('search', [sText, options]);
-
-        return sResults;
-    }
-
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    根据tree选择节点，生成已选择项，并绑定相关事件
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.setTreeSelectItem = function() {
-        var _ = this;
-
-        var checkedNodes, listNodes, totalWidth,pNodesArr;
-        var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
-
-        if (_.settings.bootstrapTreeParams.multiSelect) {
-            checkedNodes = _.tree.treeview('getChecked');
-            listNodes = getSelectedNode(_.tree, checkedNodes);
-        } else {
-            listNodes = _.tree.treeview('getSelected');
-        }
-
-
-        $clearItem = $(_.template.clearItem);
-        $ellipsisItem = $(_.template.ellipsisItem);
-        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
-
-        $itemLisGroup.empty();
-
-        if (listNodes && listNodes.length > 0) {
-            for (var i = 0; i < listNodes.length; i++) {
-                totalWidth = 0;
-                pNodesArr=new Array();
-                
-                //判断是否支持多选
-                if (_.settings.bootstrapTreeParams.multiSelect) {
-                    $selectedItem = $(_.template.item);
-                } else {
-                    $selectedItem = $(_.template.singleItem);
-                }
-
-                getParentNodes(_.tree, listNodes[i], pNodesArr);
-                listNodes[i].level = pNodesArr.length;
-
-                $selectedItem.attr('nodeid', listNodes[i].nodeId);
-                $selectedItem.find('span').html(listNodes[i].text);
-
-                $selectedItem.find('.glyphicon-remove').on('click', function() {
-                    var _this = $(this);
-                    var node = _.tree.treeview('getNode', _this.parent().attr('nodeid'));
-
-                    _.setNodeState('uncheckNode', node);
-
-                    _this.parent().remove();
-
-                    return false;
-                });
-
-                $itemLisGroup.append($selectedItem);
-
-                //如果支持多选但是不支持多行，则超出部分显示省略号
-                if (_.settings.bootstrapTreeParams.multiSelect && !_.settings.multiRow) {
-                    $itemLisGroup.find('li').each(function(index, el) {
-                        totalWidth += $(el).width() + 2 * parseInt($(el).css('padding-left').replace('px', '')) + 2;
-                    });
-
-                    if (totalWidth > $itemLisGroup.parent().parent().width() - 28) {
-                        //添加ellipsisItem
-                        $itemLisGroup.append($ellipsisItem);
-                        $ellipsisItem.css('visibility', 'visible');
-                    }
-                }
-            }
-        }
-
-
-        //支持多选则添加清空按钮
-        if (_.settings.bootstrapTreeParams.multiSelect && !_.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').length) {
-            //重置筛选条件按钮绑定事件
-            $clearItem.find('.glyphicon-remove').on('click', function() {
-                var checkedNodes = _.tree.treeview('getChecked');
-
-                $itemLisGroup.empty();
-                _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
-
-                _.tree.treeview('uncheckAll', {
-                    silent: true
-                });
-
-                _.element.trigger('nodesCleared', $.extend(true, {}, checkedNodes));
-
-                //如果不是多行显示，无需计算位置
-                if (_.settings.multiRow) {
-                    _.setTreePosition();
-                }
-            });
-
-            //添加重置筛选条件        
-            _.element.find('.treeviewselect-listOpGroup ul').prepend($clearItem);
-        }
-
-        //如果支持多行显示选中项
-        if (_.settings.multiRow) {
-            _.setTreePosition();
-        }
-
-        _.element.trigger('completed', [listNodes]);
-    }
-
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    设置treeConainer的位置
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.setTreePosition = function() {
-        var _ = this;
-
-        var sOffset = _.element.offset();
-        var sPaddingTop = _.element.css('padding-top').replace('px', '');
-        var sPaddingBottom = _.element.css('padding-bottom').replace('px', '');
-        var sPaddingLeft = _.element.css('padding-left').replace('px', '');
-        var sPaddingRight = _.element.css('padding-right').replace('px', '');
-
-        var tHeight = 250; //treeView的高度,默认为300px
-        var tWidth = _.element.width() + parseInt(sPaddingLeft) + parseInt(sPaddingRight); //treeView的宽度
-        var tTop = sOffset.top + _.element.height() + parseInt(sPaddingTop) + parseInt(sPaddingBottom); + 5;
-        var tLeft = sOffset.left;
-
-        tHeight = _.treeContainer.find('li.list-group-item').length * 40 * 0.2;
-        // tWidth = tWidth < 250 ? 250 : tWidth;
-        tHeight = tHeight < 250 ? 250 : tHeight;
-
-
-        _.treeContainer.css({
-            'top': tTop,
-            'left': tLeft,
-            'height': tHeight,
-            'width': tWidth,
-        });
-
-        _.element.css('width', tWidth);
-
-        if (_.settings.multiRow) {
-            //重置Line-height
-            _.element.find('.treeviewselect-listOpGroup').css('line-height', _.element.find('.treeviewselect-listOpGroup').attr('data-height'));
-
-            _.element.find('.treeviewselect-listOpGroup').css({
-                'line-height': _.element.height() + 'px'
-            });
-        }
-    }
-
-    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    去除所有已勾选的节点
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.uncheckAll = function(nodes) {
-        this.element.empty();
-
-        this.tree.treeview('uncheckAll', {
-            silent: true
-        });
-
-        this.element.trigger('nodeAllUnchecked', $.extend(true, {}, nodes));
-    }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     取消所有订阅事件
@@ -829,7 +430,524 @@
         }
     }
 
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    请求接口地址,渲染tree
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.initTree = function(data) {
+        var _ = this;
 
+        try {
+            $.ajax({
+                url: _.settings.apiUrl,
+                type: 'GET',
+                dataType: _.settings.dataType,
+                data: _.settings.data,
+                success: function(resp) {
+                    if (resp && resp.status == '200') {
+                        if (resp.data) {
+                            require([_.settings.sourceUrl], function() {
+                                _.initialized = true;
+                                _.renderTree(resp.data);
+                                _.addListenersToTree();
+                                _.addListenersToHanlder();
+                            });
+                        }
+                    } else {
+                        if (_.settings.onExceptionInterface) {
+                            _.settings.onExceptionInterface();
+                        }
+                    }
+                },
+                error: function() {
+                    if (_.settings.onErrorInterface) {
+                        _.settings.onErrorInterface();
+                    }
+                }
+            })
+        } catch (e) {
+            logError(e);
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    渲染tree View 
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.renderTree = function(data) {
+        var _ = this;
+        var $selectedItem;
+        var tConfig = _.settings.bootstrapTreeParams;
+        tConfig.data = flatToHierarchy(data);
+        tConfig.showCheckbox = _.settings.bootstrapTreeParams.multiSelect;
+        tConfig.highlightSelected = !_.settings.bootstrapTreeParams.multiSelect;
+        tConfig.onhoverColor = _.settings.bootstrapTreeParams.multiSelect ? "" : "#F5F5F5";
+
+        if (_.settings.showSearch) {
+            _.treeContainer.append(_.searchInput);
+        }
+
+        _.tree.treeview(tConfig);
+        _.treeContainer.append(_.tree);
+
+        _.element.parent().append(_.treeContainer);
+
+        _.setTreePosition();
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    给tree 绑定事件
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.addListenersToTree = function() {
+        var _ = this;
+
+        //搜索框绑定相关事件
+        _.searchInput.keyup(function(event) {
+            var _this = $(this);
+
+
+            var sNodes = _.searchNodes($.trim(_this.val()));
+
+            if (sNodes && sNodes.length > 0) {
+                //scroll to first checked node postion
+                var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
+                if ($firstNode.length > 0) {
+                    //console.log($firstNode.position().top);
+                    _.treeContainer.scrollTop($firstNode.position().top - 60);
+                } else {
+                    _.treeContainer.scrollTop(0);
+                }
+            }
+
+        });
+
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            _.tree.on('nodeSelected nodeChecked nodeUnselected nodeUnchecked', function(event, node) {
+                _.setNodeState(event.type, node);
+            });
+
+        } else {
+            _.tree.on('nodeSelected', function(event, node) {
+                _.treeContainer.addClass('hide');
+                _.setNodeState(event.type, node);
+            });
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    初始化Hanlder 相关事件
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.initHandler = function() {
+        var _ = this;
+
+        //add class
+        if (!_.element.hasClass('treeviewSelect-selection')) {
+            _.element.addClass('treeviewSelect-selection');
+        }
+
+        _.element.append($(_.template.listGroup));
+        _.element.append($(_.template.listOpGroup));
+
+        //outside click hide the treecontainer
+        $('html').on('click', function(eventObject) {
+            var $el = $(event.target);
+
+            if (!$el.hasClass('list-group-item') && !$el.hasClass('check-icon') && !$el.hasClass('treeview-search-input') && !$el.hasClass('expand-icon') && !$el.hasClass('treeviewSelect-container')) {
+                $('.treeviewSelect-container').addClass('hide');
+            }
+        });
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Hanlder 绑定事件
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.addListenersToHanlder = function() {
+        var _ = this;
+        var nodeIds, nodeTexts;
+
+        //如果存在默认值
+        if (_.element.attr('data-id') && _.element.attr('data-text')) {
+            nodeIds = _.element.attr("data-id").split(',');
+            nodeTexts = _.element.attr('data-text').split(',');
+            if (nodeIds && nodeTexts && nodeIds.length > 0 && nodeTexts.length > 0) {
+                for (var i = 0; i < nodeIds.length; i++) {
+                    //生成选中项
+                    $selectedItem = _.genTreeSelectItem(nodeIds[i], nodeTexts[i]);
+                    //添加到父容器
+                    _.element.find('.treeviewselect-listGroup ul').append($selectedItem);
+                }
+            }
+        }
+
+
+        //绑定点击事件
+        _.element.on('click', function() {
+
+            var firstNodeId, $firstNode;
+
+            //设置tree 点击是否显示
+            if (_.treeContainer.hasClass('hide')) {
+
+                //显示tree
+                _.treeContainer.removeClass('hide');
+
+                //重置搜索框
+                _.searchInput.val('');
+                _.tree.treeview('clearSearch');
+
+                //折叠所有的节点，折叠整个树。
+                // _.tree.treeview('collapseAll', {
+                //     silent: true
+                // });
+
+                //展开到第二级
+                // _.tree.treeview('expandAll', {
+                //     levels: 1,
+                //     silent: true
+                // });
+
+                //循环遍历所有选中项，勾选对应节点，并展开
+                _.element.find('.treeviewselect-item').each(function(index, el) {
+                    if (!$(el).hasClass('ellipsis-item')) {
+                        var nodeId = $(el).attr('nodeid');
+                        var node = _.tree.treeview('getNode', nodeId);
+
+                        //选中节点
+                        if (_.settings.bootstrapTreeParams.multiSelect) {
+                            _.setNodeState("nodeChecked", node);
+
+                        } else {
+                            _.setNodeState('nodeSelected', node);
+                        }
+
+                        //展开节点
+                        if (node['nodes']) { //如存在子节点
+                            _.tree.treeview('expandNode', [node, {
+                                levels: 1,
+                                silent: true
+                            }]);
+
+                        } else { //不存在子节点，就展开对应的父节点
+                            var pNode = _.tree.treeview('getParent', node);
+                            if (pNode.nodeId) {
+                                _.tree.treeview('expandNode', [pNode, {
+                                    levels: 1,
+                                    silent: true
+                                }]);
+                            }
+                        }
+
+                        //记录第一个节点
+                        if (index === 0) {
+                            firstNodeId = nodeId;
+                        }
+                    }
+                });
+
+                //滑动到第一个node的位置
+                _.goToFirstNodePosition(firstNodeId);
+
+            } else {
+                _.treeContainer.addClass('hide');
+            }
+
+            return false;
+        });
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    设置Tree 节点的状态
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.setNodeState = function(eventType, node) {
+        var _ = this;
+
+        //如果支持多选
+        if (this.settings.bootstrapTreeParams.multiSelect) {
+            if (!_.settings.stateSynch) {
+                if (eventType === 'nodeChecked') {
+                    up(this.tree, node, 'checkNode');
+
+                    down(this.tree, node, 'checkNode');
+                } else if (eventType === 'nodeUnchecked') {
+                    up(this.tree, node, 'uncheckNode');
+
+                    down(this.tree, node, 'uncheckNode');
+                }
+            } else {
+                if (eventType === 'nodeChecked') {
+                    //找到节点所有父节点
+                    var pNodes = new Array();
+                    getParentNodes(_.tree, node, pNodes);
+
+                    if (pNodes && pNodes.length) {
+                        for (var i = 0; i < pNodes.length; i++) {
+                            _.tree.treeview('checkNode', [pNodes[i].nodeId, {
+                                silent: true
+                            }]);
+                        }
+                    }
+
+                    //同步所有子节点的状态
+                    down(this.tree, node, 'checkNode');
+
+                } else if (eventType === 'nodeUnchecked') {
+                    down(this.tree, node, 'uncheckNode');
+                }
+            }
+
+            this.element.trigger(eventType, $.extend(true, {}, node));
+        } else {
+            _.tree.treeview('selectNode', [node, {
+                silent: true
+            }]);
+            this.element.trigger(eventType, $.extend(true, {}, node));
+        }
+
+        //根据选中的节点生成选中项
+        this.setTreeSelectItem();
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    搜索节点
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.searchNodes = function(sText) {
+        var options = {
+            ignoreCase: true,
+            exactMatch: false,
+            revealResults: true
+        };
+
+        var sResults = this.tree.treeview('search', [sText, options]);
+
+        return sResults;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    根据tree选择节点，生成已选择项，并绑定相关事件
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.setTreeSelectItem = function() {
+        var _ = this;
+
+        var checkedNodes, listNodes, totalWidth, pNodesArr;
+        var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
+
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            checkedNodes = _.tree.treeview('getChecked');
+            listNodes = getSelectedNode(_.tree, checkedNodes);
+        } else {
+            listNodes = _.tree.treeview('getSelected');
+        }
+
+
+        $clearItem = $(_.template.clearItem);
+        $ellipsisItem = $(_.template.ellipsisItem);
+        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
+
+        $itemLisGroup.empty();
+
+        if (listNodes && listNodes.length > 0) {
+            for (var i = 0; i < listNodes.length; i++) {
+                totalWidth = 0;
+                pNodesArr = new Array();
+
+                //取出指定节点的父节点的数量，并给节点赋值，父节点的数量就是节点的level 值
+                getParentNodes(_.tree, listNodes[i], pNodesArr);
+                listNodes[i].level = pNodesArr.length;
+
+                //生成选中项
+                $selectedItem = _.genTreeSelectItem(listNodes[i].nodeId, listNodes[i].text);
+
+                //如果支持多选但是不支持多行，则超出部分显示省略号
+                if (_.settings.bootstrapTreeParams.multiSelect && !_.settings.multiRow) {
+                    $selectedItem.css('visibility', 'hidden');
+                    $itemLisGroup.append($selectedItem);
+                    $itemLisGroup.find('li').each(function(index, el) {
+                        totalWidth += $(el).width() + 2 * parseInt($(el).css('padding-left').replace('px', '')) + 2;
+                    });
+
+                    if (totalWidth > $itemLisGroup.parent().parent().width() - 25) {
+                        //添加ellipsisItem
+                        $selectedItem.remove();
+                        $itemLisGroup.append($ellipsisItem);
+                        $ellipsisItem.css('visibility', 'visible');
+                    } else {
+                        $selectedItem.css('visibility', 'visible');
+                    }
+                } else {
+                    $itemLisGroup.append($selectedItem);
+                }
+            }
+        }
+
+
+        //支持多选则添加清空按钮
+        if (_.settings.bootstrapTreeParams.multiSelect && !_.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').length) {
+            //重置筛选条件按钮绑定事件
+            $clearItem.find('.glyphicon-remove').on('click', function() {
+                var checkedNodes = _.tree.treeview('getChecked');
+
+                $itemLisGroup.empty();
+                _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
+
+                _.tree.treeview('uncheckAll', {
+                    silent: true
+                });
+
+                _.element.trigger('nodesCleared', $.extend(true, {}, checkedNodes));
+
+                //如果不是多行显示，无需计算位置
+                if (_.settings.multiRow) {
+                    _.setTreePosition();
+                }
+            });
+
+            //添加重置筛选条件        
+            _.element.find('.treeviewselect-listOpGroup ul').prepend($clearItem);
+        }
+
+        //如果支持多行则需要重新计算treeView 显示位置
+        if (_.settings.multiRow) {
+            _.setTreePosition();
+        }
+
+        //触发completed 事件
+        _.element.trigger('completed', [listNodes]);
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    生成选中项
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.genTreeSelectItem = function(id, text) {
+        var _ = this;
+        var $selectedItem;
+
+        //判断是否支持多选
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            $selectedItem = $(_.template.item);
+        } else {
+            $selectedItem = $(_.template.singleItem);
+        }
+
+        $selectedItem.attr('nodeid', id);
+        $selectedItem.find('span').html(text);
+
+        $selectedItem.find('.glyphicon-remove').on('click', function() {
+            var _this = $(this);
+            var node = _.tree.treeview('getNode', _this.parent().attr('nodeid'));
+
+            _.setNodeState('uncheckNode', node);
+
+            _this.parent().remove();
+
+            return false;
+        });
+
+        return $selectedItem;
+    }
+
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    设置treeConainer的位置
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.setTreePosition = function() {
+        var _ = this;
+
+        var sOffset = _.element.offset();
+        var sPaddingTop = _.element.css('padding-top').replace('px', '');
+        var sPaddingBottom = _.element.css('padding-bottom').replace('px', '');
+        var sPaddingLeft = _.element.css('padding-left').replace('px', '');
+        var sPaddingRight = _.element.css('padding-right').replace('px', '');
+
+        var tHeight = 250; //treeView的高度,默认为300px
+        var tWidth = _.element.width() + parseInt(sPaddingLeft) + parseInt(sPaddingRight); //treeView的宽度
+        var tTop = sOffset.top + _.element.height() + parseInt(sPaddingTop) + parseInt(sPaddingBottom); + 5;
+        var tLeft = sOffset.left;
+
+        tHeight = _.treeContainer.find('li.list-group-item').length * 40 * 0.2;
+        // tWidth = tWidth < 250 ? 250 : tWidth;
+        tHeight = tHeight < 250 ? 250 : tHeight;
+
+
+        _.treeContainer.css({
+            'top': tTop,
+            'left': tLeft,
+            'height': tHeight,
+            'width': tWidth,
+        });
+
+        _.element.css('width', tWidth);
+
+        //是否支持多行显示选择结果
+        if (_.settings.multiRow) {
+            //重置Line-height
+            _.element.find('.treeviewselect-listOpGroup').css('line-height', _.element.find('.treeviewselect-listOpGroup').attr('data-height'));
+
+            _.element.find('.treeviewselect-listOpGroup').css({
+                'line-height': _.element.height() + 'px'
+            });
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    去除所有已勾选的节点
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.uncheckAll = function(nodes) {
+        this.element.empty();
+
+        this.tree.treeview('uncheckAll', {
+            silent: true
+        });
+
+        this.element.trigger('nodeAllUnchecked', $.extend(true, {}, nodes));
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    获取当前所有选中节点
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.getChecked = function() {
+        var _ = this;
+        var checkedNodes;
+
+        var idArray = new Array();
+
+        if (!_.settings.bootstrapTreeParams.multiSelect) {
+            _.element.find('.treeviewselect-item').each(function(index, el) {
+                if (!$(el).hasClass('ellipsis-item')) {
+                    idArray.push($(el).attr('nodeid'));
+                }
+            });
+        } else {
+            checkedNodes = _.tree.treeview('getChecked');
+            if (checkedNodes) {
+                for (var i = 0; i < checkedNodes.length; i++) {
+                    idArray.push(checkedNodes[i].id);
+                }
+            }
+        }
+
+
+        return idArray;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    滑动到第一个node的位置
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.goToFirstNodePosition = function(nodeId) {
+        var _ = this;
+        var $firstLi, preNodes, liHeight;
+
+        $firstLi = _.tree.find('li[data-nodeid=' + nodeId + ']');
+        preNodes = $firstLi.prevAll();
+        liHeight = $firstLi.height() + parseInt($firstLi.css('padding-top').replace('px', '')) + parseInt($firstLi.css('padding-bottom').replace('px', ''));
+
+        if ($firstLi.length > 0) {
+            _.treeContainer.scrollTop(liHeight * preNodes.length - 60);
+        } else {
+            _.treeContainer.scrollTop(0);
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    相关模板定义
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.template = {
         listGroup: '<li class="treeviewselect-listGroup"><ul></ul></li>',
         listOpGroup: '<li class="treeviewselect-listOpGroup"><ul></ul></li>',
@@ -839,7 +957,7 @@
         singleItem: '<li class="treeviewselect-item"><span></span></li>',
         bottomArrowItem: '<li class="treeviewselect-arrow"><i class="glyphicon glyphicon-triangle-bottom"></i></li>',
         inlineInput: '<li><input type="text" class="treeviewSelect-inline-input"></li>',
-        treeContainer: '<ul class="treeviewSelect-container"></ul>',
+        treeContainer: '<ul class="treeviewSelect-container hide"></ul>',
         searchInput: '<input class="treeview-search-input" placeholder="请搜索..."></input>',
         tree: '<div class="treeviewSelect-tree"></div>'
     }

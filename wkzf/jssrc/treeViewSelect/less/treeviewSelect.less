@@ -14,16 +14,31 @@ treeViewSelect 样式
     *zoom: 1; // fix for IE6/7
 }
 
+.text-ellipsis() {
+    /*
+    *截取文本用省略号追加在后面
+    */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-overflow: ellipsis; //对IE7+ | Safari的兼容
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis; //对Opera的兼容
+    -moz-binding: url("ellipsis.xml#ellipsis"); //对FireFox的兼容 
+}
+
 .treeviewSelect-container {
-    position: absolute;
     z-index: 1000;
     float: left;
     padding: 5px 0;
     margin: 5px 0 0;
     font-size: 14px;
+    position: absolute;
     text-align: left;
     list-style: none;
     background-color: #fff;
+    max-height: 450px;
+    min-height: 100px;
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
     border: 1px solid #ccc;
@@ -33,7 +48,7 @@ treeViewSelect 样式
     box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
     overflow: auto;
     .treeview-search-input {
-        border-radius:4px;
+        border-radius: 4px;
         border: 1px solid #ccc;
         border: 1px solid rgba(0, 0, 0, .15);
         padding: 4px;
@@ -47,29 +62,77 @@ treeViewSelect 样式
     border-radius: 4px;
     .clearfix();
     list-style: none;
-    width: 100%;
-    padding: 5px;
     min-height: 35px;
+    padding: 5px;
     height: auto;
+    position: relative;
+    margin-bottom: 0;
     &>li {
-        .treeviewSelect-inline-input {
-            width: 10px;
-            border: none;
-            box-shadow: none;
-            outline: 0 none;
+        border: none;
+        float: left;
+        &.treeviewselect-listGroup {
+            &>ul {
+                .clearfix();
+                padding-left: 0;
+                list-style: none;
+                &>li {
+                    &.treeviewselect-item {
+                        border: none;
+                        background-color: #fff;
+                        float: left;
+                        margin-bottom: 3px;
+                        padding: 0;
+                    }
+
+                    &.selected-item {
+                        background-color: #e4e4e4;
+                        border: 1px solid #aaa;
+                        border-radius: 4px;
+                        cursor: default;
+                        margin-right: 3px;
+                        padding: 0 3px;
+                        max-width: 66px;
+                        .text-ellipsis();
+                        .glyphicon-remove {
+                            cursor: pointer;
+                            font-size: 10px;
+                        }
+                    }
+                    &.ellipsis-item{
+                        margin-right: 3px;
+                        visibility: hidden;
+                    }
+                }
+            }
         }
-        &.treeviewselect-selected-item {
-            background-color: #e4e4e4;
-            border: 1px solid #aaa;
-            border-radius: 4px;
-            cursor: default;
-            float: left;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            padding: 0 5px;
-            .glyphicon-remove {
-                cursor: pointer;
-                font-size: 12px;
+        &.treeviewselect-listOpGroup {
+            float: right;
+            width: 15px;
+            &>ul {
+                .clearfix();
+                padding-left: 0;
+                list-style: none;
+                &>li {
+                    float: left;
+                    background: #fff;
+                    cursor: pointer;
+                    &.treeviewselect-clear {
+                        .glyphicon-remove {
+                            cursor: pointer;
+                            font-size: 14px;
+                            color: red;
+                        }
+                    }
+                    &.treeviewselect-arrow {
+                        float: right;
+                        .glyphicon-triangle-bottom {
+                            font-size: 5px;
+                        }
+                        .glyphicon-triangle-top {
+                            font-size: 10px;
+                        }
+                    }
+                }
             }
         }
     }
