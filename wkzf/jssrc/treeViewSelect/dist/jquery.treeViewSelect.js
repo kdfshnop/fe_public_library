@@ -443,11 +443,16 @@
                 dataType: _.settings.dataType,
                 data: _.settings.data,
                 success: function(resp) {
-                    if (resp && resp.status == '200') {
+                    if (resp && resp.status == '1') {
                         if (resp.data) {
                             require([_.settings.sourceUrl], function() {
                                 _.initialized = true;
-                                _.renderTree(resp.data);
+                                if (typeof resp.data === "string") {
+                                    _.renderTree($.parseJSON(resp.data));
+
+                                } else {
+                                    _.renderTree(resp.data);
+                                }
                                 _.addListenersToTree();
                                 _.addListenersToHanlder();
                             });
@@ -458,7 +463,7 @@
                         }
                     }
                 },
-                error: function() {
+                error: function(e) {
                     if (_.settings.onErrorInterface) {
                         _.settings.onErrorInterface();
                     }
@@ -935,10 +940,10 @@
         var $firstLi, preNodes, liHeight;
 
         $firstLi = _.tree.find('li[data-nodeid=' + nodeId + ']');
-        preNodes = $firstLi.prevAll();
-        liHeight = $firstLi.height() + parseInt($firstLi.css('padding-top').replace('px', '')) + parseInt($firstLi.css('padding-bottom').replace('px', ''));
 
         if ($firstLi.length > 0) {
+            preNodes = $firstLi.prevAll();
+            liHeight = $firstLi.height() + parseInt($firstLi.css('padding-top').replace('px', '')) + parseInt($firstLi.css('padding-bottom').replace('px', ''));
             _.treeContainer.scrollTop(liHeight * preNodes.length - 60);
         } else {
             _.treeContainer.scrollTop(0);
