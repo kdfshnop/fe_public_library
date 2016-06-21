@@ -9,19 +9,7 @@
 7. 作者：luwei@lifang.com
 -----------------------------------------------------------------------------------------------------------*/
 ;
-(function(factory) {
-
-    // 如果要兼容 CMD 等其他标准，可以在下面添加条件，比如：
-    // CMD: typeof define === 'function' && define.cmd
-    // UMD: typeof exports === 'object'
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['jquery'], factory);
-    } else {
-        factory(jQuery);
-        // 如果要兼容 Zepto，可以改写，比如使用：factory(jQuery||Zepto)
-    }
-}(function($) {
+(function($) {
     'use strict';
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -309,4 +297,4 @@
         $.fn[Plugin.pluginName] = old;
         return this
     };
-}));
+})(jQuery);
