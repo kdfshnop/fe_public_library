@@ -125,11 +125,14 @@
         数据转换
         -----------------------------------------------------------------------------------------------------------*/
         flatToHierarchy: function(opts) {
+            var minParentId = opts.data.sort(function(a, b) {
+                return a[opts.parentKeyFieldName] - b[opts.parentKeyFieldName]
+            })[0][opts.parentKeyFieldName];
             var nestedData = opts.data.reduce(function(obj, item) {
                 var parentId = item[opts.parentKeyFieldName],
                     map = obj.map;
                 map[item[opts.keyFieldName]] = item;
-                if (parentId === null || parentId === 0) {
+                if (parentId === null || parentId === minParentId) {
                     obj.res.push(item);
                 } else {
                     var parentItem = map[parentId];
