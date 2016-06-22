@@ -49,10 +49,13 @@
             stateSynch: false,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-             是否多行显示选中项
+            是否多行显示选中项
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             multiRow: false,
-
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            调用服务端SOA接口,需要的user token 信息
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            token:'',
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             接口请求出错时候的接口方法 
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -100,7 +103,7 @@
                 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 是否可以同时选择多个节点
                 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-                multiSelect: false,
+                multiSelect: true,
                 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 设置处于checked状态的复选框图标。
                 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -443,11 +446,16 @@
                 dataType: _.settings.dataType,
                 data: _.settings.data,
                 success: function(resp) {
-                    if (resp && resp.status == '200') {
+                    if (resp && resp.status == '1') {
                         if (resp.data) {
                             require([_.settings.sourceUrl], function() {
                                 _.initialized = true;
-                                _.renderTree(resp.data);
+                                if (typeof resp.data === "string") {
+                                    _.renderTree($.parseJSON(resp.data));
+
+                                } else {
+                                    _.renderTree(resp.data);
+                                }
                                 _.addListenersToTree();
                                 _.addListenersToHanlder();
                             });
@@ -458,7 +466,7 @@
                         }
                     }
                 },
-                error: function() {
+                error: function(e) {
                     if (_.settings.onErrorInterface) {
                         _.settings.onErrorInterface();
                     }
@@ -520,7 +528,7 @@
         });
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
-            _.tree.on('nodeSelected nodeChecked nodeUnselected nodeUnchecked', function(event, node) {
+            _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
                 _.setNodeState(event.type, node);
             });
 
@@ -833,7 +841,11 @@
             var _this = $(this);
             var node = _.tree.treeview('getNode', _this.parent().attr('nodeid'));
 
-            _.setNodeState('uncheckNode', node);
+            _.setNodeState('nodeUnchecked', node);
+
+            if($('.treeviewselect-listGroup .selected-item').length===0)  {
+                $('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
+            }
 
             _this.parent().remove();
 
@@ -935,10 +947,10 @@
         var $firstLi, preNodes, liHeight;
 
         $firstLi = _.tree.find('li[data-nodeid=' + nodeId + ']');
-        preNodes = $firstLi.prevAll();
-        liHeight = $firstLi.height() + parseInt($firstLi.css('padding-top').replace('px', '')) + parseInt($firstLi.css('padding-bottom').replace('px', ''));
 
         if ($firstLi.length > 0) {
+            preNodes = $firstLi.prevAll();
+            liHeight = $firstLi.height() + parseInt($firstLi.css('padding-top').replace('px', '')) + parseInt($firstLi.css('padding-bottom').replace('px', ''));
             _.treeContainer.scrollTop(liHeight * preNodes.length - 60);
         } else {
             _.treeContainer.scrollTop(0);
