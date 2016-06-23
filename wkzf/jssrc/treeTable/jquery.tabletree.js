@@ -84,6 +84,10 @@
         默认展开
         -----------------------------------------------------------------------------------------------------------*/
         defaultexpend: null,
+        /*-----------------------------------------------------------------------------------------------------------
+        需要隐藏的单元格配置(对象数组)－[{"id":111,"columnName":'test'}]
+        -----------------------------------------------------------------------------------------------------------*/
+        hiddenCells: []
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -120,16 +124,24 @@
             $.each(tbodyHtml, function(index, el) {
                 $element.find('tbody').append(el);
             });
+            if (opts.hiddenCells.length > 0) {
+                $.each(opts.hiddenCells, function(index, el) {
+                    $element.find('tr[data-id="' + el.id + '"]').find('td[data-name="' + el.columnName + '"]').css('display', 'none');;
+                });
+            }
         },
         /*-----------------------------------------------------------------------------------------------------------
         数据转换
         -----------------------------------------------------------------------------------------------------------*/
         flatToHierarchy: function(opts) {
+            var minParentId = opts.data.sort(function(a, b) {
+                return a[opts.parentKeyFieldName] - b[opts.parentKeyFieldName]
+            })[0][opts.parentKeyFieldName];
             var nestedData = opts.data.reduce(function(obj, item) {
                 var parentId = item[opts.parentKeyFieldName],
                     map = obj.map;
                 map[item[opts.keyFieldName]] = item;
-                if (parentId === null || parentId === 0) {
+                if (parentId === null || parentId === minParentId) {
                     obj.res.push(item);
                 } else {
                     var parentItem = map[parentId];
@@ -158,7 +170,7 @@
                     $tr;
                 trHtml.push('<tr data-id="' + val[opts.keyFieldName] + '" data-parentId="' + val[opts.parentKeyFieldName] + '" data-level="' + level + '" data-expended="false">');
                 $.each(opts.colmodel, function(index, el) {
-                    trHtml.push('<td>' + val[el.name] + '</td>');
+                    trHtml.push('<td data-name="' + el.name + '">' + val[el.name] + '</td>');
                 });
                 trHtml.push('</tr>')
                 $tr = $(trHtml.join(''));
