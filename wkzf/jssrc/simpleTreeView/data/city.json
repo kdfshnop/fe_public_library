@@ -56,7 +56,7 @@
             "t": "id=105",
             "state": {
                 "checked": true,
-                "expanded":true
+                "disabled":false,
             },
             "nodes": [{
                 "id": 106,
