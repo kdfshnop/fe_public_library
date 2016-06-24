@@ -27,14 +27,20 @@
         "t": "id=23"
     }, {
         "id": 42,
-        "name": "上海市",
+        "name": "上海",
         "pId": 1,
-        "t": "id=42"
+        "t": "id=42",
+        "state": {
+            "checked": true
+        }
     }, {
         "id": 43,
         "name": "上海市",
         "pId": 42,
-        "t": "id=43"
+        "t": "id=43",
+        "state": {
+            "checked": true
+        }
     }, {
         "id": 63,
         "name": "重庆市",
@@ -49,12 +55,19 @@
         "id": 105,
         "name": "河北省",
         "pId": 1,
-        "t": "id=105"
+        "t": "id=105",
+        "state": {
+            "checked": true,
+            "disabled": true
+        }
     }, {
         "id": 106,
         "name": "邯郸市",
         "pId": 105,
-        "t": "id=106"
+        "t": "id=106",
+        "state": {
+            "disabled": true
+        }
     }, {
         "id": 126,
         "name": "石家庄市",
