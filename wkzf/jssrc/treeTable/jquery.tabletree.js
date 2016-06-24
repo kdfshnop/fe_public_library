@@ -126,7 +126,7 @@
             });
             if (opts.hiddenCells.length > 0) {
                 $.each(opts.hiddenCells, function(index, el) {
-                    $element.find('tr[data-id="' + el.id + '"]').find('td[data-name="' + el.columnName + '"]').css('display', 'none');;
+                    $element.find('tr[data-id="' + el.id + '"]').find('td[data-name="' + el.columnName + '"]').css('visibility', 'hidden');;
                 });
             }
         },
