@@ -62,10 +62,7 @@
                 "id": 106,
                 "text": "邯郸市",
                 "pId": 105,
-                "state":{
-                    "checked":true,
-                    "expanded":true
-                },
+                "state":null,
                 "t": "id=106"
             }, {
                 "id": 126,

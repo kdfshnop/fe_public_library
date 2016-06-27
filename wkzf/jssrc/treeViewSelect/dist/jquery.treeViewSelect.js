@@ -172,7 +172,7 @@
         }).res;
 
         function insert(obj, item) {
-            var parent = item.pId;
+            var parent = item.pid;
             var map = obj.map;
             map[item.id] = item;
 
