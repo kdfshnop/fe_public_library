@@ -103,6 +103,7 @@
 
             // Get methods
             getNode: $.proxy(this.getNode, this),
+            getAllNodes: $.proxy(this.getAllNodes, this),
             getParent: $.proxy(this.getParent, this),
             getSiblings: $.proxy(this.getSiblings, this),
             getSelected: $.proxy(this.getSelected, this),
@@ -716,6 +717,17 @@
     */
     Tree.prototype.getNode = function(nodeId) {
         return this.nodes[nodeId];
+    };
+
+
+    //add by yuxiaochen 2016-06-28
+    /**
+        Returns a single node object that matches the given node id.
+        @param {Number} id - A node's unique identifier property
+        @return {Object} node - Matching node
+    */
+    Tree.prototype.getAllNodes = function(id) {
+        return this.nodes;
     };
 
     /**

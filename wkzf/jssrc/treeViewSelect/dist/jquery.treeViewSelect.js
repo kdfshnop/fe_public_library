@@ -55,7 +55,7 @@
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             调用服务端SOA接口,需要的user token 信息
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            token:'',
+            token: '',
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             接口请求出错时候的接口方法 
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -569,7 +569,7 @@
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.addListenersToHanlder = function() {
         var _ = this;
-        var nodeIds, nodeTexts;
+        var nodeIds, nodeTexts,tmpNode;
 
         //如果存在默认值
         if (_.element.attr('data-id') && _.element.attr('data-text')) {
@@ -577,8 +577,9 @@
             nodeTexts = _.element.attr('data-text').split(',');
             if (nodeIds && nodeTexts && nodeIds.length > 0 && nodeTexts.length > 0) {
                 for (var i = 0; i < nodeIds.length; i++) {
+                    tmpNode=_.getNodeById(nodeIds[i]);
                     //生成选中项
-                    $selectedItem = _.genTreeSelectItem(nodeIds[i], nodeTexts[i]);
+                    $selectedItem = _.genTreeSelectItem(tmpNode.id, tmpNode.text);
                     //添加到父容器
                     _.element.find('.treeviewselect-listGroup ul').append($selectedItem);
                 }
@@ -588,7 +589,6 @@
 
         //绑定点击事件
         _.element.on('click', function() {
-
             var firstNodeId, $firstNode;
 
             //设置tree 点击是否显示
@@ -616,7 +616,7 @@
                 _.element.find('.treeviewselect-item').each(function(index, el) {
                     if (!$(el).hasClass('ellipsis-item')) {
                         var nodeId = $(el).attr('nodeid');
-                        var node = _.tree.treeview('getNode', nodeId);
+                        var node = _.getNodeById(nodeId);
 
                         //选中节点
                         if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -843,7 +843,7 @@
 
             _.setNodeState('nodeUnchecked', node);
 
-            if($('.treeviewselect-listGroup .selected-item').length===0)  {
+            if ($('.treeviewselect-listGroup .selected-item').length === 0) {
                 $('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
             }
 
@@ -937,6 +937,25 @@
 
 
         return idArray;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    根据ID属性获取tree Node
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.getNodeById = function(id) {
+        var _ = this;
+        var tmpNode;
+        var nodes = _.tree.treeview('getAllNodes');
+        if (nodes && nodes.length > 0) {
+            for (var i = nodes.length - 1; i >= 0; i--) {
+                tmpNode = nodes[i];
+                if (tmpNode.id == id) {
+                    break;
+                }
+            }
+        }
+
+        return tmpNode;
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
