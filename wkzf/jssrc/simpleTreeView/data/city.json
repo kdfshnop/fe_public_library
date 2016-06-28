@@ -63,7 +63,11 @@
                 "text": "邯郸市",
                 "pId": 105,
                 "state":null,
-                "t": "id=106"
+                "t": "id=106",
+                "state":{
+                    "checked":true,
+                    "disabled":true
+                }
             }, {
                 "id": 126,
                 "text": "石家庄市",

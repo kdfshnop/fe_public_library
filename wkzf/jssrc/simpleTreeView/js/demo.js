@@ -15,6 +15,9 @@ $(function(){
 
 	$('#btnSave').on('click',function(){
 		var checkedNodes=$('#tree').simpleTreeView('getChecked');
+		var realCheckedNodes=$('#tree').simpleTreeView('getRealChecked');
 		console.log(checkedNodes);
+		console.log(realCheckedNodes);
 	});
+
 });
