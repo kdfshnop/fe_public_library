@@ -394,7 +394,7 @@
                 dataType: _.settings.dataType,
                 data: _.settings.data,
                 success: function(resp) {
-                    if (resp && resp.status == '200') {
+                    if (resp && resp.status == '1') {
                         if (resp.data) {
                             require([_.settings.sourceUrl], function() {
                                 _.initialized = true;
