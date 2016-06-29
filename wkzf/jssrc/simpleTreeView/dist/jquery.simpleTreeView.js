@@ -548,31 +548,20 @@
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     获取当前选中节点，不包含disabled节点
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    SimpleTreeView.prototype.getRealChecked = function() {
-        var _ = this;
-
-        var checkedNodes = _.tree.treeview('getChecked');
-        var disabledNodes = _.tree.treeview('getDisabled');
+    SimpleTreeView.prototype.getRealChecked = function() {        
+        var _ = this;        
+        var checkedNodes = _.tree.treeview('getChecked');        
         var nodes = new Array();
 
-        if (!disabledNodes.length) {
-            nodes = checkedNodes;
-
-        } else {
-            for (var i = 0; i < checkedNodes.length; i++) {
-                for (var j = 0; j < disabledNodes.length; j++)
-                    if (checkedNodes[i].id != disabledNodes[j].id) {
-                        nodes.push(checkedNodes[i]);
-                    }
-            }
+                
+        for (var i = 0; i < checkedNodes.length; i++) {            
+            if (!checkedNodes[i].state.disabled) {                
+                nodes.push(checkedNodes[i]);            
+            }        
         }
-        return nodes;
 
+        return nodes;    
     }
-
-
-
-
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     相关显示dom元素模板定义
