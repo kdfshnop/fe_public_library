@@ -4,7 +4,7 @@
 	        apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/city.json',
 	        dataType: 'json',
 	        bootstrapTreeParams: {
-	            multiSelect: false
+	            multiSelect: true
 	        }
 	    });
 
@@ -14,5 +14,9 @@
 	            apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/data/city.json',
 	            dataType: 'json'
 	        });
+	    });
+
+	    $('#area').on('completed',function(eventType,node){
+	    	console.log('completed');
 	    });
 	});

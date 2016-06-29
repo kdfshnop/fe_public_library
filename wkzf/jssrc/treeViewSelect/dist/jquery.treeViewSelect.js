@@ -93,6 +93,10 @@
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             onCompleted: undefined,
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            节点选中事件
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            onSelected: undefined,
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
              bootstrap-treeview 参数配置
              --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             "bootstrapTreeParams": {
@@ -569,7 +573,7 @@
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.addListenersToHanlder = function() {
         var _ = this;
-        var nodeIds, nodeTexts,tmpNode;
+        var nodeIds, nodeTexts, tmpNode;
 
         //如果存在默认值
         if (_.element.attr('data-id') && _.element.attr('data-text')) {
@@ -577,7 +581,7 @@
             nodeTexts = _.element.attr('data-text').split(',');
             if (nodeIds && nodeTexts && nodeIds.length > 0 && nodeTexts.length > 0) {
                 for (var i = 0; i < nodeIds.length; i++) {
-                    tmpNode=_.getNodeById(nodeIds[i]);
+                    tmpNode = _.getNodeById(nodeIds[i]);
                     //生成选中项
                     $selectedItem = _.genTreeSelectItem(tmpNode.id, tmpNode.text);
                     //添加到父容器
@@ -620,10 +624,10 @@
 
                         //选中节点
                         if (_.settings.bootstrapTreeParams.multiSelect) {
-                            _.setNodeState("nodeChecked", node);
+                            _.setNodeState("nodeChecked", node, false);
 
                         } else {
-                            _.setNodeState('nodeSelected', node);
+                            _.setNodeState('nodeSelected', node, false);
                         }
 
                         //展开节点
@@ -663,8 +667,9 @@
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     设置Tree 节点的状态
+    isNeedSetSelectItem:表示是否需要重新render 选择项
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.setNodeState = function(eventType, node) {
+    TreeViewSelect.prototype.setNodeState = function(eventType, node, isNeedSetSelectItem) {
         var _ = this;
 
         //如果支持多选
@@ -710,7 +715,9 @@
         }
 
         //根据选中的节点生成选中项
-        this.setTreeSelectItem();
+        if (isNeedSetSelectItem == undefined) {
+            this.setTreeSelectItem();
+        }
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -761,7 +768,7 @@
                 listNodes[i].level = pNodesArr.length;
 
                 //生成选中项
-                $selectedItem = _.genTreeSelectItem(listNodes[i].nodeId, listNodes[i].text);
+                $selectedItem = _.genTreeSelectItem(listNodes[i].id, listNodes[i].text);
 
                 //如果支持多选但是不支持多行，则超出部分显示省略号
                 if (_.settings.bootstrapTreeParams.multiSelect && !_.settings.multiRow) {
@@ -839,7 +846,8 @@
 
         $selectedItem.find('.glyphicon-remove').on('click', function() {
             var _this = $(this);
-            var node = _.tree.treeview('getNode', _this.parent().attr('nodeid'));
+
+            var node =_.getNodeById(_this.parent().attr('nodeid'));
 
             _.setNodeState('nodeUnchecked', node);
 
