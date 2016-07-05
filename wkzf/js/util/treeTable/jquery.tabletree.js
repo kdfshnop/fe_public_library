@@ -93,9 +93,13 @@
         -----------------------------------------------------------------------------------------------------------*/
         enableSort: false,
         /*-----------------------------------------------------------------------------------------------------------
-        是否添加编辑删除查看按钮{edit:true/false,delete:true/false,detail}
+        是否添加编辑删除查看按钮{edit:"url",delete:"url",detail:"url"}
         -----------------------------------------------------------------------------------------------------------*/
         enableOperation: null,
+        /*-----------------------------------------------------------------------------------------------------------
+        渲染完成回调函数
+        -----------------------------------------------------------------------------------------------------------*/
+        callback: null
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -192,12 +196,12 @@
                     trHtml.push('<td data-name="operation">');
                     var tdsHtml = []
                     $.each(opts.enableOperation, function(index, el) {
-                        if (index === "edit" && el) {
-                            tdsHtml.push('<a href="javascript:;" class＝"operation edit">编辑</a>')
-                        } else if (index === "delete" && el) {
-                            tdsHtml.push('<a href="javascript:;" class＝"operation delete">删除</a>')
-                        } else if (index === "detail" && el) {
-                            tdsHtml.push('<a href="javascript:;" class＝"operation detail">查看</a>')
+                        if (index === "edit" && el && el.length > 0) {
+                            tdsHtml.push('<a href="javascript:;" class＝"operation edit" data-href="' + el + '">编辑</a>')
+                        } else if (index === "delete" && el && el.length > 0) {
+                            tdsHtml.push('<a href="javascript:;" class＝"operation delete" data-href="' + el + '">删除</a>')
+                        } else if (index === "detail" && el && el.length > 0) {
+                            tdsHtml.push('<a href="javascript:;" class＝"operation detail" data-href="' + el + '">查看</a>')
                         };
                     });
                     trHtml.push(tdsHtml.join('&nbsp;&nbsp;'))
@@ -248,6 +252,7 @@
                 });
             }
             this.bindEvent();
+            if (classSelf.options.callback) classSelf.options.callback();
         },
         /*-----------------------------------------------------------------------------------------------------------
         绑定事件
