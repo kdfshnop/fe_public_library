@@ -197,18 +197,18 @@
                     var tdsHtml = []
                     $.each(opts.enableOperation, function(index, el) {
                         if (index === "edit" && el && el.length > 0) {
-                            tdsHtml.push('<a href="javascript:;" class＝"operation edit" data-href="' + el + '">编辑</a>')
+                            tdsHtml.push('<a href="javascript:;" class="operation edit" data-href="' + el + '">编辑</a>')
                         } else if (index === "delete" && el && el.length > 0) {
-                            tdsHtml.push('<a href="javascript:;" class＝"operation delete" data-href="' + el + '">删除</a>')
+                            tdsHtml.push('<a href="javascript:;" class="operation delete" data-href="' + el + '">删除</a>')
                         } else if (index === "detail" && el && el.length > 0) {
-                            tdsHtml.push('<a href="javascript:;" class＝"operation detail" data-href="' + el + '">查看</a>')
+                            tdsHtml.push('<a href="javascript:;" class="operation detail" data-href="' + el + '">查看</a>')
                         };
                     });
                     trHtml.push(tdsHtml.join('&nbsp;&nbsp;'))
                     trHtml.push('</td>');
                 }
                 if (opts.enableSort) {
-                    trHtml.push('<td data-name="sort"><a href="javascript:;" class＝"sort up">上移</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort down">下移</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort top">置顶</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort bottom">置底</a></td>');
+                    trHtml.push('<td data-name="sort"><a href="javascript:;" class="sort up">上移</a>&nbsp;&nbsp;<a href="javascript:;" class="sort down">下移</a>&nbsp;&nbsp;<a href="javascript:;" class="sort top">置顶</a>&nbsp;&nbsp;<a href="javascript:;" class="sort bottom">置底</a></td>');
                 }
                 trHtml.push('</tr>')
                 $tr = $(trHtml.join(''));
