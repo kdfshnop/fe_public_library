@@ -25,12 +25,15 @@
         var colmodels = [{
             'name': 'area_name',
             "display_name": '区域',
+            'width':'20%',
         }, {
             'name': 'quantity',
             'display_name': '房源数量（套）',
+            'width':'20%',
         }, {
             'name': 'price',
             'display_name': '均价（元）',
+            'width':'20%',
         }];
         $.ajax({
             url: 'sampleData.json',
@@ -42,6 +45,9 @@
                     'colmodel': colmodels,
                     'keyFieldName': 'area_id',
                     'parentKeyFieldName': 'parent_area_id',
+                    'defaultexpend': [1, 2],
+                    'hiddenCells':[{id:1,columnName:'sort'}],
+                    'enableSort': true
                 });
             },
             error: function(e) {
