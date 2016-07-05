@@ -91,7 +91,11 @@
         /*-----------------------------------------------------------------------------------------------------------
         是否添加设置排序按钮
         -----------------------------------------------------------------------------------------------------------*/
-        enableSort: false
+        enableSort: false,
+        /*-----------------------------------------------------------------------------------------------------------
+        是否添加编辑删除查看按钮{edit:true/false,delete:true/false,detail}
+        -----------------------------------------------------------------------------------------------------------*/
+        enableOperation: null,
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -111,6 +115,9 @@
                 var width = el.width || '50px';
                 tableHtml.push('<th name="' + el.name + '" style="width:' + width + '">' + el.display_name + '</th>');
             });
+            if (opts.enableOperation) {
+                tableHtml.push('<th name="sort" style="100px">操作</th>');
+            }
             if (opts.enableSort) {
                 tableHtml.push('<th name="sort" style="100px">排序</th>');
             }
@@ -181,8 +188,23 @@
                 $.each(opts.colmodel, function(index, el) {
                     trHtml.push('<td data-name="' + el.name + '">' + val[el.name] + '</td>');
                 });
+                if (opts.enableOperation) {
+                    trHtml.push('<td data-name="operation">');
+                    var tdsHtml = []
+                    $.each(opts.enableOperation, function(index, el) {
+                        if (index === "edit" && el) {
+                            tdsHtml.push('<a href="javascript:;" class＝"operation edit">编辑</a>')
+                        } else if (index === "delete" && el) {
+                            tdsHtml.push('<a href="javascript:;" class＝"operation delete">删除</a>')
+                        } else if (index === "detail" && el) {
+                            tdsHtml.push('<a href="javascript:;" class＝"operation detail">查看</a>')
+                        };
+                    });
+                    trHtml.push(tdsHtml.join('&nbsp;&nbsp;'))
+                    trHtml.push('</td>');
+                }
                 if (opts.enableSort) {
-                    trHtml.push('<td data-name="sort"><a href="javascript:; class＝"sort up">上移</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort down">下移</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort top">置顶</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort bottom">置底</a></td>');
+                    trHtml.push('<td data-name="sort"><a href="javascript:;" class＝"sort up">上移</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort down">下移</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort top">置顶</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort bottom">置底</a></td>');
                 }
                 trHtml.push('</tr>')
                 $tr = $(trHtml.join(''));
