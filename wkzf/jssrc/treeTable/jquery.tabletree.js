@@ -87,7 +87,11 @@
         /*-----------------------------------------------------------------------------------------------------------
         需要隐藏的单元格配置(对象数组)－[{"id":111,"columnName":'test'}]
         -----------------------------------------------------------------------------------------------------------*/
-        hiddenCells: []
+        hiddenCells: [],
+        /*-----------------------------------------------------------------------------------------------------------
+        是否添加设置排序按钮
+        -----------------------------------------------------------------------------------------------------------*/
+        enableSort: false
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -104,9 +108,12 @@
             tableHtml.push('<table class="table table-tree ' + opts.tableClass + '">');
             tableHtml.push('<thead><tr>');
             $.each(columns, function(index, el) {
-                var width = el.width || 50;
-                tableHtml.push('<th name="' + el.name + '" style="width:' + width + 'px">' + el.display_name + '</th>');
+                var width = el.width || '50px';
+                tableHtml.push('<th name="' + el.name + '" style="width:' + width + '">' + el.display_name + '</th>');
             });
+            if (opts.enableSort) {
+                tableHtml.push('<th name="sort" style="100px">排序</th>');
+            }
             tableHtml.push('</tr></thead>');
             tableHtml.push('<tbody></tbody>')
             tableHtml.push('</table>');
@@ -174,6 +181,9 @@
                 $.each(opts.colmodel, function(index, el) {
                     trHtml.push('<td data-name="' + el.name + '">' + val[el.name] + '</td>');
                 });
+                if (opts.enableSort) {
+                    trHtml.push('<td data-name="sort"><a href="javascript:; class＝"sort up">上移</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort down">下移</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort top">置顶</a>&nbsp;&nbsp;<a href="javascript:;" class＝"sort bottom">置底</a></td>');
+                }
                 trHtml.push('</tr>')
                 $tr = $(trHtml.join(''));
 
