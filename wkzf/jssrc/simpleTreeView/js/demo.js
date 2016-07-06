@@ -4,6 +4,7 @@ $(function(){
 		apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/city.json',
 		dataType:'json',
 		stateSynch:true,
+		showSearch:true,
 		bootstrapTreeParams:{
 			color:'#4081d6'
 		}

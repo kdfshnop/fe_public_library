@@ -568,7 +568,7 @@
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     SimpleTreeView.prototype.template = {
         tree: '<div class="treeviewSelect-tree"></div>',
-        searchInput: '<input class="treeview-search-input" placeholder="请搜索..."></input>',
+        searchInput: '<input class="treeview-search-input form-control" placeholder="请搜索..."></input>',
     }
 
     var logError = function(message) {
