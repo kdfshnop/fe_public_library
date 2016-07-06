@@ -870,7 +870,8 @@
     TreeViewSelect.prototype.setTreePosition = function() {
         var _ = this;
 
-        var sOffset = _.element.offset();
+        // var sOffset = _.element.offset();
+        var sOffset = _.element.position();
         var sPaddingTop = _.element.css('padding-top').replace('px', '');
         var sPaddingBottom = _.element.css('padding-bottom').replace('px', '');
         var sPaddingLeft = _.element.css('padding-left').replace('px', '');
