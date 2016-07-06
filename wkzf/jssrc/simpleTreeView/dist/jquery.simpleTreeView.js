@@ -412,7 +412,8 @@
                     if (_.settings.onErrorInterface) {
                         _.settings.onErrorInterface();
                     }
-                }
+                },
+                timeout: 5000
             })
         } catch (e) {
             logError(e);
