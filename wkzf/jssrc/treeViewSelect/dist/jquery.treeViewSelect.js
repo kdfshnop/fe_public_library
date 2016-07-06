@@ -575,11 +575,11 @@
         var _ = this;
         var nodeIds, nodeTexts, tmpNode;
 
+        debugger;
         //如果存在默认值
-        if (_.element.attr('data-id') && _.element.attr('data-text')) {
+        if (_.element.attr('data-id')) {
             nodeIds = _.element.attr("data-id").split(',');
-            nodeTexts = _.element.attr('data-text').split(',');
-            if (nodeIds && nodeTexts && nodeIds.length > 0 && nodeTexts.length > 0) {
+            if (nodeIds && nodeIds.length > 0) {
                 for (var i = 0; i < nodeIds.length; i++) {
                     tmpNode = _.getNodeById(nodeIds[i]);
                     //生成选中项
@@ -847,7 +847,7 @@
         $selectedItem.find('.glyphicon-remove').on('click', function() {
             var _this = $(this);
 
-            var node =_.getNodeById(_this.parent().attr('nodeid'));
+            var node = _.getNodeById(_this.parent().attr('nodeid'));
 
             _.setNodeState('nodeUnchecked', node);
 
@@ -870,7 +870,8 @@
     TreeViewSelect.prototype.setTreePosition = function() {
         var _ = this;
 
-        var sOffset = _.element.offset();
+        // var sOffset = _.element.offset();
+        var sOffset = _.element.position();
         var sPaddingTop = _.element.css('padding-top').replace('px', '');
         var sPaddingBottom = _.element.css('padding-bottom').replace('px', '');
         var sPaddingLeft = _.element.css('padding-left').replace('px', '');
