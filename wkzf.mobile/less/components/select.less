@@ -1,0 +1,65 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：悟空找房移动端FE-MVC框架
+ 2. 文件名称：select.less (下拉选择器)
+ 3. 作者：zhaohuagang@lifang.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.wkzf-select {
+    border-top : 1px solid @line-gray-color ;
+    box-shadow : 0 3px 12px rgba(0, 0, 0, 0.176) ;
+    bottom : -19rem ; 
+    display : none ;
+    left : 0 ; 
+    position : fixed ;
+    width : 100% ;
+    .select-toolbar {
+        background-color : @title-background-color ;
+        border-bottom : 1px solid @light-line-gray-color ;
+        .clearfix() ;
+        line-height : 4rem ;
+        text-align : center ;
+        h5 {
+            display : inline-block ;
+            font-size : 1.4rem ;
+            font-weight : normal ;
+            text-shadow : 0 -1px 0 #fff ;
+        }
+        a {            
+            display : block ;            
+            font-size : 1.4rem ;
+            line-height : 4rem ;            
+            text-shadow : 0 -1px 0 #fff ;
+        }
+        .confirm {
+            color : @success-color ;
+            float : right ;
+            margin-right : 1rem ;
+        }
+        .cancel {
+            color : @light-font-color ;
+            float : left ;
+            margin-left : 1rem ;
+        }
+    }
+    .select-items {
+        background-color : rgba(255, 255, 255, .9) ;
+        max-height : 15rem ;
+        overflow : auto ;
+        a {            
+            border-top : 1px solid @light-line-gray-color ;
+            color : @default-font-color ;
+            display : block ;
+            font-size : 1.4rem ;
+            line-height : 3.5rem ;
+            margin : 0 1rem ;
+            &:nth-child(1) {
+                border-top-color : transparent ;
+            }
+            .iconfont {
+                color : @success-color ;
+                float : right ;
+                font-size : 1.8rem ;
+                margin-right : .5rem ;
+            }
+        }
+    }
+}

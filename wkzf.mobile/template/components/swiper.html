@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="../../css/app.min.css">
+        <style>
+            .swiper-container {                
+                height : 30rem ;
+            } 
+             .swiper-slide {
+                color : #fff ;
+                font-size : 2.4rem ;
+                line-height : 30rem ;
+                text-align : center ;
+            }
+        </style>
+        <title>swiper的demo</title>
+    </head>
+    <body ontouchstart="">
+        <!--body的ontouchstart：active兼容处理 即 伪类 :active 失效-->
+        <div class="swiper-container">            
+            <div class="swiper-wrapper">                
+                <div class="swiper-slide" style="background-color : #cc0000 ;">我是第一帧</div>
+                <div class="swiper-slide" style="background-color : #ff9900 ;">我是第二帧</div>
+                <div class="swiper-slide" style="background-color : #ffcc00 ;">我是第三帧</div>
+                <div class="swiper-slide" style="background-color : #ffff00 ;">我是第四帧</div>
+                <div class="swiper-slide" style="background-color : #cccc00 ;">我是第五帧</div>
+                <div class="swiper-slide" style="background-color : #ffcc99 ;">我是第六帧</div>
+            </div>            
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"><i class="iconfont icon-fanhui"></i></div>
+            <div class="swiper-button-next"><i class="iconfont icon-xiangyou3"></i></div>
+            <div class="swiper-scrollbar"></div>
+        </div>
+        <script src="../../js/app.min.js"></script>
+       <script>        
+            var mySwiper = new Swiper ('.swiper-container', {          
+                direction : "horizontal" ,
+                loop : true ,
+                pagination : ".swiper-pagination" ,         
+                nextButton : ".swiper-button-next" ,
+                prevButton : ".swiper-button-prev" ,         
+                scrollbar : ".swiper-scrollbar"
+            }) ;
+        </script>
+    </body>
+</html>

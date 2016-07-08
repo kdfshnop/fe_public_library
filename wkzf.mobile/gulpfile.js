@@ -52,7 +52,8 @@ gulp.task("compileLess", function() {
 gulp.task("concatUglifyToApp", function() {
     return gulp.src(concatJsPath)
         .pipe(plumber())
-        .pipe(concat("app.min.js"))        
+        .pipe(concat("app.min.js"))
+        .pipe(uglify())
         .pipe(gulp.dest("js"));
 }) ;
 

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="../../css/app.min.css"> 
+        <style>
+            .memo {
+                background-color : #fff ;
+                color : #c00 ;
+                padding : 2.0rem ;                
+            }
+            .memo>h3 {                
+                font-weight : normal ;
+                font-size : 1.8rem ;
+                line-height : 200% ;
+            }
+            .memo>p {
+                font-size : 1.2rem ;
+                line-height : 170% ;                    
+            }
+            .item {
+                background-color : #f9f9f9 ;
+                border-bottom : 1px solid #eee ;
+                font-size : 1.4rem ;
+                line-height : 5rem ;
+                text-align : center ;
+            }
+            .item:nth-child(1) {
+                border-top : 1px solid #eee ;
+            }
+            .data-status {
+                background-color : #fff ;
+                border-bottom : 1px solid #eee ;
+                color : #999 ;
+                font-size : 1.2rem ;
+                line-height : 4.0rem ;
+                text-align : center ;
+            }
+        </style>
+        <title>拖动加载pullload的demo</title>
+    </head>
+    <body>
+        <div class="memo">
+            <h3>pullload(拖动加载)插件使用说明</h3>
+            <p>在发送Ajax向后端请求数据的时候的入参包含了插件初始化的时候的requestLoadedKey这个key的值表示的key，比如默认为loaded，插件会去自动计算容器内已经存在的遍历元素有多少个当做这个参数的值传给后端接口，所以后端接口要接收这个key的值来决定返回的数据是从 loaded + 1 条记录开始的。同时接口的返参在第一级key里面一定要有"count"这个key，"count"也可以由插件的countKey参数指定</p>
+        </div>
+        <div class="container">
+            <div class="item">这是第 1 条记录</div>
+            <div class="item">这是第 2 条记录</div>
+            <div class="item">这是第 3 条记录</div>
+            <div class="item">这是第 4 条记录</div>
+            <div class="item">这是第 5 条记录</div>
+        </div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <script src="../../js/app.min.js"></script>        
+        <script>
+            $(".container").pullload({
+                "loadingTips" : "<img src=\"../../images/loading.gif\"> 数据加载中..." ,
+                "apiUrl" : "../../json/pullloadData.json" ,
+                "callback" : function(result) {
+                    $.each(result.data, function(key, entry){
+                        $(".container").append("<div class=\"item\">这是第 " + entry.sn + " 条记录</div>") ;
+                    }) ;
+                }
+            }) ;
+        </script>
+    </body>
+</html>

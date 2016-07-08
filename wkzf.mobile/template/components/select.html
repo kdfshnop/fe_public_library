@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="../../css/app.min.css">       
+        <title>下拉选择插件demo</title>
+    </head>
+    <body>
+        <br><br><br>
+        <input id="interest" value="足球,篮球,音乐" readonly><input type="hidden" value="football,basketball,music" id="selectedInterest">
+        <script src="../../js/app.min.js"></script>
+        <script>
+            $("input").select({
+                "title" : "请选择爱好" ,
+                "options" : [
+                    { "text" : "足球" , "value" : "football" } ,
+                    { "text" : "篮球" , "value" : "basketball" } ,
+                    { "text" : "音乐" , "value" : "music" } ,
+                    { "text" : "旅游" , "value" : "tour" } ,
+                    { "text" : "打架" , "value" : "war" } ,
+                    { "text" : "计算机" , "value" : "computer" }
+                ] ,
+                "valueUnionSelector" : "#selectedInterest" ,
+                "multiple" : true ,
+                "least" : 2 ,
+                "most" : 3
+            }) ;
+        </script>
+    </body>
+</html>

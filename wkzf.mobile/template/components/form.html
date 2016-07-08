@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="../../css/app.min.css">
+        <style>
+            .toolbar {
+                padding : 1rem ;
+            }
+        </style>
+        <title>form表单的demo</title>
+    </head>
+    <body>
+        <form class="wkzf-form form-horizontal">
+            <section class="wkzf-panel top-gap">
+                <div class="form-group">
+                    <label class="control-label percent-20">QQ号码</label>
+                    <div class="percent-80 control-box"><input type="text" name="qq" class="form-control" placeholder="请输入QQ号"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label percent-20">微信号码</label>
+                    <div class="percent-80 control-box"><input type="text" name="weixin" class="form-control" placeholder="请输入微信号"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label percent-20">职业</label>
+                    <div class="percent-80 control-box selectable-flag">
+                        <select class="form-control">
+                            <option value="" selected>请选择</option>
+                            <option value="1">老师</option>
+                            <option value="1">医生</option>
+                        </select>
+                    </div>                    
+                </div>
+            </section>
+            <section class="wkzf-panel top-gap">
+                <div class="panel-header">头像上传</div>
+                <div class="portrait-uploader"></div>
+            </section>
+            <section class="wkzf-panel top-gap">
+                <div class="panel-header">备注</div>
+                <div><textarea class="form-control"></textarea></div>
+            </section>
+            <div class="toolbar"><button class="wkzf-btn wkzf-btn-block wkzf-btn-success wkzf-btn-lg">提交</button></div>
+        </form>        
+        <script src="../../js/app.min.js"></script>        
+        <script>
+            $(".portrait-uploader").upload({
+                "multiple" : true
+            }) ;
+        </script>
+    </body>
+</html>
