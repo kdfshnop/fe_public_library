@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="../../css/app.min.css">
+        <title>通知(notification)的demo</title>
+    </head>
+    <body>        
+        <script src="../../js/app.min.js"></script>
+        <script>
+            $.notification({
+                "html" : "出大事啦！我中了一千万！" ,
+                "onClick" : function(){ alert("你敢打我？") ; } ,
+                //"onClose" : function() { alert("不想看啦？") ; } ,
+                "time" : 4
+            }) ;
+        </script>
+    </body>
+</html>

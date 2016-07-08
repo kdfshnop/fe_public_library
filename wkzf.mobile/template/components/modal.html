@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="../../css/app.min.css">        
+        <style>
+            body {
+                margin : 20px ;
+            }
+        </style>
+        <title>modal框的demo</title>
+    </head>
+    <body>
+        <a href="javascript:void(0);" id="alertModal" class="wkzf-btn wkzf-btn-lg wkzf-btn-success">弹出一个Alert框</a>
+        <br><br>
+        <a href="javascript:void(0);" id="confirmModal" class="wkzf-btn wkzf-btn-primary">弹出一个Confirm框</a>
+        <br><br>
+        <a href="javascript:void(0);" id="tips" class="wkzf-btn wkzf-btn-sm wkzf-btn-warning">这个其实不是modal，只是差不多的应用场景</a>
+        <br><br>
+        <a href="javascript:void(0);" id="customModal" class="wkzf-btn wkzf-btn-xs wkzf-btn-danger">玩一点自定义的modal</a>
+        <script src="../../js/app.min.js"></script>        
+        <script>
+            $("#alertModal").click(function(){
+                $.alert({                    
+                    "title" : "提示信息" ,
+                    "content" : "AlphaGo 就是天网的前身，人类要完蛋了！"                    
+                }) ;
+            }) ;
+            $("#confirmModal").click(function(){
+                $.confirm({
+                    "id" : "confirmDialog" ,
+                    "title" : "智商测试题" ,
+                    "content" : "如花和苏菲玛索摆在你面前你会选择如花吗？" ,
+                    "confirmText" : "是" ,
+                    "confirmInterface" : function() { alert("sb") ; } ,
+                    "cancelText" : "否 " ,
+                    "cancelInterface" : function() { alert("好样的！") ; $.modal.close("confirmDialog") ; } 
+                }) ;
+            }) ;
+            $("#tips").click(function(){
+                $.tips("大哥别杀我！", 3, function(){ alert("妈的你还是开枪了！") ; }) ;
+            }) ;
+            $("#customModal").click(function(){
+                $.modal({
+                    "id" : "customModalDialog" ,
+                    "title" : "来搞个测试啊！" ,
+                    "content" : "我觉得你是一个超级烂人你相信吗？<br><input type=\"radio\"> 相信 <input type=\"radio\"> 不相信" ,
+                    "buttons" : [
+                         { "text" : "确定" , "className" : "text-success" , "clickInterface" : function(){ alert("确定") ; $.modal.close("customModalDialog") ; } } ,
+                         { "text" : "否认" , "className" : "text-info" , "clickInterface" : function(){ alert("否认") ; } } ,
+                         { "text" : "你坏淫" , "className" : "text-warning" , "clickInterface" : function(){ alert("不置可否") ; } }
+                    ]
+                }) ;
+            }) ;
+        </script>
+    </body>
+</html>

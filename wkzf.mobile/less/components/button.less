@@ -1,0 +1,63 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：悟空找房移动端FE-MVC框架
+ 2. 文件名称：button.less (按钮)
+ 3. 作者：zhaohuagang@lifang.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.wkzf-btn {
+    .border-radius(3px) ;
+    box-shadow : 0 1px 1px rgba(255, 255, 255, 0.4) inset ;
+    color : @default-font-color ;
+    display : inline-block ;
+    font-size : 1.4rem ;
+    line-height : 170% ;
+    padding : .5rem 1rem ;
+    text-align : center ;    
+    &.wkzf-btn-lg {
+        font-size : 1.8rem ;
+    }
+    &.wkzf-btn-sm {
+        font-size : 1.2rem ;       
+    }
+    &.wkzf-btn-xs {
+        font-size : 1rem ;
+        -webkit-transform : scale(0.84, 0.84) ;
+    }
+    &.wkzf-btn-transparent {
+        .transparent() ;
+    }
+    &.wkzf-btn-block {
+        display : block ;
+        width : 100% ;
+    }
+    &.wkzf-btn-success {
+        //background-color : @success-color ;
+        .v-gradient(@success-color, @success-deeper-color, 20% ,100%) ;
+        border : 1px solid @success-deeper-color ;
+        color : #fff ;
+    }
+    &.wkzf-btn-primary {
+        //background-color : @primary-color ;
+        .v-gradient(@primary-color, @primary-deeper-color, 20% ,100%) ;
+        border : 1px solid @primary-deeper-color ;
+        color : #fff ;
+    }
+    &.wkzf-btn-info {
+        //background-color : @info-color ;
+        .v-gradient(@info-color, @info-deeper-color, 20% ,100%) ;
+        border : 1px solid @info-deeper-color ;
+        color : #fff ;
+    }
+    &.wkzf-btn-warning {
+        //background-color : @warning-color ;
+        .v-gradient(@warning-color, @warning-deeper-color, 20% ,100%) ;
+        border : 1px solid @warning-deeper-color ;
+        color : #fff ;
+    }
+    &.wkzf-btn-danger {
+        //background-color : @danger-color ;
+        .v-gradient(@danger-color, @danger-deeper-color, 20% ,100%) ;
+        border : 1px solid @danger-deeper-color ;
+        color : #fff ;
+    }
+}
+

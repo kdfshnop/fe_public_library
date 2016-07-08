@@ -1,0 +1,29 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：悟空找房移动端FE-MVC框架
+ 2. 文件名称：notification.less (通知)
+ 3. 作者：zhaohuagang@lifang.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.wkzf-notification {
+    background-color : @notification-bg-color  ;  
+    //display : none ;
+    left : 0 ;
+    position : fixed ;
+    top : 0 ;
+    width : 100% ;    
+    z-index : 9999 ;
+    .notification-content {
+        color : @notification-content-color ;
+        font-size : 1.2rem ;
+        line-height : @notification-content-line-height ;
+        padding : .3rem .3rem 0 .3rem ;
+        text-align : center ;
+    }
+    .notification-handle-bar {
+        background-color : @notification-handler-bar-bg-color ;
+        .border-radius(100px) ;
+        .center-block() ;
+        height : .35rem ;        
+        margin-bottom : .3rem ;
+        width : 3rem ;
+    }
+}

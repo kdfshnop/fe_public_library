@@ -1,0 +1,32 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：悟空找房移动端FE-MVC框架
+ 2. 文件名称：tab.less (标签页)
+ 3. 作者：zhaohuagang@lifang.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.wkzf-tabs {   
+    .tabs-handle {
+        background-color : #fff ;
+        border-bottom : 1px solid @light-line-gray-color ;
+         .clearfix() ;
+        &>li {
+            border-bottom : 3px solid transparent ;
+            float : left ;
+            a {
+                color : @default-font-color ;
+                display : block ;
+                font-size : 1.6rem ;
+                line-height : 3.5rem ;
+                text-align : center ;
+            }
+            &.on {
+                border-bottom-color : @success-color ;
+                a {
+                    color : @success-color ;
+                }
+            }
+        }
+    }
+    .tabs-frame {
+        display : none ;
+    }
+}

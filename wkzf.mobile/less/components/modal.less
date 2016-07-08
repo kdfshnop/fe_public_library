@@ -1,0 +1,50 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：悟空找房移动端FE-MVC框架
+ 2. 文件名称：modal.less (modal框)
+ 3. 作者：zhaohuagang@lifang.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.wkzf-modal {
+    background-color : @modal-bg-color ;
+    box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.15) ;
+    .border-radius(3px) ;
+    display : none ;
+    min-width : 17rem ;
+    position : absolute ;    
+    max-width : 60% ;
+    z-index : 9998 ;
+    .modal-header {
+        font-size : 1.6rem ;
+        line-height : 3rem ;
+        padding : 1.5rem 0 .75rem ;
+        text-align : center ;
+    }
+    .modal-body {
+        color : @light-font-color ;
+        font-size : 1.4rem ;
+        line-height : 150% ;
+        padding : 0 .75rem ;
+        text-align : center ;
+    }
+    .modal-footer {
+        border-top : 1px solid @light-line-gray-color ;        
+        margin-top : 1.5rem ; 
+        text-align : center ;
+        .wkzf-btn {
+            border-left : 1px solid @light-line-gray-color ; 
+            &:nth-child(1) {
+                border-left : none ;
+            }
+        }
+    }
+}
+
+.wkzf-modal-mask {
+    background-color : @modal-mask-bg-color ;
+    display : none ;
+    height : 100% ;
+    left : 0 ;
+    position : fixed ;
+    top : 0 ;
+    width : 100% ;
+    z-index : 9997 ;
+}
