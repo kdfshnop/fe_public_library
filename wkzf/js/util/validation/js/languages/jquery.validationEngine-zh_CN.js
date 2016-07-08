@@ -103,7 +103,7 @@
                     "alertText": "* 无效的数字"
                 },
                 "positiveInteger": {
-                    "regex": /^\d+$/,
+                    "regex": /^([1-9][0-9]*)$/,
                     "alertText": "* 不是有效的正整数"
                 },
                 "date": {
