@@ -489,10 +489,13 @@
         var _ = this;
         var $selectedItem;
         var tConfig = _.settings.bootstrapTreeParams;
+        var treeContainerId = 'treeContainerId_' + parseInt($('.treeviewSelect-container').length + 1); //treeContainerId
         tConfig.data = flatToHierarchy(data);
         tConfig.showCheckbox = _.settings.bootstrapTreeParams.multiSelect;
         tConfig.highlightSelected = !_.settings.bootstrapTreeParams.multiSelect;
         tConfig.onhoverColor = _.settings.bootstrapTreeParams.multiSelect ? "" : "#F5F5F5";
+
+        _.treeContainer.attr('id', treeContainerId);
 
         if (_.settings.showSearch) {
             _.treeContainer.append(_.searchInput);
@@ -576,7 +579,6 @@
         var _ = this;
         var nodeIds, nodeTexts, tmpNode;
 
-        debugger;
         //如果存在默认值
         if (_.element.attr('data-id')) {
             nodeIds = _.element.attr("data-id").split(',');
@@ -595,6 +597,14 @@
         //绑定点击事件
         _.element.on('click', function() {
             var firstNodeId, $firstNode;
+
+            //先隐藏掉其他treeViewSelect
+
+            $('.treeviewSelect-container').each(function(index, el) {
+                if ($(el).attr('id') != _.treeContainer.attr('id')) {
+                    $(el).addClass('hide');
+                }
+            });
 
             //设置tree 点击是否显示
             if (_.treeContainer.hasClass('hide')) {
