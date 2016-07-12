@@ -564,7 +564,7 @@
 
         //outside click hide the treecontainer
         $('html').on('click', function(eventObject) {
-            var $el = $(event.target);
+            var $el = $(eventObject.target);
 
             if (!$el.hasClass('list-group-item') && !$el.hasClass('check-icon') && !$el.hasClass('treeview-search-input') && !$el.hasClass('expand-icon') && !$el.hasClass('treeviewSelect-container')) {
                 $('.treeviewSelect-container').addClass('hide');
