@@ -53,9 +53,9 @@
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             multiRow: false,
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            调用服务端SOA接口,需要的user token 信息
+            Placeholder 文本
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            token: '',
+            placeholder: '请选择...',
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             接口请求出错时候的接口方法 
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -346,6 +346,7 @@
         this.treeContainer = $(this.template.treeContainer);
         this.tree = $(this.template.tree);
         this.searchInput = $(this.template.searchInput);
+        this.placeholder = $(this.template.placeholder).html(this.settings.placeholder);
 
         /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         reset element state
@@ -559,6 +560,7 @@
             _.element.addClass('treeviewSelect-selection');
         }
 
+        _.element.append(_.placeholder);
         _.element.append($(_.template.listGroup));
         _.element.append($(_.template.listOpGroup));
 
@@ -585,11 +587,19 @@
             if (nodeIds && nodeIds.length > 0) {
                 for (var i = 0; i < nodeIds.length; i++) {
                     tmpNode = _.getNodeById(nodeIds[i]);
-                    //生成选中项
-                    $selectedItem = _.genTreeSelectItem(tmpNode.id, tmpNode.text);
-                    //添加到父容器
-                    _.element.find('.treeviewselect-listGroup ul').append($selectedItem);
+                    if (_.settings.bootstrapTreeParams.multiSelect) {
+                        _.tree.treeview('checkNode', [tmpNode, {
+                            silent: true
+                        }]);
+
+                    } else {
+                         _.tree.treeview('selectNode', [tmpNode, {
+                            silent: true
+                        }]);
+                    }
                 }
+
+                _.setTreeSelectItem();
             }
         }
 
@@ -616,16 +626,6 @@
                 _.searchInput.val('');
                 _.tree.treeview('clearSearch');
 
-                //折叠所有的节点，折叠整个树。
-                // _.tree.treeview('collapseAll', {
-                //     silent: true
-                // });
-
-                //展开到第二级
-                // _.tree.treeview('expandAll', {
-                //     levels: 1,
-                //     silent: true
-                // });
 
                 //循环遍历所有选中项，勾选对应节点，并展开
                 _.element.find('.treeviewselect-item').each(function(index, el) {
@@ -755,6 +755,9 @@
         var checkedNodes, listNodes, totalWidth, pNodesArr;
         var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
 
+        //隐藏placeholder
+        _.placeholder.hide();
+
         if (_.settings.bootstrapTreeParams.multiSelect) {
             checkedNodes = _.tree.treeview('getChecked');
             listNodes = getSelectedNode(_.tree, checkedNodes);
@@ -801,6 +804,8 @@
                     $itemLisGroup.append($selectedItem);
                 }
             }
+        } else {
+            _.placeholder.show();
         }
 
 
@@ -811,6 +816,7 @@
                 var checkedNodes = _.tree.treeview('getChecked');
 
                 $itemLisGroup.empty();
+                _.placeholder.show();
                 _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
                 _.tree.treeview('uncheckAll', {
@@ -1010,7 +1016,8 @@
         inlineInput: '<li><input type="text" class="treeviewSelect-inline-input"></li>',
         treeContainer: '<ul class="treeviewSelect-container hide"></ul>',
         searchInput: '<input class="treeview-search-input" placeholder="请搜索..."></input>',
-        tree: '<div class="treeviewSelect-tree"></div>'
+        tree: '<div class="treeviewSelect-tree"></div>',
+        placeholder: '<li class="treeviewselect-placeholder"></li>'
     }
 
     var logError = function(message) {
