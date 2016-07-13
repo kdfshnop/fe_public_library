@@ -560,7 +560,6 @@
             _.element.addClass('treeviewSelect-selection');
         }
 
-        //如果不存在默认选项，则需要添加placeholder
         _.element.append(_.placeholder);
         _.element.append($(_.template.listGroup));
         _.element.append($(_.template.listOpGroup));
@@ -591,11 +590,10 @@
             if (nodeIds && nodeIds.length > 0) {
                 for (var i = 0; i < nodeIds.length; i++) {
                     tmpNode = _.getNodeById(nodeIds[i]);
-                    //生成选中项
-                    $selectedItem = _.genTreeSelectItem(tmpNode.id, tmpNode.text);
-                    //添加到父容器
-                    _.element.find('.treeviewselect-listGroup ul').append($selectedItem);
+                    _.tree.treeview('checkNode', [ tmpNode, { silent: true } ]);
                 }
+
+                _.setTreeSelectItem();
             }
         }
 
