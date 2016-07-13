@@ -583,14 +583,20 @@
 
         //如果存在默认值
         if (_.element.attr('data-id')) {
-            //隐藏placeholder
-            _.placeholder.hide();
-
             nodeIds = _.element.attr("data-id").split(',');
             if (nodeIds && nodeIds.length > 0) {
                 for (var i = 0; i < nodeIds.length; i++) {
                     tmpNode = _.getNodeById(nodeIds[i]);
-                    _.tree.treeview('checkNode', [ tmpNode, { silent: true } ]);
+                    if (_.settings.bootstrapTreeParams.multiSelect) {
+                        _.tree.treeview('checkNode', [tmpNode, {
+                            silent: true
+                        }]);
+
+                    } else {
+                         _.tree.treeview('selectNode', [tmpNode, {
+                            silent: true
+                        }]);
+                    }
                 }
 
                 _.setTreeSelectItem();
@@ -620,16 +626,6 @@
                 _.searchInput.val('');
                 _.tree.treeview('clearSearch');
 
-                //折叠所有的节点，折叠整个树。
-                // _.tree.treeview('collapseAll', {
-                //     silent: true
-                // });
-
-                //展开到第二级
-                // _.tree.treeview('expandAll', {
-                //     levels: 1,
-                //     silent: true
-                // });
 
                 //循环遍历所有选中项，勾选对应节点，并展开
                 _.element.find('.treeviewselect-item').each(function(index, el) {

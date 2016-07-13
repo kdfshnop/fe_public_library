@@ -4,7 +4,7 @@
 	        apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/city.json',
 	        dataType: 'json',
 	        bootstrapTreeParams: {
-	            multiSelect: true
+	            multiSelect: false
 	        }
 	    });
 
