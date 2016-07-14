@@ -593,13 +593,13 @@
                         }]);
 
                     } else {
-                         _.tree.treeview('selectNode', [tmpNode, {
+                        _.tree.treeview('selectNode', [tmpNode, {
                             silent: true
                         }]);
                     }
                 }
 
-                _.setTreeSelectItem();
+                _.setTreeSelectItem(true);
             }
         }
 
@@ -748,8 +748,9 @@
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     根据tree选择节点，生成已选择项，并绑定相关事件
+    @noCompleted：是否需要触发 noCompleted 事件
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.setTreeSelectItem = function() {
+    TreeViewSelect.prototype.setTreeSelectItem = function(noCompleted) {
         var _ = this;
 
         var checkedNodes, listNodes, totalWidth, pNodesArr;
@@ -841,7 +842,9 @@
         }
 
         //触发completed 事件
-        _.element.trigger('completed', [listNodes]);
+        if (!noCompleted) {
+            _.element.trigger('completed', [listNodes]);
+        }
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
