@@ -1,7 +1,7 @@
 	$(function() {
 	    $('#area').treeViewSelect({
 	        sourceUrl: 'http://dev01.fe.wkzf/fe_public_library/bootstrap/plugins/bootstrap-treeview/src/js/bootstrap-treeview.js',
-	        apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/data/3.json',
+	        apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/demo/data/3.json',
 	        dataType: 'json',
 	        bootstrapTreeParams: {
 	            multiSelect: true
@@ -26,7 +26,9 @@
 	        });
 	    });
 
-	    $('#area').on('completed', function(eventType, node) {
-	        console.log('completed');
+	    $('#area').on('itemsRendered', function(eventType, node) {
+	        console.log('itemsRendered');
+
+	        console.log(node);
 	    });
 	});

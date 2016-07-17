@@ -1,0 +1,265 @@
+{
+    "status": 1,
+    "message": "操作成功",
+    "data": [{
+        "id": 11189,
+        "text": "新房运营",
+        "t": "id=11189",
+        "state": {
+            "expanded": true,
+            "checked": true,
+            "disabled": 1
+        },
+        "nodes": [{
+            "id": 11190,
+            "text": "新房项目维护（运营）",
+            "t": "id=11190",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11189
+        }, {
+            "id": 11191,
+            "text": "新房项目维护（项目经理）",
+            "t": "id=11191",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11189
+        }, {
+            "id": 11208,
+            "text": "测试",
+            "t": "id=11208",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11189
+        }],
+        "pid": 0
+    }, {
+        "id": 11198,
+        "text": "审批管理",
+        "t": "id=11198",
+        "state": {
+            "expanded": true,
+            "checked": true,
+            "disabled": 1
+        },
+        "nodes": [{
+            "id": 11192,
+            "text": "新建申请",
+            "t": "id=11192",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11198
+        }, {
+            "id": 11194,
+            "text": "待办申请",
+            "t": "id=11194",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11198
+        }, {
+            "id": 11193,
+            "text": "我的申请",
+            "t": "id=11193",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11198
+        }, {
+            "id": 11197,
+            "text": "我的草稿",
+            "t": "id=11197",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11198
+        }, {
+            "id": 11195,
+            "text": "待销申请",
+            "t": "id=11195",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11198
+        }, {
+            "id": 11196,
+            "text": "已办申请",
+            "t": "id=11196",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": null,
+            "pid": 11198
+        }],
+        "pid": 0
+    }, {
+        "id": 11183,
+        "text": "人事设置",
+        "t": "id=11183",
+        "state": null,
+        "nodes": [{
+            "id": 11186,
+            "text": "部门设置",
+            "t": "id=11186",
+            "state": null,
+            "nodes": null,
+            "pid": 11183
+        }, {
+            "id": 11188,
+            "text": "账号设置",
+            "t": "id=11188",
+            "state": null,
+            "nodes": null,
+            "pid": 11183
+        }, {
+            "id": 11185,
+            "text": "功能菜单设置",
+            "t": "id=11185",
+            "state": null,
+            "nodes": null,
+            "pid": 11183
+        }, {
+            "id": 11187,
+            "text": "职位设置",
+            "t": "id=11187",
+            "state": null,
+            "nodes": [{
+                "id": 11210,
+                "text": "职位设置2",
+                "t": "id=11210",
+                "state": null,
+                "nodes": null,
+                "pid": 11187
+            }],
+            "pid": 11183
+        }, {
+            "id": 11184,
+            "text": "URL设置",
+            "t": "id=11184",
+            "state": null,
+            "nodes": null,
+            "pid": 11183
+        }],
+        "pid": 0
+    }, {
+        "id": 11204,
+        "text": "报表",
+        "t": "id=11204",
+        "state": {
+            "expanded": true,
+            "checked": true,
+            "disabled": 0
+        },
+        "nodes": [{
+            "id": 11205,
+            "text": "大师兄关注日报",
+            "t": "id=11205",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 0
+            },
+            "nodes": null,
+            "pid": 11204
+        }, {
+            "id": 11211,
+            "text": "大师兄概况日报",
+            "t": "id=11211",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 0
+            },
+            "nodes": null,
+            "pid": 11204
+        }, {
+            "id": 11212,
+            "text": "大师兄发布客户日报",
+            "t": "id=11212",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 0
+            },
+            "nodes": null,
+            "pid": 11204
+        }, {
+            "id": 11213,
+            "text": "大师兄发布房源日报",
+            "t": "id=11213",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 0
+            },
+            "nodes": null,
+            "pid": 11204
+        }],
+        "pid": 0
+    }, {
+        "id": 11201,
+        "text": "大师兄后台",
+        "t": "id=11201",
+        "state": null,
+        "nodes": [{
+            "id": 11203,
+            "text": "预警池",
+            "t": "id=11203",
+            "state": null,
+            "nodes": null,
+            "pid": 11201
+        }, {
+            "id": 11202,
+            "text": "工单规则配置",
+            "t": "id=11202",
+            "state": null,
+            "nodes": null,
+            "pid": 11201
+        }],
+        "pid": 0
+    }, {
+        "id": 11206,
+        "text": "任溶溶",
+        "t": "id=11206",
+        "state": null,
+        "nodes": null,
+        "pid": 0
+    }, {
+        "id": 11209,
+        "text": "22222227778",
+        "t": "id=11209",
+        "state": null,
+        "nodes": null,
+        "pid": 0
+    }]
+}
