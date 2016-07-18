@@ -8,8 +8,8 @@
     <link rel="stylesheet" type="text/css" href="../css/treeviewSelect.min.css">
     <script src="../lib/jquery-2.0.3.min.js"></script>
     <script src="../lib/bootstrap.min.js"></script>
-    <script src="../src/bootstrap-treeview.js"></script>
-    <script src="../src/jquery.treeViewSelect.js"></script>
+    <!-- <script src="../src/bootstrap-treeview.js"></script> -->
+    <script src="../dist/jquery.treeViewSelect.js"></script>
     <script data-main="js/index.js" src="../lib/require.min.js"></script>
     <style>
     .container {
@@ -23,14 +23,15 @@
         <form class="form-inline">
             <div class="form-group">
                 <label for="areaTree">区域:</label>
-                <ul class="treeviewSelect-selection" id="area" style="width: 200px">
+                <ul class="treeviewSelect-selection" id="area" style="width: 250px">
                 </ul>
             </div>
         </form>
         <form class="form-inline">
             <div class="form-group">
-                <a href="#" id="btnTest"> aaa</a>
+                <a href="#" id="btnTest" class="btn btn-default"> 设置默认为北京</a>
             </div>
+         
         </form>
     </div>
 </body>
