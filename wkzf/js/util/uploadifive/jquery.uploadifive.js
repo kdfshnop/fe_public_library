@@ -376,13 +376,13 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                             // Create a new FormData object
                             var formData = new FormData();
 
-                            // Add the form data
-                            formData.append(settings.fileObjName, file);
-
                             // Add the rest of the formData
                             for (i in settings.formData) {
                                 formData.append(i, settings.formData[i]);
                             }
+
+                            // Add the form data
+                            formData.append(settings.fileObjName, file);
 
                             // Open the AJAX call
                             xhr.open(settings.method, settings.uploadScript, true);
