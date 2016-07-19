@@ -723,7 +723,9 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                 var $this    = $(this),
                     $data    = $this.data('uploadifive'),
                     settings = $data.settings;
-
+                    
+                $data.filesCancelled=isNaN($data.filesCancelled)?0:$data.filesCancelled;
+                
                 // If user passed a queue item ID instead of file...
                 if (typeof file === 'string') {
                     if (!isNaN(file)) {
