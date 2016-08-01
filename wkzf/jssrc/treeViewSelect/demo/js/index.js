@@ -3,8 +3,10 @@
 	        sourceUrl: 'http://dev01.fe.wkzf/fe_public_library/bootstrap/plugins/bootstrap-treeview/src/js/bootstrap-treeview.js',
 	        apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/demo/data/3.json',
 	        dataType: 'json',
+	        cascadeText:true,
 	        bootstrapTreeParams: {
-	            multiSelect: true
+	            multiSelect: true,
+	            enableCascade:false
 	        }
 	    });
 
@@ -29,10 +31,10 @@
 	        $('#area').treeViewSelect('setDefaults',['2']);
 	    });
 
-	    $('#area').on('itemsRendered', function(eventType, node) {
+	    $('#area').on('completed', function(eventType, node) {
 	        // console.log('itemsRendered');
 
-	        // console.log(node);
+	        console.log(node);
 
 	        
 	        // window.location.reload();

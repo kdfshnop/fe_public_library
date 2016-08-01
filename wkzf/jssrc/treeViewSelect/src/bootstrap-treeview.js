@@ -440,27 +440,9 @@
 
         if (state === node.state.checked) return;
 
-        if (state) {
-
-            // Check node
-            node.state.checked = true;
-
-            // if (!options.silent) {
-            //     _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
-            // }
-        } else {
-
-            // Uncheck node
-            node.state.checked = false;
-            // if (!options.silent) {
-            //     _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
-            // }
-        }
-
-
         if (_this.options.enableCascade) {
 
-             //reset nodes array
+            //reset nodes array
             _this.childsNodes = [];
             _this.parentNodes = [];
 
@@ -470,11 +452,13 @@
 
             if (_this.childsNodes && _this.childsNodes.length) {
                 $.each(_this.childsNodes, function(index, el) {
-                    el.state.checked = node.state.checked;
+                    el.state.checked = state;
                 });
             }
 
             if (state) {
+                node.state.checked = true;
+
                 $.each(_this.parentNodes, function(index, node) {
                     var checkedNodes = _this.getChecked(node);
                     if (checkedNodes.length == node.nodes.length) {
@@ -487,6 +471,7 @@
                 }
 
             } else {
+                node.state.checked = false;
 
                 $.each(_this.parentNodes, function(index, node) {
                     node.state.checked = false;
@@ -496,6 +481,24 @@
                     _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
                 }
             }
+        } else {
+            if (state) {
+
+                // Check node
+                node.state.checked = true;
+
+                if (!options.silent) {
+                    _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
+                }
+            } else {
+
+                // Uncheck node
+                node.state.checked = false;
+                if (!options.silent) {
+                    _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
+                }
+            }
+
         }
     };
 

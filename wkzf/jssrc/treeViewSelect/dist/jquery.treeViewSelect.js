@@ -1,3 +1,22 @@
+/* =========================================================
+ * bootstrap-treeview.js v1.2.0
+ * =========================================================
+ * Copyright 2013 Jonathan Miles
+ * Project URL : http://www.jondmiles.com/bootstrap-treeview
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ========================================================= */
+
 ;
 (function($, window, document, undefined) {
 
@@ -421,27 +440,9 @@
 
         if (state === node.state.checked) return;
 
-        if (state) {
-
-            // Check node
-            node.state.checked = true;
-
-            // if (!options.silent) {
-            //     _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
-            // }
-        } else {
-
-            // Uncheck node
-            node.state.checked = false;
-            // if (!options.silent) {
-            //     _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
-            // }
-        }
-
-
         if (_this.options.enableCascade) {
 
-             //reset nodes array
+            //reset nodes array
             _this.childsNodes = [];
             _this.parentNodes = [];
 
@@ -451,11 +452,13 @@
 
             if (_this.childsNodes && _this.childsNodes.length) {
                 $.each(_this.childsNodes, function(index, el) {
-                    el.state.checked = node.state.checked;
+                    el.state.checked = state;
                 });
             }
 
             if (state) {
+                node.state.checked = true;
+
                 $.each(_this.parentNodes, function(index, node) {
                     var checkedNodes = _this.getChecked(node);
                     if (checkedNodes.length == node.nodes.length) {
@@ -468,6 +471,7 @@
                 }
 
             } else {
+                node.state.checked = false;
 
                 $.each(_this.parentNodes, function(index, node) {
                     node.state.checked = false;
@@ -477,6 +481,24 @@
                     _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
                 }
             }
+        } else {
+            if (state) {
+
+                // Check node
+                node.state.checked = true;
+
+                if (!options.silent) {
+                    _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
+                }
+            } else {
+
+                // Uncheck node
+                node.state.checked = false;
+                if (!options.silent) {
+                    _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
+                }
+            }
+
         }
     };
 
@@ -1334,7 +1356,16 @@
 
 })(jQuery, window, document);
 
-
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. 插件名称：treeViewSelect
+2. 插件描述：树形下拉菜单选择插件
+3. 版本：1.0
+4. 原理：
+5. 使用范例：  
+    
+6. 未尽事宜：
+7. 作者：yuxiaochen@lifang.com
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 ;
 (function($, window, document, undefined) {
 
@@ -1372,8 +1403,27 @@
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             placeholder: '请选择...',
 
-            //默认选择 
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            defaultVals 默认值s
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             defaultVals: null,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            enableCascade 设置勾选节点是否影响上下级节点
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            enableCascade:true,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            是否显示级联的文本，目前只支持单选的前提下。
+            默认为false ,表示 点击长宁区节点，选中项文本为 [长宁区]
+            为true时，选中项文本为[上海市-长宁区]
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            cascadeText: false,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            cascadeText 为true 的时候，选中项文本的分隔符
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            cascadeTextSeparator: '-',
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             树渲染完成后，执行的回调方法 
@@ -1393,7 +1443,7 @@
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             勾选或者选中，选中项生成好了，回调事件
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            onItemsRendered: undefined,
+            onCompleted: undefined,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
              bootstrap-treeview 参数配置
@@ -1637,9 +1687,8 @@
 
         this.unsubscribeEvents();
 
-        //选中或者勾选结束后，完成生成treeviewselect-item 的事件
-        if (typeof(this.settings.onItemsRendered) === 'function') {
-            this.element.on('itemsRendered', this.settings.onItemsRendered);
+        if (typeof(this.settings.onCompleted) === 'function') {
+            this.element.on('completed', this.settings.onCompleted);
         }
     }
 
@@ -1740,6 +1789,7 @@
         tConfig.showCheckbox = this.settings.bootstrapTreeParams.multiSelect;
         tConfig.highlightSelected = !this.settings.bootstrapTreeParams.multiSelect;
         tConfig.onhoverColor = this.settings.bootstrapTreeParams.multiSelect ? "" : "#F5F5F5";
+        tConfig.enableCascade=this.settings.enableCascade;
 
         this.tree.treeview(tConfig);
 
@@ -1878,7 +1928,6 @@
 
         if (isDefault) {
             if (this.defaultVals && this.defaultVals.length > 0) {
-                // nodeIds = _.element.attr("data-id").split(',');
                 if (this.defaultVals && this.defaultVals.length > 0) {
                     for (var i = 0; i < this.defaultVals.length; i++) {
                         tmpNode = _.getNodeById(this.defaultVals[i]);
@@ -1899,7 +1948,10 @@
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             checkedNodes = _.tree.treeview('getChecked');
-            listNodes = getSelectedNode(_.tree, checkedNodes);
+            listNodes=checkedNodes;
+            if (_.settings.enableCascade) {
+                listNodes = getSelectedNode(_.tree, checkedNodes);
+            }         
         } else {
             listNodes = _.tree.treeview('getSelected');
         }
@@ -1924,7 +1976,7 @@
                 listNodes[i].level = pNodesArr.length;
 
                 //生成选中项
-                $selectedItem = _.genTreeSelectItem(listNodes[i].id, listNodes[i].text);
+                $selectedItem = _.genTreeSelectItem(listNodes[i]);
 
                 //如果支持多选但是不支持多行，则超出部分显示省略号
                 if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -1976,7 +2028,7 @@
         $('[data-toggle="tooltip"]').tooltip();
 
         if (!isDefault) {
-            _.element.trigger('itemsRendered', [listNodes]);
+            _.element.trigger('completed', [listNodes]);
         }
 
     }
@@ -2007,9 +2059,9 @@
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     生成选中项
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.genTreeSelectItem = function(id, text) {
+    TreeViewSelect.prototype.genTreeSelectItem = function(node) {
         var _ = this;
-        var $selectedItem;
+        var $selectedItem, pNodes = [];
 
         //判断是否支持多选
         if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -2018,14 +2070,29 @@
             $selectedItem = $(_.template.singleItem);
         }
 
-        $selectedItem.attr('nodeid', id);
-        $selectedItem.find('span').html(text);
+        $selectedItem.attr('nodeid', node.id);
 
-        if (text.length > 3) {
+        if (_.settings.cascadeText && !_.settings.bootstrapTreeParams.multiSelect) {
+            var tText = '';
+            getParentNodes(_.tree, node, pNodes);
+            if (pNodes) {
+                for (var i = pNodes.length - 1; i >= 0; i--) {
+                    tText += pNodes[i].text + _.settings.cascadeTextSeparator;
+                }
+
+                $selectedItem.find('span').html(tText + node.text);
+            } else {
+                $selectedItem.find('span').html(node.text);
+            }
+        } else {
+            $selectedItem.find('span').html(node.text);
+        }
+
+        if (node.text.length > 3) {
             $selectedItem.attr({
                 'data-toggle': 'tooltip',
                 'data-placement': 'top',
-                'title': text
+                'title': node.text
             });
         }
 
@@ -2131,8 +2198,10 @@
     设置默认值
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.setDefaults = function(vals) {
-        if (!vals||!vals.length) {return;}
-        this.defaultVals=vals;
+        if (!vals || !vals.length) {
+            return;
+        }
+        this.defaultVals = vals;
 
         this.renderItems(true);
     }

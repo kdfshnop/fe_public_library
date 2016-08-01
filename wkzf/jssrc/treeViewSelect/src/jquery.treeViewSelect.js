@@ -45,8 +45,27 @@
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             placeholder: '请选择...',
 
-            //默认选择 
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            defaultVals 默认值s
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             defaultVals: null,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            enableCascade 设置勾选节点是否影响上下级节点
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            enableCascade:true,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            是否显示级联的文本，目前只支持单选的前提下。
+            默认为false ,表示 点击长宁区节点，选中项文本为 [长宁区]
+            为true时，选中项文本为[上海市-长宁区]
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            cascadeText: false,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            cascadeText 为true 的时候，选中项文本的分隔符
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            cascadeTextSeparator: '-',
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             树渲染完成后，执行的回调方法 
@@ -66,7 +85,7 @@
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             勾选或者选中，选中项生成好了，回调事件
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            onItemsRendered: undefined,
+            onCompleted: undefined,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
              bootstrap-treeview 参数配置
@@ -310,9 +329,8 @@
 
         this.unsubscribeEvents();
 
-        //选中或者勾选结束后，完成生成treeviewselect-item 的事件
-        if (typeof(this.settings.onItemsRendered) === 'function') {
-            this.element.on('itemsRendered', this.settings.onItemsRendered);
+        if (typeof(this.settings.onCompleted) === 'function') {
+            this.element.on('completed', this.settings.onCompleted);
         }
     }
 
@@ -413,6 +431,7 @@
         tConfig.showCheckbox = this.settings.bootstrapTreeParams.multiSelect;
         tConfig.highlightSelected = !this.settings.bootstrapTreeParams.multiSelect;
         tConfig.onhoverColor = this.settings.bootstrapTreeParams.multiSelect ? "" : "#F5F5F5";
+        tConfig.enableCascade=this.settings.enableCascade;
 
         this.tree.treeview(tConfig);
 
@@ -551,7 +570,6 @@
 
         if (isDefault) {
             if (this.defaultVals && this.defaultVals.length > 0) {
-                // nodeIds = _.element.attr("data-id").split(',');
                 if (this.defaultVals && this.defaultVals.length > 0) {
                     for (var i = 0; i < this.defaultVals.length; i++) {
                         tmpNode = _.getNodeById(this.defaultVals[i]);
@@ -572,7 +590,10 @@
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             checkedNodes = _.tree.treeview('getChecked');
-            listNodes = getSelectedNode(_.tree, checkedNodes);
+            listNodes=checkedNodes;
+            if (_.settings.enableCascade) {
+                listNodes = getSelectedNode(_.tree, checkedNodes);
+            }         
         } else {
             listNodes = _.tree.treeview('getSelected');
         }
@@ -597,7 +618,7 @@
                 listNodes[i].level = pNodesArr.length;
 
                 //生成选中项
-                $selectedItem = _.genTreeSelectItem(listNodes[i].id, listNodes[i].text);
+                $selectedItem = _.genTreeSelectItem(listNodes[i]);
 
                 //如果支持多选但是不支持多行，则超出部分显示省略号
                 if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -649,7 +670,7 @@
         $('[data-toggle="tooltip"]').tooltip();
 
         if (!isDefault) {
-            _.element.trigger('itemsRendered', [listNodes]);
+            _.element.trigger('completed', [listNodes]);
         }
 
     }
@@ -680,9 +701,9 @@
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     生成选中项
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    TreeViewSelect.prototype.genTreeSelectItem = function(id, text) {
+    TreeViewSelect.prototype.genTreeSelectItem = function(node) {
         var _ = this;
-        var $selectedItem;
+        var $selectedItem, pNodes = [];
 
         //判断是否支持多选
         if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -691,14 +712,29 @@
             $selectedItem = $(_.template.singleItem);
         }
 
-        $selectedItem.attr('nodeid', id);
-        $selectedItem.find('span').html(text);
+        $selectedItem.attr('nodeid', node.id);
 
-        if (text.length > 3) {
+        if (_.settings.cascadeText && !_.settings.bootstrapTreeParams.multiSelect) {
+            var tText = '';
+            getParentNodes(_.tree, node, pNodes);
+            if (pNodes) {
+                for (var i = pNodes.length - 1; i >= 0; i--) {
+                    tText += pNodes[i].text + _.settings.cascadeTextSeparator;
+                }
+
+                $selectedItem.find('span').html(tText + node.text);
+            } else {
+                $selectedItem.find('span').html(node.text);
+            }
+        } else {
+            $selectedItem.find('span').html(node.text);
+        }
+
+        if (node.text.length > 3) {
             $selectedItem.attr({
                 'data-toggle': 'tooltip',
                 'data-placement': 'top',
-                'title': text
+                'title': node.text
             });
         }
 
@@ -804,8 +840,10 @@
     设置默认值
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.setDefaults = function(vals) {
-        if (!vals||!vals.length) {return;}
-        this.defaultVals=vals;
+        if (!vals || !vals.length) {
+            return;
+        }
+        this.defaultVals = vals;
 
         this.renderItems(true);
     }
