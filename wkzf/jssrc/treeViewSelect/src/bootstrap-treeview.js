@@ -51,11 +51,13 @@
         searchResultColor: '#D9534F',
         searchResultBackColor: undefined, //'#FFFFFF',
 
+        enableCascade: true,
         enableLinks: false,
         highlightSelected: true,
         highlightSearchResults: true,
         showBorder: true,
         showIcon: true,
+        showSearch: false,
         showCheckbox: false,
         showTags: false,
         multiSelect: false,
@@ -105,6 +107,7 @@
             getNode: $.proxy(this.getNode, this),
             getAllNodes: $.proxy(this.getAllNodes, this),
             getParent: $.proxy(this.getParent, this),
+            getParents: $.proxy(this.getParents, this),
             getSiblings: $.proxy(this.getSiblings, this),
             getSelected: $.proxy(this.getSelected, this),
             getUnselected: $.proxy(this.getUnselected, this),
@@ -152,6 +155,8 @@
 
         this.tree = [];
         this.nodes = [];
+        this.childsNodes = []; // nodes array from getting recursion childs  
+        this.parentNodes = []; //// nodes array from getting recursion parents 
 
         if (options.data) {
             if (typeof options.data === 'string') {
@@ -318,7 +323,6 @@
     };
 
     Tree.prototype.clickHandler = function(event) {
-
         if (!this.options.enableLinks) event.preventDefault();
 
         var target = $(event.target);
@@ -432,24 +436,69 @@
     };
 
     Tree.prototype.setCheckedState = function(node, state, options) {
+        var _this = this;
 
         if (state === node.state.checked) return;
 
-        if (state) {
+        if (_this.options.enableCascade) {
 
-            // Check node
-            node.state.checked = true;
+            //reset nodes array
+            _this.childsNodes = [];
+            _this.parentNodes = [];
 
-            if (!options.silent) {
-                this.$element.trigger('nodeChecked', $.extend(true, {}, node));
+            //Recurse the tree structure and get all child nodes
+            _this.getChilds(node);
+            _this.getParents(node);
+
+            if (_this.childsNodes && _this.childsNodes.length) {
+                $.each(_this.childsNodes, function(index, el) {
+                    el.state.checked = state;
+                });
+            }
+
+            if (state) {
+                node.state.checked = true;
+
+                $.each(_this.parentNodes, function(index, node) {
+                    var checkedNodes = _this.getChecked(node);
+                    if (checkedNodes.length == node.nodes.length) {
+                        node.state.checked = true;
+                    }
+                });
+
+                if (!options.silent) {
+                    _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
+                }
+
+            } else {
+                node.state.checked = false;
+
+                $.each(_this.parentNodes, function(index, node) {
+                    node.state.checked = false;
+                });
+
+                if (!options.silent) {
+                    _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
+                }
             }
         } else {
+            if (state) {
 
-            // Uncheck node
-            node.state.checked = false;
-            if (!options.silent) {
-                this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
+                // Check node
+                node.state.checked = true;
+
+                if (!options.silent) {
+                    _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
+                }
+            } else {
+
+                // Uncheck node
+                node.state.checked = false;
+                if (!options.silent) {
+                    _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
+                }
             }
+
         }
     };
 
@@ -740,6 +789,39 @@
         return this.nodes[node.parentId];
     };
 
+
+    /**
+        get the parent node of a given node recursively
+        store the nodes in this.parentNodes;
+        @param {Object|Number} identifier - A valid node or node id
+    */
+    Tree.prototype.getParents = function(identifier) {
+        var node = this.getParent(identifier);
+
+        if (!node) {
+            return;
+        }
+
+        this.parentNodes.push(node);
+
+        this.getParents(node);
+    }
+
+
+    Tree.prototype.getChilds = function(identifier) {
+        var _this = this;
+        var node = this.identifyNode(identifier);
+        if (!node.nodes) {
+            return;
+        }
+
+        $.each(node.nodes, function(index, el) {
+            _this.childsNodes.push(el);
+
+            _this.getChilds(el);
+        });
+    }
+
     /**
         Returns an array of sibling nodes for a given node, if valid otherwise returns undefined.
         @param {Object|Number} identifier - A valid node or node id
@@ -788,10 +870,17 @@
 
     /**
         Returns an array of checked nodes.
+        @params:a given node
         @returns {Array} nodes - Checked nodes
     */
-    Tree.prototype.getChecked = function() {
-        return this.findNodes('true', 'g', 'state.checked');
+    Tree.prototype.getChecked = function(node) {
+        if (!node || !node.nodes) {
+            return this.findNodes('true', 'g', 'state.checked');
+        } else {
+            return node.nodes.filter(function(obj) {
+                return obj.state.checked;
+            });
+        }
     };
 
     /**
