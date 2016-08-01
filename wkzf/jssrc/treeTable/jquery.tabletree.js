@@ -103,7 +103,9 @@
         /*-----------------------------------------------------------------------------------------------------------
         icon图表偏移位置
         -----------------------------------------------------------------------------------------------------------*/
-        iconPosition: 0
+        iconPosition: 0,
+        //配置需要搜索的列,colmodel中的名称一致,["columnA","cloumnB"]
+        searchColumns: []
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -114,22 +116,58 @@
         渲染表头
         -----------------------------------------------------------------------------------------------------------*/
         renderHeader: function($element, opts) {
-            var columns = opts.colmodel,
-                tableHtml = [];
+            var columns = opts.colmodel;
+            var searchCol = opts.searchColumns;
+            var tableHtml = [];
             if (!columns) return;
+            if (!Array.isArray(columns) || Object.prototype.toString.call(columns) !== '[object Array]') return;
+            if (!searchCol) return;
+            if (!Array.isArray(searchCol) || Object.prototype.toString.call(searchCol) !== '[object Array]') return;
+
+            //创建表格
             tableHtml.push('<table class="table table-tree ' + opts.tableClass + '">');
             tableHtml.push('<thead><tr>');
+            //创建表头
             $.each(columns, function(index, el) {
                 var width = el.width || '50px';
                 tableHtml.push('<th name="' + el.name + '" style="width:' + width + '">' + el.display_name + '</th>');
             });
+            //如果有操作列参数则插入html
             if (opts.enableOperation) {
                 tableHtml.push('<th name="sort" style="100px">操作</th>');
             }
+            //如果有排序列参数则插入html
             if (opts.enableSort) {
                 tableHtml.push('<th name="sort" style="100px">排序</th>');
             }
-            tableHtml.push('</tr></thead>');
+            tableHtml.push('</tr>');
+            //如果有需要搜索的列则插入html
+            if (searchCol.length > 0) {
+                tableHtml.push('<tr>');
+                //更加colmodel数量插入相应th
+                for (var i = 0; i < columns.length; i++) {
+                    //最后一列插入搜索按钮
+                    if (i == columns.length - 1) {
+                        //如果有操作或排序列需要多插入th
+                        if (opts.enableOperation) {
+                            tableHtml.push('<th></th>');
+                        };
+                        if (opts.enableSort) {
+                            tableHtml.push('<th></th>');
+                        };
+                        tableHtml.push('<th><button type="submit" id="tree-search" class="btn btn-primary btn-sm">搜索</button></th>');
+                    } else {
+                        //插入搜索框
+                        if (searchCol.indexOf(columns[i].name) >= 0) {
+                            tableHtml.push('<th id="' + columns[i].name + '"><input type="text" class="form-control input-sm"></th>');
+                        } else {
+                            tableHtml.push('<th id="' + columns[i].name + '"></th>');
+                        }
+                    }
+                }
+                tableHtml.push('</tr>')
+            };
+            tableHtml.push('</thead>');
             tableHtml.push('<tbody></tbody>')
             tableHtml.push('</table>');
             $element.append(tableHtml.join(''));
@@ -139,13 +177,16 @@
         -----------------------------------------------------------------------------------------------------------*/
         renderData: function($element, opts) {
             if (!opts.data || !opts.keyFieldName || !opts.parentKeyFieldName) return;
+            //数据转换
             var nestedData = this.flatToHierarchy(opts);
             if (!nestedData) return;
             var tbodyHtml = []
+                //生成tr
             this.buildTr(tbodyHtml, nestedData, opts, 0);
             $.each(tbodyHtml, function(index, el) {
                 $element.find('tbody').append(el);
             });
+            //处理需要隐藏的单元格
             if (opts.hiddenCells.length > 0) {
                 $.each(opts.hiddenCells, function(index, el) {
                     $element.find('tr[data-id="' + el.id + '"]').find('td[data-name="' + el.columnName + '"]').empty();
@@ -192,10 +233,13 @@
             $.each(datas, function(index, val) {
                 var trHtml = [],
                     $tr;
+                //生成tr
                 trHtml.push('<tr data-id="' + val[opts.keyFieldName] + '" data-parentId="' + val[opts.parentKeyFieldName] + '" data-level="' + level + '" data-expended="false">');
+                //生成td
                 $.each(opts.colmodel, function(index, el) {
                     trHtml.push('<td data-name="' + el.name + '">' + val[el.name] + '</td>');
                 });
+                //生成操作按钮
                 if (opts.enableOperation) {
                     trHtml.push('<td data-name="operation">');
                     var tdsHtml = []
@@ -210,19 +254,24 @@
                     });
                     trHtml.push(tdsHtml.join('&nbsp;&nbsp;'))
                     trHtml.push('</td>');
-                }
+                };
+                //生成排序按钮
                 if (opts.enableSort) {
                     trHtml.push('<td data-name="sort"><a href="javascript:;" class="sort up">上移</a>&nbsp;&nbsp;<a href="javascript:;" class="sort down">下移</a>&nbsp;&nbsp;<a href="javascript:;" class="sort top">置顶</a>&nbsp;&nbsp;<a href="javascript:;" class="sort bottom">置底</a></td>');
-                }
+                };
                 trHtml.push('</tr>')
                 $tr = $(trHtml.join(''));
 
+                //行隐藏
                 if (hidden) {
                     $tr.css('display', 'none');
-                }
+                };
+
+                //增加展开收起按钮
                 if (val.children) {
                     $tr.find('td:first').prepend('<i class="' + opts.expendIcon + '" style="top:' + opts.iconPosition + 'px"></i>');
                 }
+                //缩进处理
                 for (var i = level - 1; i > 0; i--) {
                     $tr.find('td:first').prepend('<span class="indent"></span>');
                 }
@@ -264,8 +313,10 @@
         bindEvent: function() {
             var $element = this.$element,
                 $tbody = $element.find('table tbody'),
+                $thead = $element.find('table thead'),
                 options = this.options,
                 classSelf = this;
+            //点击第一个单元格展开或收起
             $tbody.find('tr').on('click', 'td:first', function(event) {
                 event.preventDefault();
                 /* Act on the event */
@@ -278,6 +329,58 @@
                 } else {
                     classSelf.collapseRow($currentRow);
                 }
+            });
+
+            //点击搜索
+            $thead.find('#tree-search').on('click', function(event) {
+                event.preventDefault();
+                /* Act on the event */
+                var me = $(this);
+                var obj = {};
+                //去除高亮
+                $tbody.find('tr').css('color', '');
+                //获取搜索条件
+                $.each(me.parents('tr').find('th'), function(index, val) {
+                    var el = $(val);
+                    var ipt = el.find('input');
+                    if (ipt.length > 0 && ipt.val().length > 0) {
+                        obj[el.attr('id')] = el.find('input').val() || "";
+                    };
+                });
+                var trs = $tbody.find('tr');
+                //获取满足条件的行
+                var results = $.map(trs, function(item, index) {
+                    var found = false;
+                    $.each(obj, function(key, val) {
+                        var text = $(item).find('td[data-name="' + key + '"]').text() || "";
+                        //文本匹配
+                        if (text.indexOf(val) >= 0) {
+                            found = true;
+                        } else {
+                            found = false;
+                            return false;
+                        }
+                    });
+                    if (found) return item;
+                });
+                //高亮搜中的行并处理展开
+                $.each(results, function(index, el) {
+                    $(el).css('color', 'red');
+                    var parentId = $(el).data('parentid');
+                    var expend = function(id) {
+                        var $parentTr = $tbody.find('tr[data-id="' + id + '"]');
+                        var nextParentId = $parentTr.data('parentid');
+                        var currentLevel = $parentTr.data('level');
+                        classSelf.expendRow($parentTr);
+                        if (!nextParentId) return false;
+                        if (currentLevel && currentLevel !== 1) {
+                            expend(nextParentId);
+                        } else {
+                            return false;
+                        }
+                    };
+                    expend(parentId);
+                });
             });
         },
         /*-----------------------------------------------------------------------------------------------------------

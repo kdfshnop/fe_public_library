@@ -36,12 +36,24 @@
         "quantity": 40,
         "price": 50000,
         "parent_area_id": 11
+    },{
+        "area_id": 1111,
+        "area_name": "金桥国际",
+        "quantity": 40,
+        "price": 50000,
+        "parent_area_id": 111
     }, {
         "area_id": 141,
         "area_name": "顾村",
         "quantity": 30,
         "price": 30000,
         "parent_area_id": 14
+    }, {
+        "area_id": 1411,
+        "area_name": "顾村国际",
+        "quantity": 30,
+        "price": 30000,
+        "parent_area_id": 141
     }, {
         "area_id": 2,
         "area_name": "北京",
