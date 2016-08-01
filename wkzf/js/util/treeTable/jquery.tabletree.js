@@ -134,7 +134,7 @@
             });
             //如果有操作列参数则插入html
             if (opts.enableOperation) {
-                tableHtml.push('<th name="sort" style="100px">操作</th>');
+                tableHtml.push('<th name="operation" style="100px">操作</th>');
             }
             //如果有排序列参数则插入html
             if (opts.enableSort) {
@@ -143,29 +143,29 @@
             tableHtml.push('</tr>');
             //如果有需要搜索的列则插入html
             if (searchCol.length > 0) {
-                tableHtml.push('<tr>');
+                var searchRow = [];
+                var $search;
+                searchRow.push('<tr id="searchHead">');
                 //更加colmodel数量插入相应th
                 for (var i = 0; i < columns.length; i++) {
-                    //最后一列插入搜索按钮
-                    if (i == columns.length - 1) {
-                        //如果有操作或排序列需要多插入th
-                        if (opts.enableOperation) {
-                            tableHtml.push('<th></th>');
-                        };
-                        if (opts.enableSort) {
-                            tableHtml.push('<th></th>');
-                        };
-                        tableHtml.push('<th><button type="submit" id="tree-search" class="btn btn-primary btn-sm">搜索</button></th>');
+                    //插入搜索框
+                    if (searchCol.indexOf(columns[i].name) >= 0) {
+                        searchRow.push('<th id="' + columns[i].name + '"><input type="text" class="form-control input-sm" style="max-width:150px;"></th>');
                     } else {
-                        //插入搜索框
-                        if (searchCol.indexOf(columns[i].name) >= 0) {
-                            tableHtml.push('<th id="' + columns[i].name + '"><input type="text" class="form-control input-sm"></th>');
-                        } else {
-                            tableHtml.push('<th id="' + columns[i].name + '"></th>');
-                        }
+                        searchRow.push('<th id="' + columns[i].name + '"></th>');
                     }
                 }
-                tableHtml.push('</tr>')
+                if (opts.enableOperation) {
+                    searchRow.push('<th></th>');
+                };
+                if (opts.enableSort) {
+                    searchRow.push('<th></th>');
+                };
+                searchRow.push('</tr>');
+                $search = $(searchRow.join(''));
+                //添加搜索按钮
+                $search.find('th:last').append('<button type="submit" id="tree-search" class="btn btn-primary btn-sm">搜索</button>');
+                tableHtml.push($search[0].outerHTML);
             };
             tableHtml.push('</thead>');
             tableHtml.push('<tbody></tbody>')
@@ -381,6 +381,15 @@
                     };
                     expend(parentId);
                 });
+            });
+
+            //回车触发搜索
+            $thead.find('#searchHead input').on('keyup', function(event) {
+                event.preventDefault();
+                /* Act on the event */
+                if (event.which == 13) {
+                    $thead.find('#tree-search').click();
+                }
             });
         },
         /*-----------------------------------------------------------------------------------------------------------
