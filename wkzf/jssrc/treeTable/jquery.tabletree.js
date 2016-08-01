@@ -92,10 +92,26 @@
         是否添加设置排序按钮
         -----------------------------------------------------------------------------------------------------------*/
         enableSort: false,
+        //上移回调
+        upSortCallback: $.noop(),
+        //下移回调
+        downSortCallback: $.noop(),
+        //置顶回调
+        topSortCallback: $.noop(),
+        //置底回调
+        bottomSortCallback: $.noop(),
         /*-----------------------------------------------------------------------------------------------------------
-        是否添加编辑删除查看按钮{edit:"url",delete:"url",detail:"url"}
+        是否添加编辑删除查看按钮{add:"url",edit:"url",delete:"url",detail:"url"}
         -----------------------------------------------------------------------------------------------------------*/
         enableOperation: null,
+        //新增回调
+        addOpCallback: $.noop(),
+        //编辑回调
+        editOpCallback: $.noop(),
+        //删除回调
+        deleteOpCallback: $.noop(),
+        //明细回调
+        detailOpCallback: $.noop(),
         /*-----------------------------------------------------------------------------------------------------------
         渲染完成回调函数
         -----------------------------------------------------------------------------------------------------------*/
@@ -244,7 +260,9 @@
                     trHtml.push('<td data-name="operation">');
                     var tdsHtml = []
                     $.each(opts.enableOperation, function(index, el) {
-                        if (index === "edit" && el && el.length > 0) {
+                        if (index === "add" && el && el.length > 0) {
+                            tdsHtml.push('<a href="javascript:;" class="operation add" data-href="' + el + '">编辑</a>')
+                        } else if (index === "edit" && el && el.length > 0) {
                             tdsHtml.push('<a href="javascript:;" class="operation edit" data-href="' + el + '">编辑</a>')
                         } else if (index === "delete" && el && el.length > 0) {
                             tdsHtml.push('<a href="javascript:;" class="operation delete" data-href="' + el + '">删除</a>')
@@ -389,6 +407,50 @@
                 /* Act on the event */
                 if (event.which == 13) {
                     $thead.find('#tree-search').click();
+                }
+            });
+
+            //排序事件
+            $tbody.find('tr').on('click', '.sort', function(event) {
+                event.preventDefault();
+                /* Act on the event */
+                var me = $(this);
+                var $tr = me.parents('tr')
+                var obj = {
+                    id: $tr.data('id'),
+                    parentId: $tr.data('parentid'),
+                    level: $tr.data('level')
+                };
+                if (me.hasClass('up')) {
+                    options.upSortCallback(obj);
+                } else if (me.hasClass('down')) {
+                    options.downSortCallback(obj);
+                } else if (me.hasClass('top')) {
+                    options.topSortCallback(obj);
+                } else if (me.hasClass('bottom')) {
+                    options.bottomSortCallback(obj);
+                }
+            });
+
+            //操作事件
+            $tbody.find('tr').on('click', '.operation', function(event) {
+                event.preventDefault();
+                /* Act on the event */
+                var me = $(this);
+                var $tr = me.parents('tr')
+                var obj = {
+                    id: $tr.data('id'),
+                    parentId: $tr.data('parentid'),
+                    level: $tr.data('level')
+                };
+                if (me.hasClass('add')) {
+                    options.addOpCallback(obj);
+                } else if (me.hasClass('edit')) {
+                    options.editOpCallback(obj);
+                } else if (me.hasClass('delete')) {
+                    options.deleteOpCallback();
+                } else if (me.hasClass('details')) {
+                    options.detailsOpCallback(obj);
                 }
             });
         },
