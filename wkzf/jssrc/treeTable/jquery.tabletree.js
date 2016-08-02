@@ -101,7 +101,7 @@
         //置底回调
         bottomSortCallback: $.noop(),
         /*-----------------------------------------------------------------------------------------------------------
-        是否添加编辑删除查看按钮{add:"url",edit:"url",delete:"url",detail:"url"}
+        是否添加编辑删除查看按钮［"add","edit","delete","detail"］
         -----------------------------------------------------------------------------------------------------------*/
         enableOperation: null,
         //新增回调
@@ -260,14 +260,14 @@
                     trHtml.push('<td data-name="operation">');
                     var tdsHtml = []
                     $.each(opts.enableOperation, function(index, el) {
-                        if (index === "add" && el && el.length > 0) {
-                            tdsHtml.push('<a href="javascript:;" class="operation add" data-href="' + el + '">编辑</a>')
-                        } else if (index === "edit" && el && el.length > 0) {
-                            tdsHtml.push('<a href="javascript:;" class="operation edit" data-href="' + el + '">编辑</a>')
-                        } else if (index === "delete" && el && el.length > 0) {
-                            tdsHtml.push('<a href="javascript:;" class="operation delete" data-href="' + el + '">删除</a>')
-                        } else if (index === "detail" && el && el.length > 0) {
-                            tdsHtml.push('<a href="javascript:;" class="operation detail" data-href="' + el + '">查看</a>')
+                        if (el === "add") {
+                            tdsHtml.push('<a href="javascript:;" class="operation add">添加</a>')
+                        } else if (el === "edit") {
+                            tdsHtml.push('<a href="javascript:;" class="operation edit">编辑</a>')
+                        } else if (el === "delete") {
+                            tdsHtml.push('<a href="javascript:;" class="operation delete">删除</a>')
+                        } else if (el === "detail") {
+                            tdsHtml.push('<a href="javascript:;" class="operation detail">查看</a>')
                         };
                     });
                     trHtml.push(tdsHtml.join('&nbsp;&nbsp;'))
