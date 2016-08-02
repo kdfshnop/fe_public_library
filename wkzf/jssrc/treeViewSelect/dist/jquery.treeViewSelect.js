@@ -51,7 +51,8 @@
         searchResultColor: '#D9534F',
         searchResultBackColor: undefined, //'#FFFFFF',
 
-        enableCascade: true,
+        enableUpCascade: true,
+        enableDownCascade: true,
         enableLinks: false,
         highlightSelected: true,
         highlightSearchResults: true,
@@ -437,27 +438,33 @@
 
     Tree.prototype.setCheckedState = function(node, state, options) {
         var _this = this;
-
+        var stateFlag, eventType;
         if (state === node.state.checked) return;
 
-        if (_this.options.enableCascade) {
+        stateFlag = state ? true : false;
+        eventType = state ? 'nodeChecked' : 'nodeUnchecked';
 
+        node.state.checked = stateFlag;
+
+        if (_this.options.enableUpCascade || _this.options.enableDownCascade) {
             //reset nodes array
             _this.childsNodes = [];
             _this.parentNodes = [];
 
-            //Recurse the tree structure and get all child nodes
-            _this.getChilds(node);
-            _this.getParents(node);
+            if (_this.options.enableDownCascade) {
+                //Recurse the tree structure and get all child nodes
+                _this.getChilds(node);
 
-            if (_this.childsNodes && _this.childsNodes.length) {
-                $.each(_this.childsNodes, function(index, el) {
-                    el.state.checked = state;
-                });
+                if (_this.childsNodes && _this.childsNodes.length) {
+                    $.each(_this.childsNodes, function(index, el) {
+                        el.state.checked = stateFlag;
+                    });
+                }
             }
 
-            if (state) {
-                node.state.checked = true;
+            if (_this.options.enableUpCascade) {
+                //Recurse the tree structure and get all parent nodes
+                _this.getParents(node);
 
                 $.each(_this.parentNodes, function(index, node) {
                     var checkedNodes = _this.getChecked(node);
@@ -465,40 +472,13 @@
                         node.state.checked = true;
                     }
                 });
-
-                if (!options.silent) {
-                    _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
-                }
-
-            } else {
-                node.state.checked = false;
-
-                $.each(_this.parentNodes, function(index, node) {
-                    node.state.checked = false;
-                });
-
-                if (!options.silent) {
-                    _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
-                }
             }
-        } else {
-            if (state) {
+        }
 
-                // Check node
-                node.state.checked = true;
+        //Trigger the Event
 
-                if (!options.silent) {
-                    _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
-                }
-            } else {
-
-                // Uncheck node
-                node.state.checked = false;
-                if (!options.silent) {
-                    _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
-                }
-            }
-
+        if (!options.silent) {
+            _this.$element.trigger(eventType, $.extend(true, {}, node));
         }
     };
 
@@ -1378,6 +1358,12 @@
             获取渲染tree数据的异步请求地址
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             apiUrl: '',
+
+            /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            请求方法，Get OR POST
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            type: 'GET',
+
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             请求的数据类型
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -1409,9 +1395,14 @@
             defaultVals: null,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            enableCascade 设置勾选节点是否影响上下级节点
+            enableUpCascade 设置勾选节点是否影响上级节点,即向上递归
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            enableCascade:true,
+            enableUpCascade: true,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            enableUpCascade 设置勾选节点是否影响上级节点,即向上递归
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            enableDownCascade: true,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             是否显示级联的文本，目前只支持单选的前提下。
@@ -1715,7 +1706,7 @@
             try {
                 $.ajax({
                     url: _.settings.apiUrl,
-                    type: 'GET',
+                    type: _.settings.type,
                     timeout: _.settings.timeout,
                     dataType: _.settings.dataType,
                     data: _.settings.data,
@@ -1789,7 +1780,8 @@
         tConfig.showCheckbox = this.settings.bootstrapTreeParams.multiSelect;
         tConfig.highlightSelected = !this.settings.bootstrapTreeParams.multiSelect;
         tConfig.onhoverColor = this.settings.bootstrapTreeParams.multiSelect ? "" : "#F5F5F5";
-        tConfig.enableCascade=this.settings.enableCascade;
+        tConfig.enableUpCascade = this.settings.enableUpCascade;
+        tConfig.enableDownCascade = this.settings.enableDownCascade;
 
         this.tree.treeview(tConfig);
 
@@ -1948,10 +1940,10 @@
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             checkedNodes = _.tree.treeview('getChecked');
-            listNodes=checkedNodes;
-            if (_.settings.enableCascade) {
+            listNodes = checkedNodes;
+            if (_.settings.enableUpCascade || _.settings.enableDownCascade) {
                 listNodes = getSelectedNode(_.tree, checkedNodes);
-            }         
+            }
         } else {
             listNodes = _.tree.treeview('getSelected');
         }

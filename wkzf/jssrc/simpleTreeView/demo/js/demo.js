@@ -1,12 +1,14 @@
 $(function(){
 	$("#tree").simpleTreeView({
 		sourceUrl: 'http://dev01.fe.wkzf/fe_public_library/bootstrap/plugins/bootstrap-treeview/src/js/bootstrap-treeview.js',
-		apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/city.json',
+		apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/bigDataCity.json',
 		dataType:'json',
-		stateSynch:true,
+		enableDownCascade:true,
+		enableUpCascade:true,
 		showSearch:true,
 		bootstrapTreeParams:{
-			color:'#4081d6'
+			color:'#4081d6',
+			multiSelect:true
 		}
 	});
 
