@@ -448,7 +448,7 @@
                 } else if (me.hasClass('edit')) {
                     options.editOpCallback(obj);
                 } else if (me.hasClass('delete')) {
-                    options.deleteOpCallback();
+                    options.deleteOpCallback(obj);
                 } else if (me.hasClass('detail')) {
                     options.detailOpCallback(obj);
                 }
