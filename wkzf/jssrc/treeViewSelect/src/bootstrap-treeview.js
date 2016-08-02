@@ -51,7 +51,8 @@
         searchResultColor: '#D9534F',
         searchResultBackColor: undefined, //'#FFFFFF',
 
-        enableCascade: true,
+        enableUpCascade: true,
+        enableDownCascade: true,
         enableLinks: false,
         highlightSelected: true,
         highlightSearchResults: true,
@@ -437,27 +438,33 @@
 
     Tree.prototype.setCheckedState = function(node, state, options) {
         var _this = this;
-
+        var stateFlag, eventType;
         if (state === node.state.checked) return;
 
-        if (_this.options.enableCascade) {
+        stateFlag = state ? true : false;
+        eventType = state ? 'nodeChecked' : 'nodeUnchecked';
 
+        node.state.checked = stateFlag;
+
+        if (_this.options.enableUpCascade || _this.options.enableDownCascade) {
             //reset nodes array
             _this.childsNodes = [];
             _this.parentNodes = [];
 
-            //Recurse the tree structure and get all child nodes
-            _this.getChilds(node);
-            _this.getParents(node);
+            if (_this.options.enableDownCascade) {
+                //Recurse the tree structure and get all child nodes
+                _this.getChilds(node);
 
-            if (_this.childsNodes && _this.childsNodes.length) {
-                $.each(_this.childsNodes, function(index, el) {
-                    el.state.checked = state;
-                });
+                if (_this.childsNodes && _this.childsNodes.length) {
+                    $.each(_this.childsNodes, function(index, el) {
+                        el.state.checked = stateFlag;
+                    });
+                }
             }
 
-            if (state) {
-                node.state.checked = true;
+            if (_this.options.enableUpCascade) {
+                //Recurse the tree structure and get all parent nodes
+                _this.getParents(node);
 
                 $.each(_this.parentNodes, function(index, node) {
                     var checkedNodes = _this.getChecked(node);
@@ -465,40 +472,13 @@
                         node.state.checked = true;
                     }
                 });
-
-                if (!options.silent) {
-                    _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
-                }
-
-            } else {
-                node.state.checked = false;
-
-                $.each(_this.parentNodes, function(index, node) {
-                    node.state.checked = false;
-                });
-
-                if (!options.silent) {
-                    _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
-                }
             }
-        } else {
-            if (state) {
+        }
 
-                // Check node
-                node.state.checked = true;
+        //Trigger the Event
 
-                if (!options.silent) {
-                    _this.$element.trigger('nodeChecked', $.extend(true, {}, node));
-                }
-            } else {
-
-                // Uncheck node
-                node.state.checked = false;
-                if (!options.silent) {
-                    _this.$element.trigger('nodeUnchecked', $.extend(true, {}, node));
-                }
-            }
-
+        if (!options.silent) {
+            _this.$element.trigger(eventType, $.extend(true, {}, node));
         }
     };
 
