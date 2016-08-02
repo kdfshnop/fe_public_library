@@ -627,7 +627,7 @@
 
                 //取出指定节点的父节点的数量，并给节点赋值，父节点的数量就是节点的level 值
                 getParentNodes(_.tree, listNodes[i], pNodesArr);
-                listNodes[i].level = pNodesArr.length;
+                listNodes[i].level = pNodesArr.length + 1;
 
                 //生成选中项
                 $selectedItem = _.genTreeSelectItem(listNodes[i]);
