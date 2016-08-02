@@ -120,8 +120,8 @@
         icon图表偏移位置
         -----------------------------------------------------------------------------------------------------------*/
         iconPosition: 0,
-        //配置需要搜索的列,colmodel中的名称一致,["columnA","cloumnB"]
-        searchColumns: []
+        //是否允许搜索
+        enableSearch: false
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -133,12 +133,9 @@
         -----------------------------------------------------------------------------------------------------------*/
         renderHeader: function($element, opts) {
             var columns = opts.colmodel;
-            var searchCol = opts.searchColumns;
             var tableHtml = [];
             if (!columns) return;
             if (!Array.isArray(columns) || Object.prototype.toString.call(columns) !== '[object Array]') return;
-            if (!searchCol) return;
-            if (!Array.isArray(searchCol) || Object.prototype.toString.call(searchCol) !== '[object Array]') return;
 
             //创建表格
             tableHtml.push('<table class="table table-tree ' + opts.tableClass + '">');
@@ -157,31 +154,24 @@
                 tableHtml.push('<th name="sort" style="100px">排序</th>');
             }
             tableHtml.push('</tr>');
-            //如果有需要搜索的列则插入html
-            if (searchCol.length > 0) {
-                var searchRow = [];
-                var $search;
-                searchRow.push('<tr id="searchHead">');
+            //如果需要搜索则插入html
+            if (opts.enableSearch) {
+                tableHtml.push('<tr id="searchHead">');
                 //更加colmodel数量插入相应th
                 for (var i = 0; i < columns.length; i++) {
-                    //插入搜索框
-                    if (searchCol.indexOf(columns[i].name) >= 0) {
-                        searchRow.push('<th id="' + columns[i].name + '"><input type="text" class="form-control input-sm" style="max-width:150px;"></th>');
+                    if (i === 0) {
+                        tableHtml.push('<th><div class="input-group"><input type="text" class="form-control" id="keyword" placeholder="请输入"><span class="input-group-btn"><button class="btn btn-default" id="tree-search" type="button">搜索</button></span></div></th>');
                     } else {
-                        searchRow.push('<th id="' + columns[i].name + '"></th>');
+                        tableHtml.push('<th></th>');
                     }
                 }
                 if (opts.enableOperation) {
-                    searchRow.push('<th></th>');
+                    tableHtml.push('<th></th>');
                 };
                 if (opts.enableSort) {
-                    searchRow.push('<th></th>');
+                    tableHtml.push('<th></th>');
                 };
-                searchRow.push('</tr>');
-                $search = $(searchRow.join(''));
-                //添加搜索按钮
-                $search.find('th:last').append('<button type="submit" id="tree-search" class="btn btn-primary btn-sm">搜索</button>');
-                tableHtml.push($search[0].outerHTML);
+                tableHtml.push('</tr>');
             };
             tableHtml.push('</thead>');
             tableHtml.push('<tbody></tbody>')
@@ -253,7 +243,7 @@
                 trHtml.push('<tr data-id="' + val[opts.keyFieldName] + '" data-parentId="' + val[opts.parentKeyFieldName] + '" data-level="' + level + '" data-expended="false">');
                 //生成td
                 $.each(opts.colmodel, function(index, el) {
-                    trHtml.push('<td data-name="' + el.name + '">' + val[el.name] + '</td>');
+                    trHtml.push('<td data-name="' + el.name + '" class="tree-data">' + val[el.name] + '</td>');
                 });
                 //生成操作按钮
                 if (opts.enableOperation) {
@@ -353,36 +343,23 @@
             $thead.find('#tree-search').on('click', function(event) {
                 event.preventDefault();
                 /* Act on the event */
+                debugger;
                 var me = $(this);
-                var obj = {};
+                var keyword = $.trim($("#keyword").val()) || "";
+                var resultsTr = [];
+                var tds = $tbody.find('.tree-data');
                 //去除高亮
                 $tbody.find('tr').css('color', '');
-                //获取搜索条件
-                $.each(me.parents('tr').find('th'), function(index, val) {
-                    var el = $(val);
-                    var ipt = el.find('input');
-                    if (ipt.length > 0 && ipt.val().length > 0) {
-                        obj[el.attr('id')] = el.find('input').val() || "";
-                    };
-                });
-                var trs = $tbody.find('tr');
+                if (keyword ==="") return false;                
                 //获取满足条件的行
-                var results = $.map(trs, function(item, index) {
-                    var found = false;
-                    $.each(obj, function(key, val) {
-                        var text = $(item).find('td[data-name="' + key + '"]').text() || "";
-                        //文本匹配
-                        if (text.indexOf(val) >= 0) {
-                            found = true;
-                        } else {
-                            found = false;
-                            return false;
-                        }
-                    });
-                    if (found) return item;
+                $.each(tds, function(index, el) {
+                    /* iterate through array or object */
+                    if ($(el).text().indexOf(keyword) >= 0) {
+                        resultsTr.push($(el).parent());
+                    }
                 });
                 //高亮搜中的行并处理展开
-                $.each(results, function(index, el) {
+                $.each(resultsTr, function(index, el) {
                     $(el).css('color', 'red');
                     var parentId = $(el).data('parentid');
                     var expend = function(id) {
