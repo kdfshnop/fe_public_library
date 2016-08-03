@@ -91,11 +91,9 @@
         /*-----------------------------------------------------------------------------------------------------------
         是否添加设置排序按钮
         -----------------------------------------------------------------------------------------------------------*/
-        enableSort: false,
-        //上移回调,需要返回值用于操作页面元素
-        upSortCallback: $.noop,
-        //下移回调,需要返回值用于操作页面元素
-        downSortCallback: $.noop,
+        enableMove: false,
+        //上下移回调,需要返回值用于操作页面元素
+        moveCallback: $.noop,
         /*-----------------------------------------------------------------------------------------------------------
         渲染完成回调函数
         -----------------------------------------------------------------------------------------------------------*/
@@ -122,7 +120,7 @@
             if (!Array.isArray(columns) || Object.prototype.toString.call(columns) !== '[object Array]') return;
 
             //如果有排序列参数则插入html
-            if (opts.enableSort) {
+            if (opts.enableMove) {
                 $element.css('position', 'relative');
                 tableHtml.push('<div class="change-sort" style="position:absolute;top:50%;right:3%;font-size:30px;color:#337ab7">');
                 tableHtml.push('<i class="glyphicon glyphicon-arrow-up move-up sort-change" style="display:block;margin-bottom:10px;"></i>');
@@ -370,42 +368,13 @@
                 if (me.hasClass('move-up')) {
                     //向上移动
                     me.addClass('disabled').css('color', '#999999');
-                    success = options.upSortCallback(param);
-                    if (success) {
-                        $preTr = $tr.prevAll('tr[data-parentid="' + parentId + '"]').first();
-                        if ($preTr.length === 0) return false;
-                        $tempTrs = $childs.clone(true, true);
-                        $tempTrs.insertBefore($preTr);
-                        $childs.remove();
-                    }
+                    param.move = "up";
                 } else if (me.hasClass('move-down')) {
                     //向上移动
-                    me.addClass('disabled').css('color', '#999999');;
-                    success = options.downSortCallback(param);
-                    if (success) {
-                        $nextTr = $tr.nextAll('tr[data-parentid="' + parentId + '"]').first();
-                        if ($nextTr.length === 0) return false;
-                        //找到下一层级最后一行
-                        var FindLastChildRow = function($element, $tr) {
-                            var id = $tr.data('id');
-                            var $lastChild = $element.find('tr[data-parentid="' + id + '"]').last();
-                            if ($lastChild.length > 0) {
-                                FindLastChildRow($element, $lastChild);
-                            } else {
-                                $insertTr = $tr;
-                                return false;
-                            }
-                        };
-                        FindLastChildRow($element, $nextTr);
-                        $tempTrs = $childs.clone(true, true);
-                        $tempTrs.insertAfter($insertTr);
-                        $childs.remove();
-                    };
+                    me.addClass('disabled').css('color', '#999999');
+                    param.move = "down";
                 };
-                me.removeClass('disabled').css('color', '#337ab7');
-                //控制按钮显示隐藏
-                var obj = privateMethod.TopOrBottom($element, id);
-                privateMethod.ControlSortArrow($element, obj);
+                options.moveCallback(param);
             });
 
             //点击搜索
@@ -492,7 +461,54 @@
                 });
             else
                 return;
-        }
+        },
+        //同级向上移动
+        Move: function(param) {
+            if (!param || !param.id || !param.move) return false;
+            var $element = this.$element;
+            var $tbody = $element.find('table tbody');
+            var $tr = $tbody.find('tr[data-id="' + param.id + '"]');
+            var id = $tr.data('id');
+            var parentId = $tr.data('parentid');
+            var level = $tr.data('level');
+            var route = $tr.data('route');
+            var $childs = $tbody.find('tr[data-route^="' + route + '"]');
+            var $tempTrs, $preTr, $nextTr, $insertTr, $arrow;
+            var type = param.move.toString().toLowerCase()
+            if (type === "up") {
+                //向上移动
+                $arrow = $element.find('.move-up');
+                $preTr = $tr.prevAll('tr[data-parentid="' + parentId + '"]').first();
+                if ($preTr.length === 0) return false;
+                $tempTrs = $childs.clone(true, true);
+                $tempTrs.insertBefore($preTr);
+                $childs.remove();
+            } else if (type === "down") {
+                //向上移动
+                $arrow = $element.find('.move-down');
+                $nextTr = $tr.nextAll('tr[data-parentid="' + parentId + '"]').first();
+                if ($nextTr.length === 0) return false;
+                //找到下一层级最后一行
+                var FindLastChildRow = function($element, $tr) {
+                    var id = $tr.data('id');
+                    var $lastChild = $element.find('tr[data-parentid="' + id + '"]').last();
+                    if ($lastChild.length > 0) {
+                        FindLastChildRow($element, $lastChild);
+                    } else {
+                        $insertTr = $tr;
+                        return false;
+                    }
+                };
+                FindLastChildRow($element, $nextTr);
+                $tempTrs = $childs.clone(true, true);
+                $tempTrs.insertAfter($insertTr);
+                $childs.remove();
+            };
+            $arrow.removeClass('disabled').css('color', '#337ab7');
+            //控制按钮显示隐藏
+            var obj = privateMethod.TopOrBottom($element, id);
+            privateMethod.ControlSortArrow($element, obj);
+        },
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -518,6 +534,7 @@
                 $this.data(Plugin.dataName, (data = new Plugin(this, options)));
             }
             //如果插件的参数是一个字符串，则直接调用插件的名称为此字符串方法
+            debugger;
             if (typeof option == 'string') data[option](args);
             return this;
         });
