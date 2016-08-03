@@ -60,7 +60,14 @@
                         id: 1,
                         columnName: 'sort'
                     }],
-                    'enableSort': true,
+                    moveCallback: function(param) {
+                        $('.table').tableTree('Move', {
+                            id: param.id,
+                            move: param.move
+                        });
+
+                    },
+                    'enableMove': true,
                     "enableSearch": true
                 });
             },
