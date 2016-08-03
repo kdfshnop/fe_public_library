@@ -31,9 +31,19 @@
             'display_name': '房源数量（套）',
             'width': '20%',
         }, {
+            'name': function(row) {
+                return '<a href="" data="' + row.name + '">设置权限</a>';
+            },
+            'display_name': "设置"
+        }, {
             'name': 'price',
             'display_name': '均价（元）',
             'width': '20%',
+        }, {
+            'name': function(row) {
+                return '<a href="" data="' + row.name + '">删除</a>';
+            },
+            'display_name': "操作"
         }];
         $.ajax({
             url: 'sampleData.json',
@@ -50,7 +60,6 @@
                         id: 1,
                         columnName: 'sort'
                     }],
-                    'enableOperation':["add","edit","delete","detail"],
                     'enableSort': true,
                     "enableSearch": true
                 });

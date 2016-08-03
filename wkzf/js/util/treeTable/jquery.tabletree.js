@@ -93,21 +93,9 @@
         -----------------------------------------------------------------------------------------------------------*/
         enableSort: false,
         //上移回调,需要返回值用于操作页面元素
-        upSortCallback: $.noop(),
+        upSortCallback: $.noop,
         //下移回调,需要返回值用于操作页面元素
-        downSortCallback: $.noop(),
-        /*-----------------------------------------------------------------------------------------------------------
-        是否添加编辑删除查看按钮［"add","edit","delete","detail"］
-        -----------------------------------------------------------------------------------------------------------*/
-        enableOperation: null,
-        //新增回调
-        addOpCallback: $.noop(),
-        //编辑回调
-        editOpCallback: $.noop(),
-        //删除回调
-        deleteOpCallback: $.noop(),
-        //明细回调
-        detailOpCallback: $.noop(),
+        downSortCallback: $.noop,
         /*-----------------------------------------------------------------------------------------------------------
         渲染完成回调函数
         -----------------------------------------------------------------------------------------------------------*/
@@ -147,12 +135,13 @@
             //创建表头
             $.each(columns, function(index, el) {
                 var width = el.width || '50px';
-                tableHtml.push('<th name="' + el.name + '" style="width:' + width + '">' + el.display_name + '</th>');
+                if (typeof(el.name) === "function") {
+                    tableHtml.push('<th style="width:' + width + '">' + el.display_name + '</th>');
+                } else {
+                    tableHtml.push('<th name="' + el.name + '" style="width:' + width + '">' + el.display_name + '</th>');
+                }
             });
-            //如果有操作列参数则插入html
-            if (opts.enableOperation) {
-                tableHtml.push('<th name="operation" style="100px">操作</th>');
-            }
+
             tableHtml.push('</tr>');
             //如果需要搜索则插入html
             if (opts.enableSearch) {
@@ -165,9 +154,6 @@
                         tableHtml.push('<th></th>');
                     }
                 }
-                if (opts.enableOperation) {
-                    tableHtml.push('<th></th>');
-                };
                 tableHtml.push('</tr>');
             };
             tableHtml.push('</thead>');
@@ -243,29 +229,17 @@
                 var trHtml = [],
                     $tr;
                 //生成tr
-                trHtml.push('<tr data-id="' + val[opts.keyFieldName] + '" data-parentId="' + val[opts.parentKeyFieldName] + '" data-level="' + level + '" data-expended="false" data-route="' + val.route + '">');
+                trHtml.push('<tr data-id="' + val[opts.keyFieldName] + '" data-parentid="' + val[opts.parentKeyFieldName] + '" data-level="' + level + '" data-expended="false" data-route="' + val.route + '">');
                 //生成td
                 $.each(opts.colmodel, function(index, el) {
-                    trHtml.push('<td data-name="' + el.name + '" class="tree-data">' + val[el.name] + '</td>');
+                    var colVal;
+                    if (typeof(el.name) === 'function') {
+                        colVal = el.name(val)
+                        trHtml.push('<td>' + colVal + '</td>');
+                    } else {
+                        trHtml.push('<td data-name="' + el.name + '" class="tree-data">' + val[el.name] + '</td>');
+                    }
                 });
-                //生成操作按钮
-                if (opts.enableOperation) {
-                    trHtml.push('<td data-name="operation">');
-                    var tdsHtml = []
-                    $.each(opts.enableOperation, function(index, el) {
-                        if (el === "add") {
-                            tdsHtml.push('<a href="javascript:;" class="operation add">添加</a>')
-                        } else if (el === "edit") {
-                            tdsHtml.push('<a href="javascript:;" class="operation edit">编辑</a>')
-                        } else if (el === "delete") {
-                            tdsHtml.push('<a href="javascript:;" class="operation delete">删除</a>')
-                        } else if (el === "detail") {
-                            tdsHtml.push('<a href="javascript:;" class="operation detail">查看</a>')
-                        };
-                    });
-                    trHtml.push(tdsHtml.join('&nbsp;&nbsp;'))
-                    trHtml.push('</td>');
-                };
                 trHtml.push('</tr>')
                 $tr = $(trHtml.join(''));
 
@@ -288,7 +262,32 @@
                     me.buildTr(tbodyHtml, val.children, opts, level, !val.expendRow);
                 }
             });
-        }
+        },
+        //返回是否是该层级顶行或底行
+        TopOrBottom: function($element, id) {
+            var $tr = $element.find('tbody tr[data-id="' + id + '"]');
+            var $preTr, $nextTr;
+            var parentId = $tr.data('parentid');
+            $preTr = $tr.prevAll('tr[data-parentid="' + parentId + '"]').first();
+            $nextTr = $tr.nextAll('tr[data-parentid="' + parentId + '"]').first();
+            return {
+                top: $preTr.length > 0 ? false : true,
+                bottom: $nextTr.length > 0 ? false : true
+            };
+        },
+        //控制上移下移按钮显示
+        ControlSortArrow: function($element, obj) {
+            if (obj.top) {
+                $element.find('.move-up').addClass('hidden');
+            } else {
+                $element.find('.move-up').removeClass('hidden');
+            }
+            if (obj.bottom) {
+                $element.find('.move-down').addClass('hidden');
+            } else {
+                $element.find('.move-down').removeClass('hidden');
+            }
+        },
     };
 
     /*-----------------------------------------------------------------------------------------------------------
@@ -343,34 +342,76 @@
                 /* Act on the event */
                 $tbody.find('tr').removeClass('info');
                 $(this).addClass('info');
+                var obj = privateMethod.TopOrBottom($element, $(this).data('id'));
+                privateMethod.ControlSortArrow($element, obj);
             });
 
             //更改顺序事件
-            $tbody.find('.change-sort').on('click', function(event) {
+            $element.on('click', '.sort-change', function(event) {
                 event.preventDefault();
+                event.stopPropagation();
                 /* Act on the event */
                 var me = $(this);
+                if (me.hasClass('hidden')) return false;
+                if (me.hasClass('disabled')) return false;
                 var success = false;
+                var $tr = $tbody.find('tr.info');
+                var id = $tr.data('id');
+                var parentId = $tr.data('parentid');
+                var level = $tr.data('level');
+                var route = $tr.data('route');
+                var $childs = $tbody.find('tr[data-route^="' + route + '"]');
                 var param = {
-                    id: $tr.data('id'),
-                    parentId: $tr.data('parentid'),
-                    level: $tr.data('level')
+                    id: id,
+                    parentId: parentId,
+                    level: level
                 };
+                var $tempTrs, $preTr, $nextTr, $insertTr;
                 if (me.hasClass('move-up')) {
+                    //向上移动
+                    me.addClass('disabled').css('color', '#999999');
                     success = options.upSortCallback(param);
+                    if (success) {
+                        $preTr = $tr.prevAll('tr[data-parentid="' + parentId + '"]').first();
+                        if ($preTr.length === 0) return false;
+                        $tempTrs = $childs.clone(true, true);
+                        $tempTrs.insertBefore($preTr);
+                        $childs.remove();
+                    }
                 } else if (me.hasClass('move-down')) {
+                    //向上移动
+                    me.addClass('disabled').css('color', '#999999');;
                     success = options.downSortCallback(param);
+                    if (success) {
+                        $nextTr = $tr.nextAll('tr[data-parentid="' + parentId + '"]').first();
+                        if ($nextTr.length === 0) return false;
+                        //找到下一层级最后一行
+                        var FindLastChildRow = function($element, $tr) {
+                            var id = $tr.data('id');
+                            var $lastChild = $element.find('tr[data-parentid="' + id + '"]').last();
+                            if ($lastChild.length > 0) {
+                                FindLastChildRow($element, $lastChild);
+                            } else {
+                                $insertTr = $tr;
+                                return false;
+                            }
+                        };
+                        FindLastChildRow($element, $nextTr);
+                        $tempTrs = $childs.clone(true, true);
+                        $tempTrs.insertAfter($insertTr);
+                        $childs.remove();
+                    };
                 };
-                if (success) {
-
-                }
+                me.removeClass('disabled').css('color', '#337ab7');
+                //控制按钮显示隐藏
+                var obj = privateMethod.TopOrBottom($element, id);
+                privateMethod.ControlSortArrow($element, obj);
             });
 
             //点击搜索
-            $thead.find('#tree-search').on('click', function(event) {
+            $thead.on('click', '#tree-search', function(event) {
                 event.preventDefault();
                 /* Act on the event */
-                debugger;
                 var me = $(this);
                 var keyword = $.trim($("#keyword").val()) || "";
                 var resultsTr = [];
@@ -419,50 +460,6 @@
                     $thead.find('#tree-search').click();
                 }
             });
-
-            //排序事件
-            $tbody.find('tr').on('click', '.sort', function(event) {
-                event.preventDefault();
-                /* Act on the event */
-                var me = $(this);
-                var $tr = me.parents('tr')
-                var obj = {
-                    id: $tr.data('id'),
-                    parentId: $tr.data('parentid'),
-                    level: $tr.data('level')
-                };
-                if (me.hasClass('up')) {
-                    options.upSortCallback(obj);
-                } else if (me.hasClass('down')) {
-                    options.downSortCallback(obj);
-                } else if (me.hasClass('top')) {
-                    options.topSortCallback(obj);
-                } else if (me.hasClass('bottom')) {
-                    options.bottomSortCallback(obj);
-                }
-            });
-
-            //操作事件
-            $tbody.find('tr').on('click', '.operation', function(event) {
-                event.preventDefault();
-                /* Act on the event */
-                var me = $(this);
-                var $tr = me.parents('tr')
-                var obj = {
-                    id: $tr.data('id'),
-                    parentId: $tr.data('parentid'),
-                    level: $tr.data('level')
-                };
-                if (me.hasClass('add')) {
-                    options.addOpCallback(obj);
-                } else if (me.hasClass('edit')) {
-                    options.editOpCallback(obj);
-                } else if (me.hasClass('delete')) {
-                    options.deleteOpCallback(obj);
-                } else if (me.hasClass('detail')) {
-                    options.detailOpCallback(obj);
-                }
-            });
         },
         /*-----------------------------------------------------------------------------------------------------------
         展开行
@@ -471,7 +468,7 @@
             var $tbody = this.$element.find('table tbody'),
                 currentRowId = $row.data('id'),
                 $currentTd = $row.find('td:first'),
-                $childrenTrs = $tbody.find('tr[data-parentId="' + currentRowId + '"]');
+                $childrenTrs = $tbody.find('tr[data-parentid="' + currentRowId + '"]');
             if ($childrenTrs.length <= 0) return;
             $row.data('expended', 'true');
             $currentTd.find('i').removeClass(this.options.expendIcon).addClass(this.options.collapseIcon);
@@ -485,7 +482,7 @@
                 $tbody = classSelf.$element.find('table tbody'),
                 currentRowId = $row.data('id'),
                 $currentTd = $row.find('td:first'),
-                $childrenTrs = $tbody.find('tr[data-parentId="' + currentRowId + '"]');
+                $childrenTrs = $tbody.find('tr[data-parentid="' + currentRowId + '"]');
             $row.data('expended', 'false')
             $currentTd.find('i').removeClass(classSelf.options.collapseIcon).addClass(classSelf.options.expendIcon);
             $childrenTrs.css('display', 'none');
