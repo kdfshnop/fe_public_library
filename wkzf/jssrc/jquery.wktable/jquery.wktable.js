@@ -365,9 +365,7 @@ opitons:{
         //清空导航信息
         this.$navigation.empty();
 
-        var $pagination = $('<div></div>');
-        var $ul = $('<ul class="pagination"></ul>');
-        $pagination.append($ul);
+        var $pagination = $('<div class="pagination"></div>');        
         var $pageSizeSelect = $('<select class="page-size-select form-control"></select>');
         var $pageJump = $('<div class="page-jump"></div>');
         this.$navigation.append($pagination).append($('<div class="page-size-div"></div>').append($pageSizeSelect)).append($pageJump);
@@ -414,7 +412,7 @@ opitons:{
                 str += next;
             }
 
-            $ul.append(str);
+            $pagination.append(str);
             $pagination.after("<div class='info'><span>" + this.pageInfo.pageIndex + "/" + this.pageInfo.pageTotal + "</span></div>");
         }
         //选择页大小下拉框
