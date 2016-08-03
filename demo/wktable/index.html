@@ -2,86 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<style>
-			.wktable{
-				position:relative;
-			}
-			.wktable .loading{
-				position:absolute;	
-				z-index:10000;	
-				width:80px;
-				height:80px;		
-			}
-			.wktable .loading img{
-				height:100%;
-				width:100%;
-			}
-			.wktable .cover{
-				position:absolute;
-				left:0;
-				top:0;
-				z-index:9999;
-				background-color:black;
-				filter:alpha(opacity=50); /*IE滤镜，透明度50%*/
-				-moz-opacity:0.5; /*Firefox私有，透明度50%*/
-				opacity:0.5;/*其他，透明度50%*/
-			}
-			.sort{
-				cursor:pointer;
-			}
-			.sort:after{
-				content:"paixu";
-				
-			}
-			.sort-asc:after{
-				content:"  ↑";
-			}
-			.sort-desc:after{
-				content:"  ↓";
-			}
-
-
-			.table-navigation{
-				width:100%;
-				float:left;
-			}		
-		 	.table-navigation a.active{
-				background-color:#aaaadd;
-			}
-			.table-navigation >nav{
-				float:left;
-			}
-			.table-navigation > div{
-				float:left;				
-			}
-
-			.table-navigation .info, .table-navigation .page-size-div, .table-navigation .page-jump{
-				margin:20px 0;
-				padding:6px 12px;
-			}
-
-			.table-navigation .page-size-div{
-				padding:0;
-			}
-
-			.page-size-div div{
-				display:inline-block;
-			}
-			.table-navigation .page-size-div{
-				line-height: 1
-			}
-
-			.table-navigation .info span{
-				padding: 6px 12px;
-				font-size:16px;
-			}
-					
-
-			.table-navigation > span{
-
-			}
-		</style>
-		<link href="../../bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
+		<link href="../../wkzf/jssrc/jquery.wktable/wktable.css" rel="stylesheet"/>
 	</head>
 	<body>
 		<div class="container" style="margin:20px auto">
@@ -94,7 +15,7 @@
 		<table id="myTable" class="table"></table>
 		</div>
 		<script src="../../wkzf/js/lib/jquery/jquery-2.0.3.min.js"></script>
-		<script src="../../wkzf/jssrc/jquery.wktable.js"></script>
+		<script src="../../wkzf/jssrc/jquery.wktable/jquery.wktable.js"></script>
 		<script>
 		$(function(){
 			$('#btn').click(function(){
