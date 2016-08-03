@@ -207,17 +207,23 @@
             var minParentId = sortedData[0][opts.parentKeyFieldName];
             var nestedData = opts.data.reduce(function(obj, item) {
                 var parentId = item[opts.parentKeyFieldName],
+                    id = item[opts.keyFieldName],
                     map = obj.map;
                 map[item[opts.keyFieldName]] = item;
                 if (parentId === null || parentId === minParentId) {
+                    map[id].route = item[opts.keyFieldName].toString();
+                    item.route = item[opts.keyFieldName].toString();
                     obj.res.push(item);
                 } else {
                     var parentItem = map[parentId];
                     if (parentItem) {
-                        if (parentItem.hasOwnProperty('children'))
+                        if (parentItem.hasOwnProperty('children')) {
+                            item.route = parentItem.route + item[opts.keyFieldName].toString();
                             parentItem.children.push(item);
-                        else
+                        } else {
+                            item.route = parentItem.route + item[opts.keyFieldName].toString();
                             parentItem.children = [item];
+                        }
                     }
                 }
                 return obj
@@ -237,7 +243,7 @@
                 var trHtml = [],
                     $tr;
                 //生成tr
-                trHtml.push('<tr data-id="' + val[opts.keyFieldName] + '" data-parentId="' + val[opts.parentKeyFieldName] + '" data-level="' + level + '" data-expended="false">');
+                trHtml.push('<tr data-id="' + val[opts.keyFieldName] + '" data-parentId="' + val[opts.parentKeyFieldName] + '" data-level="' + level + '" data-expended="false" data-route="' + val.route + '">');
                 //生成td
                 $.each(opts.colmodel, function(index, el) {
                     trHtml.push('<td data-name="' + el.name + '" class="tree-data">' + val[el.name] + '</td>');
