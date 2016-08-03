@@ -79,12 +79,11 @@ opitons:{
         this.$tbody = $('<tbody></tbody>');
         this.$navigation = $('<div class="table-navigation"></div>');
         this.$empty = $('<div class="data-empty">请求数据为空:)</div>').hide();
-        this.$loading = $('<div class="loading"><img src="http://dev01.fe.wkzf/fe_public_library/wkzf/css/images/loading.gif" /></loading>').hide();
-        this.$cover = $('<div class="cover"></div>')
+        this.$loading = $('<div class="loading"><img src="http://dev01.fe.wkzf/fe_public_library/wkzf/css/images/loading.gif" /></loading>').hide();        
         this.$table.append(this.$thead).append(this.$tbody);
         this.$table.after(this.$navigation);
         this.$table.after(this.$empty);
-        this.$table.append(this.$loading).append(this.$cover);
+        this.$table.append(this.$loading);
         this.$table.addClass('wktable');
     };
 
@@ -221,12 +220,9 @@ opitons:{
         }
 
         this.$thead.append(row1);
-
-        //
-        bindSortEvent.call(this);
-
+    
         row2 != '' && this.$thead.append(row2);
-        this.needRerenderHeader = true;
+        bindSortEvent.call(this);        
     };
 
     //绘制表体
@@ -253,28 +249,28 @@ opitons:{
     };
 
     function getLessStr() {
-        return '<li><a href="#" class="less">...</a></li>';
+        return '<a href="#" class="less">...</a>';
     }
 
     function getMoreStr() {
-        return "<li><a href='#' class='more'>...</a></li>";
+        return "<a href='#' class='more'>...</a>";
     }
 
     function getPaginationItem(ind, active) {
         if (active) {
-            return '<li><a href="#" class="page-index active">' + ind + '</a></li>';
+            return '<a href="#" class="page-index active">' + ind + '</a>';
         } else {
-            return '<li><a href="#" class="page-index">' + ind + '</a></li>';
+            return '<a href="#" class="page-index">' + ind + '</a>';
         }
 
     }
 
     function getPrevStr() {
-        return '<li><a href="#" class="prev">&lt;&lt;</a></li>';
+        return '<a href="#" class="prev">&lt;&lt;</a>';
     }
 
     function getNextStr() {
-        return '<li><a href="#" class="next">&gt;&gt;</a></li>';
+        return '<a href="#" class="next">&gt;&gt;</a>';
     }
 
     function headSortClass(){
@@ -332,7 +328,7 @@ opitons:{
     			self.sortType = "desc";
     			$('.sort',self.$thead).removeClass('sort-desc').removeClass('sort-asc');    			
     			$this.addClass('sort-desc');
-    		}else{//本次操作
+    		}else{//本次操作升序
     			self.sortType = "asc";
     			$('.sort',self.$thead).removeClass('sort-desc').removeClass('sort-asc');    			
     			$this.addClass('sort-asc');
@@ -350,13 +346,11 @@ opitons:{
     		return;
     	}
     	var left = (tableWidth - width) /2, top = (tableHeight -height) /2;
-    	this.$loading.css({left:left,top:top}).show();    	
-    	//this.$cover.css({width:tableWidth,height:tableHeight}).show();
+    	this.$loading.css({left:left,top:top}).show();    	    	
     }
 
     function hideLoading(){
     	this.$loading.hide();
-    	this.$cover.hide();
     }
 
     //绘制分页
@@ -371,9 +365,7 @@ opitons:{
         //清空导航信息
         this.$navigation.empty();
 
-        var $pagination = $('<div></div>');
-        var $ul = $('<ul class="pagination"></ul>');
-        $pagination.append($ul);
+        var $pagination = $('<div class="pagination"></div>');        
         var $pageSizeSelect = $('<select class="page-size-select form-control"></select>');
         var $pageJump = $('<div class="page-jump"></div>');
         this.$navigation.append($pagination).append($('<div class="page-size-div"></div>').append($pageSizeSelect)).append($pageJump);
@@ -398,7 +390,7 @@ opitons:{
             }
 
             if (startIndex > 1) {
-                str = '<li><a href="#" class="page-index">1</a></li>' + str;
+                str = '<a href="#" class="page-index">1</a>' + str;
             }
 
             if (endIndex < this.pageInfo.pageTotal - 1) {
@@ -406,7 +398,7 @@ opitons:{
             }
 
             if (endIndex < this.pageInfo.pageTotal) {
-                str += '<li><a href="#" class="page-index">' + this.pageInfo.pageTotal + '</a></li>';
+                str += '<a href="#" class="page-index">' + this.pageInfo.pageTotal + '</a>';
             }
 
             var prev = getPrevStr(),
@@ -420,7 +412,7 @@ opitons:{
                 str += next;
             }
 
-            $ul.append(str);
+            $pagination.append(str);
             $pagination.after("<div class='info'><span>" + this.pageInfo.pageIndex + "/" + this.pageInfo.pageTotal + "</span></div>");
         }
         //选择页大小下拉框
