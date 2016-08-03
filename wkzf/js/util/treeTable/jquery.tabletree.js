@@ -92,14 +92,10 @@
         是否添加设置排序按钮
         -----------------------------------------------------------------------------------------------------------*/
         enableSort: false,
-        //上移回调
+        //上移回调,需要返回值用于操作页面元素
         upSortCallback: $.noop(),
-        //下移回调
+        //下移回调,需要返回值用于操作页面元素
         downSortCallback: $.noop(),
-        //置顶回调
-        topSortCallback: $.noop(),
-        //置底回调
-        bottomSortCallback: $.noop(),
         /*-----------------------------------------------------------------------------------------------------------
         是否添加编辑删除查看按钮［"add","edit","delete","detail"］
         -----------------------------------------------------------------------------------------------------------*/
@@ -137,6 +133,14 @@
             if (!columns) return;
             if (!Array.isArray(columns) || Object.prototype.toString.call(columns) !== '[object Array]') return;
 
+            //如果有排序列参数则插入html
+            if (opts.enableSort) {
+                $element.css('position', 'relative');
+                tableHtml.push('<div class="change-sort" style="position:absolute;top:50%;right:3%;font-size:30px;color:#337ab7">');
+                tableHtml.push('<i class="glyphicon glyphicon-arrow-up move-up sort-change" style="display:block;margin-bottom:10px;"></i>');
+                tableHtml.push('<i class="glyphicon glyphicon-arrow-down move-down sort-change" style="display:block"></i></div>');
+            };
+
             //创建表格
             tableHtml.push('<table class="table table-tree ' + opts.tableClass + '">');
             tableHtml.push('<thead><tr>');
@@ -148,10 +152,6 @@
             //如果有操作列参数则插入html
             if (opts.enableOperation) {
                 tableHtml.push('<th name="operation" style="100px">操作</th>');
-            }
-            //如果有排序列参数则插入html
-            if (opts.enableSort) {
-                tableHtml.push('<th name="sort" style="100px">排序</th>');
             }
             tableHtml.push('</tr>');
             //如果需要搜索则插入html
@@ -166,9 +166,6 @@
                     }
                 }
                 if (opts.enableOperation) {
-                    tableHtml.push('<th></th>');
-                };
-                if (opts.enableSort) {
                     tableHtml.push('<th></th>');
                 };
                 tableHtml.push('</tr>');
@@ -263,10 +260,6 @@
                     trHtml.push(tdsHtml.join('&nbsp;&nbsp;'))
                     trHtml.push('</td>');
                 };
-                //生成排序按钮
-                if (opts.enableSort) {
-                    trHtml.push('<td data-name="sort"><a href="javascript:;" class="sort up">上移</a>&nbsp;&nbsp;<a href="javascript:;" class="sort down">下移</a>&nbsp;&nbsp;<a href="javascript:;" class="sort top">置顶</a>&nbsp;&nbsp;<a href="javascript:;" class="sort bottom">置底</a></td>');
-                };
                 trHtml.push('</tr>')
                 $tr = $(trHtml.join(''));
 
@@ -274,7 +267,6 @@
                 if (hidden) {
                     $tr.css('display', 'none');
                 };
-
                 //增加展开收起按钮
                 if (val.children) {
                     $tr.find('td:first').prepend('<i class="' + opts.expendIcon + '" style="top:' + opts.iconPosition + 'px"></i>');
@@ -339,6 +331,35 @@
                 }
             });
 
+            //点击选中效果
+            $tbody.find('tr').on('click', function(event) {
+                event.preventDefault();
+                /* Act on the event */
+                $tbody.find('tr').removeClass('info');
+                $(this).addClass('info');
+            });
+
+            //更改顺序事件
+            $tbody.find('.change-sort').on('click', function(event) {
+                event.preventDefault();
+                /* Act on the event */
+                var me = $(this);
+                var success = false;
+                var param = {
+                    id: $tr.data('id'),
+                    parentId: $tr.data('parentid'),
+                    level: $tr.data('level')
+                };
+                if (me.hasClass('move-up')) {
+                    success = options.upSortCallback(param);
+                } else if (me.hasClass('move-down')) {
+                    success = options.downSortCallback(param);
+                };
+                if (success) {
+
+                }
+            });
+
             //点击搜索
             $thead.find('#tree-search').on('click', function(event) {
                 event.preventDefault();
@@ -350,7 +371,7 @@
                 var tds = $tbody.find('.tree-data');
                 //去除高亮
                 $tbody.find('tr').css('color', '');
-                if (keyword ==="") return false;                
+                if (keyword === "") return false;
                 //获取满足条件的行
                 $.each(tds, function(index, el) {
                     /* iterate through array or object */
@@ -376,6 +397,12 @@
                     };
                     expend(parentId);
                 });
+                //定位到第一条数据
+                if (resultsTr.length > 0) {
+                    $("html,body").animate({
+                        scrollTop: $(resultsTr[0]).offset().top
+                    }, 600);
+                }
             });
 
             //回车触发搜索
