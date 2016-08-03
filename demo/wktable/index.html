@@ -1,31 +1,75 @@
 <!doctype html>
 <html>
 	<head>
+		<meta charset="utf-8">
 		<style>
-
 			.wktable{
-
+				position:relative;
 			}
-			
-			.wktable tfoot{
-
+			.wktable .loading{
+				position:absolute;	
+				z-index:10000;			
+			}
+			.wktable .cover{
+				position:absolute;
+				left:0;
+				top:0;
+				z-index:9999;
+				background-color:black;
+				filter:alpha(opacity=50); /*IE滤镜，透明度50%*/
+				-moz-opacity:0.5; /*Firefox私有，透明度50%*/
+				opacity:0.5;/*其他，透明度50%*/
+			}
+			.sort:after{
+				content:"paixu";
+				cursor:pointer;
+			}
+			.sort-asc:after{
+				content:"  ↑";
+			}
+			.sort-desc:after{
+				content:"  ↓";
 			}
 
-			.wktable tfoot{
 
+			.table-navigation{
+				width:100%;
+				float:left;
+			}		
+		 	.table-navigation a.active{
+				background-color:#aaaadd;
+			}
+			.table-navigation >nav{
+				float:left;
+			}
+			.table-navigation > div{
+				float:left;				
 			}
 
-			.wktable a.page-index{
-				line-height:1.8em;
-				padding-left:.3em;
-				padding-right:.3em;
-				border:1px solid;
-				margin:0 .3em;
+			.table-navigation .info, .table-navigation .page-size-div, .table-navigation .page-jump{
+				margin:20px 0;
+				padding:6px 12px;
+			}
+
+			.table-navigation .page-size-div{
+				padding:0;
+			}
+
+			.page-size-div div{
 				display:inline-block;
 			}
+			.table-navigation .page-size-div{
+				line-height: 1
+			}
 
-			.wktable a.active{
-				background-color:#33aadd;
+			.table-navigation .info span{
+				padding: 6px 12px;
+				font-size:16px;
+			}
+					
+
+			.table-navigation > span{
+
 			}
 		</style>
 		<link href="../../bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
@@ -37,6 +81,7 @@
 			<input type="text" name="country" />
 			<input type="button" id="btn" value="click" />
 		</form>
+		<br/>
 		<table id="myTable" class="table table-hover table-striped table-condensed table-bordered"></table>
 		</div>
 		<script src="../../wkzf/js/lib/jquery/jquery-2.0.3.min.js"></script>
@@ -44,32 +89,32 @@
 		<script>
 		$(function(){
 			$('#btn').click(function(){
-				var obj = {
-					params:{
+				var params = {
 						name:$('[name=name]').val(),
 						country:$('[name=country]').val()
-					}
-				};
-				$('#myTable').wktable("setOptions",obj).wktable('refresh');				
+					};
+				$('#myTable').wktable("search",params);				
 			});
 
-			$('#myTable').wktable({
+			$('#myTable').wktable({	
 				ready:function(){
-					this.$table.find('.delete').click(function(){
-						alert('haha');
+					$('.delete',this.$table).click(function(){
+						alert('delete xxx');
 					});
-				},
+				},			
 				columns:[
 					{
 						text:"姓名",
-						field:"name"						
+						field:"name",
+						sortable:true
 					},
-					{text:"年龄",field:function(row){
+					{text:"年龄",sortable:true,sortField:'age',field:function(row){
 						return row.age;
 					}},
 					{
 						text:'国籍',
-						field:'country'
+						field:'country',
+						sortable:true
 					},
 					{
 						text:"性别",
@@ -78,7 +123,7 @@
 					{
 						text:"操作",
 						field:function(){
-							return "<a href=''>删除</a>";
+							return "<a href='#' class='delete'>删除</a>";
 						}
 					}
 				],
