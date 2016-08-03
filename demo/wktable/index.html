@@ -8,7 +8,13 @@
 			}
 			.wktable .loading{
 				position:absolute;	
-				z-index:10000;			
+				z-index:10000;	
+				width:80px;
+				height:80px;		
+			}
+			.wktable .loading img{
+				height:100%;
+				width:100%;
 			}
 			.wktable .cover{
 				position:absolute;
@@ -85,7 +91,7 @@
 			<input type="button" id="btn" value="click" />
 		</form>
 		<br/>
-		<table id="myTable" class="table table-hover table-striped table-condensed table-bordered"></table>
+		<table id="myTable" class="table"></table>
 		</div>
 		<script src="../../wkzf/js/lib/jquery/jquery-2.0.3.min.js"></script>
 		<script src="../../wkzf/jssrc/jquery.wktable.js"></script>
@@ -150,7 +156,7 @@
 					{name:"sum",age:24,country:'China'}
 					
 				]*/
-				url:'/activity/data.php',
+				url:'/activity_template/data.php',
 				parse:function(data){//映射
 					return {
 						pageInfo:{

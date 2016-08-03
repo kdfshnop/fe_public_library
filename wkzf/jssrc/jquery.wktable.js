@@ -351,7 +351,7 @@ opitons:{
     	}
     	var left = (tableWidth - width) /2, top = (tableHeight -height) /2;
     	this.$loading.css({left:left,top:top}).show();    	
-    	this.$cover.css({width:tableWidth,height:tableHeight}).show();
+    	//this.$cover.css({width:tableWidth,height:tableHeight}).show();
     }
 
     function hideLoading(){
