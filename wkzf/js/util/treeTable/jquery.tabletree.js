@@ -534,7 +534,6 @@
                 $this.data(Plugin.dataName, (data = new Plugin(this, options)));
             }
             //如果插件的参数是一个字符串，则直接调用插件的名称为此字符串方法
-            debugger;
             if (typeof option == 'string') data[option](args);
             return this;
         });
