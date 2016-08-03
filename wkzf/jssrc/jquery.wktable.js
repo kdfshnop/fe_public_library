@@ -23,12 +23,17 @@ opitons:{
 	method:'get',
 	data:[],
 	params:{},//param
-	displayTableNavigation:true,
-	displayPagination:true,
-	displayPageJump:true,
-	displayPageSizeSelection:true,
-	pageSizeSet:[20,50,100,200,500],
-	paginationPageCount:5,
+	tableNavigation: {
+            displayTableNavigation: true, //是否显示表格导航
+            displayPagination: true, //是否显示分页信息	        
+            displayPageJump: true, //是否显示页跳转
+            displayPageSizeSelection: true, //是否显示页面大小选择框
+            pageSizeSet: [10, 20, 50, 100, 200, 500], //页面大小结合
+            paginationPageCount: 5, //分页中显示的页数
+        },
+    sortInfo:{
+		
+    },
 	pageSize:10,
 	pageInfoMapping:{
 		pageSize:'pageSize',
@@ -36,6 +41,7 @@ opitons:{
 		sort:'sort',
 		sortType:'sortType'	
 	},
+
 	parse:function(data){
 	
 	},
