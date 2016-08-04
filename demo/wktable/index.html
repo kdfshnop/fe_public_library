@@ -2,89 +2,10 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<style>
-			.wktable{
-				position:relative;
-			}
-			.wktable .loading{
-				position:absolute;	
-				z-index:10000;	
-				width:80px;
-				height:80px;		
-			}
-			.wktable .loading img{
-				height:100%;
-				width:100%;
-			}
-			.wktable .cover{
-				position:absolute;
-				left:0;
-				top:0;
-				z-index:9999;
-				background-color:black;
-				filter:alpha(opacity=50); /*IE滤镜，透明度50%*/
-				-moz-opacity:0.5; /*Firefox私有，透明度50%*/
-				opacity:0.5;/*其他，透明度50%*/
-			}
-			.sort{
-				cursor:pointer;
-			}
-			.sort:after{
-				content:"paixu";
-				
-			}
-			.sort-asc:after{
-				content:"  ↑";
-			}
-			.sort-desc:after{
-				content:"  ↓";
-			}
-
-
-			.table-navigation{
-				width:100%;
-				float:left;
-			}		
-		 	.table-navigation a.active{
-				background-color:#aaaadd;
-			}
-			.table-navigation >nav{
-				float:left;
-			}
-			.table-navigation > div{
-				float:left;				
-			}
-
-			.table-navigation .info, .table-navigation .page-size-div, .table-navigation .page-jump{
-				margin:20px 0;
-				padding:6px 12px;
-			}
-
-			.table-navigation .page-size-div{
-				padding:0;
-			}
-
-			.page-size-div div{
-				display:inline-block;
-			}
-			.table-navigation .page-size-div{
-				line-height: 1
-			}
-
-			.table-navigation .info span{
-				padding: 6px 12px;
-				font-size:16px;
-			}
-					
-
-			.table-navigation > span{
-
-			}
-		</style>
-		<link href="../../bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
+		<link href="../../wkzf/jssrc/jquery.wktable/wktable.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<div class="container" style="margin:20px auto">
+		<div class="container" style="margin:20px auto;padding:50px">
 		<form id='myform'>
 			<input type="text" name="name" />
 			<input type="text" name="country" />
@@ -115,11 +36,7 @@
 					{
 						text:"姓名",
 						field:"name",
-						sortable:true,
-						subColumns:[
-							{text:'小名',field:'name',sortable:true},
-							{text:'大名',field:'name'}
-						]
+						sortable:true
 					},
 					{text:"年龄",sortable:true,sortField:'age',field:function(row){
 						return row.age;
@@ -131,11 +48,7 @@
 					},
 					{
 						text:"性别",
-						field:"gender",
-						subColumns:[
-							{text:"性别1",field:"gender"},
-							{text:"性别2",field:"gender"},
-						]
+						field:"gender"
 					},
 					{
 						text:"操作",
@@ -164,7 +77,7 @@
 					{name:"sum",age:24,country:'China'}
 					
 				]*/
-				url:'/activity/data.php',
+				url:'/activity_template/data.php',
 				parse:function(data){//映射
 					return {
 						pageInfo:{
