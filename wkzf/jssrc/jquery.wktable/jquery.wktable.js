@@ -238,15 +238,19 @@ opitons:{
         this.$tbody.empty();
         var str = ""; //保存表体字符串
 
-        items.forEach(function(item) {
-            str += "<tr>";
+        items.forEach(function(item,index) {
+            if(item.id!=undefined){
+                str += "<tr data-id='"+item.id+"'>"
+            }else{
+                str += "<tr>";
+            }
             self.columns.forEach(function(col) {
                 var properties = getCustomProperties(col); //自定义属性，直接放到dom上
                 var propertiesStr = "";
                 properties.forEach(function(p) {
                     propertiesStr += "  " + p + "='" + col[p] + "'";
                 });
-                str += "<td " + propertiesStr + " >" + col.value(item) + "</td>";
+                str += "<td " + propertiesStr + " >" + col.value(item,index) + "</td>";
             });
             str += "</tr>";
         });
@@ -616,7 +620,7 @@ opitons:{
 
     //设置options
     DataTable.prototype.setOptions = function(options) {
-        this.options = $.extend({}, this.options, options);
+        this.options = $.extend(true,{}, this.options, options);
         return this;
     };
 
