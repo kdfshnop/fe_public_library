@@ -365,6 +365,7 @@
                     level: level
                 };
                 var $tempTrs, $preTr, $nextTr, $insertTr;
+                if ($tr.length === 0) return false;
                 if (me.hasClass('move-up')) {
                     //向上移动
                     me.addClass('disabled').css('color', '#999999');
