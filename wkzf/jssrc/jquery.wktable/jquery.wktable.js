@@ -239,8 +239,8 @@ opitons:{
         var str = ""; //保存表体字符串
 
         items.forEach(function(item, index) {
-            if (item.id != undefined) {
-                str += "<tr data-id='" + item.id + "'>"
+            if (item[self.options.uniqueId] != undefined) {
+                str += "<tr data-id='" + item[self.options.uniqueId] + "'>"
             } else {
                 str += "<tr>";
             }
@@ -666,7 +666,8 @@ opitons:{
             pageIndex: 'pageIndex',
             sort: 'sort',
             sortType: 'sortType'
-        } //查询参数中分页参数的映射
+        }, //查询参数中分页参数的映射
+        uniqueId:"id"
     };
 
     function Plugin(option, _relatedTarget) {
