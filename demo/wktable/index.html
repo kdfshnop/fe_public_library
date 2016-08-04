@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link href="../../wkzf/js/util/jquery.wktable/wktable.min.css" rel="stylesheet"/>
+	</head>
+	<body>
+		<div class="container" style="margin:20px auto;padding:50px">
+		<form id='myform'>
+			<input type="text" name="name" />
+			<input type="text" name="country" />
+			<input type="button" id="btn" value="click" />
+		</form>
+		<br/>
+		<table id="myTable" class="table"></table>
+		</div>
+		<script src="../../wkzf/js/lib/jquery/jquery-2.0.3.min.js"></script>
+		<script src="../../wkzf/js/util/jquery.wktable/jquery.wktable.min.js"></script>
+		<script>
+		$(function(){
+			$('#btn').click(function(){
+				var params = {
+						name:$('[name=name]').val(),
+						country:$('[name=country]').val()
+					};
+				$('#myTable').wktable("search",params);				
+			});
+
+			$('#myTable').wktable({	
+				ready:function(){
+					$('.delete',this.$table).click(function(){
+						alert('delete xxx');
+					});
+				},			
+				columns:[
+					{
+						text:"姓名",
+						field:"name",
+						sortable:true
+					},
+					{text:"年龄",sortable:true,sortField:'age',field:function(row){
+						return row.age;
+					}},
+					{
+						text:'国籍',
+						field:'country',
+						sortable:true
+					},
+					{
+						text:"性别",
+						field:"gender"
+					},
+					{
+						text:"操作",
+						field:function(){
+							return "<a href='#' class='delete'>删除</a>";
+						}
+					}
+				],
+				/*data:[
+					{name:"mks",age:12,country:'China'},
+					{name:"sum",age:24,country:'China'},
+					{name:"john",age:122,country:'China'},
+					{name:"tim",age:13,country:'China'},
+					{name:"mars",age:12,country:'China'},
+					{name:"mks",age:12,country:'England'},
+					{name:"sum",age:24,country:'China'},
+					{name:"john",age:122,country:'China'},
+					{name:"tim",age:13,country:'China'},
+					{name:"mars",age:12,country:'China'},
+					{name:"mks",age:12,country:'England'},
+					{name:"sum",age:24,country:'China'},
+					{name:"john",age:122,country:'China'},
+					{name:"tim",age:13,country:'China'},
+					{name:"mars",age:12,country:'China'},
+					{name:"mks",age:12,country:'England'},
+					{name:"sum",age:24,country:'China'}
+					
+				]*/
+				url:'/activity/data.php',
+				parse:function(data){//映射
+					return {
+						pageInfo:{
+							pageIndex:data.data.pageIndex,
+							pageSize:data.data.pageSize,
+							total:data.data.total
+						},
+						items:data.data.contents
+					};
+				}
+			});
+		});
+		</script>
+	</body>
+</html>
