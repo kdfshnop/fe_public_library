@@ -580,9 +580,9 @@ opitons:{
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     //跳转到指定页数
     DataTable.prototype.goto = function(pageIndex) {
-        if(pageIndex == this.pageInfo.pageIndex){
+        /*if(pageIndex == this.pageInfo.pageIndex){
             return;
-        }
+        }*/
         if (pageIndex < 1) {
             pageIndex = 1;
         }
