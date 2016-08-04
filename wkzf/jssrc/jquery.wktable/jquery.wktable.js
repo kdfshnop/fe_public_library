@@ -615,7 +615,15 @@ opitons:{
 
     //转换数据
     DataTable.prototype.parse = function(data) {
-        return data.data;
+        //return data.data;
+        return {
+                pageInfo: {
+                    pageIndex: data.data.pageIndex,
+                    pageSize: data.data.pageSize,
+                    total: data.data.total
+                },
+                items: data.data.contents
+            };
     };
 
     //设置options

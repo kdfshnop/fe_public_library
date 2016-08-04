@@ -62,6 +62,9 @@ wktable默认样式
     font-family: microsoft yahei, simsun;
     width: 100%;
     clear:both;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .table-navigation .pagination a {
@@ -147,7 +150,7 @@ wktable默认样式
 }
 
 .table-navigation .page-jump input {
-    width: 25px;
+    width: 50px;
 }
 
 .table-navigation .page-jump .go {
