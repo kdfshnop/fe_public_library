@@ -1,1 +1,2301 @@
-!function(e,t,s,i){"use strict";var n="treeview",o={};o.settings={injectStyle:!0,levels:2,expandIcon:"glyphicon glyphicon-plus",collapseIcon:"glyphicon glyphicon-minus",emptyIcon:"glyphicon",nodeIcon:"",selectedIcon:"",checkedIcon:"glyphicon glyphicon-check",uncheckedIcon:"glyphicon glyphicon-unchecked",color:i,backColor:i,borderColor:i,onhoverColor:"#F5F5F5",selectedColor:"#FFFFFF",selectedBackColor:"#428bca",searchResultColor:"#D9534F",searchResultBackColor:i,enableUpCascade:!0,enableDownCascade:!0,enableLinks:!1,highlightSelected:!0,highlightSearchResults:!0,showBorder:!0,showIcon:!0,showSearch:!1,showCheckbox:!1,showTags:!1,multiSelect:!1,onNodeChecked:i,onNodeCollapsed:i,onNodeDisabled:i,onNodeEnabled:i,onNodeExpanded:i,onNodeSelected:i,onNodeUnchecked:i,onNodeUnselected:i,onSearchComplete:i,onSearchCleared:i},o.options={silent:!1,ignoreChildren:!1},o.searchOptions={ignoreCase:!0,exactMatch:!1,revealResults:!0};var r=function(t,s){return this.$element=e(t),this.elementId=t.id,this.styleId=this.elementId+"-style",this.init(s),{options:this.options,init:e.proxy(this.init,this),remove:e.proxy(this.remove,this),getNode:e.proxy(this.getNode,this),getAllNodes:e.proxy(this.getAllNodes,this),getParent:e.proxy(this.getParent,this),getParents:e.proxy(this.getParents,this),getSiblings:e.proxy(this.getSiblings,this),getSelected:e.proxy(this.getSelected,this),getUnselected:e.proxy(this.getUnselected,this),getExpanded:e.proxy(this.getExpanded,this),getCollapsed:e.proxy(this.getCollapsed,this),getChecked:e.proxy(this.getChecked,this),getUnchecked:e.proxy(this.getUnchecked,this),getDisabled:e.proxy(this.getDisabled,this),getEnabled:e.proxy(this.getEnabled,this),selectNode:e.proxy(this.selectNode,this),unselectNode:e.proxy(this.unselectNode,this),toggleNodeSelected:e.proxy(this.toggleNodeSelected,this),collapseAll:e.proxy(this.collapseAll,this),collapseNode:e.proxy(this.collapseNode,this),expandAll:e.proxy(this.expandAll,this),expandNode:e.proxy(this.expandNode,this),toggleNodeExpanded:e.proxy(this.toggleNodeExpanded,this),revealNode:e.proxy(this.revealNode,this),checkAll:e.proxy(this.checkAll,this),checkNode:e.proxy(this.checkNode,this),uncheckAll:e.proxy(this.uncheckAll,this),uncheckNode:e.proxy(this.uncheckNode,this),toggleNodeChecked:e.proxy(this.toggleNodeChecked,this),disableAll:e.proxy(this.disableAll,this),disableNode:e.proxy(this.disableNode,this),enableAll:e.proxy(this.enableAll,this),enableNode:e.proxy(this.enableNode,this),toggleNodeDisabled:e.proxy(this.toggleNodeDisabled,this),search:e.proxy(this.search,this),clearSearch:e.proxy(this.clearSearch,this)}};r.prototype.init=function(t){this.tree=[],this.nodes=[],this.childsNodes=[],this.parentNodes=[],t.data&&("string"==typeof t.data&&(t.data=e.parseJSON(t.data)),this.tree=e.extend(!0,[],t.data),delete t.data),this.options=e.extend({},o.settings,t),this.destroy(),this.subscribeEvents(),this.setInitialStates({nodes:this.tree},0),this.render()},r.prototype.remove=function(){this.destroy(),e.removeData(this,n),e("#"+this.styleId).remove()},r.prototype.destroy=function(){this.initialized&&(this.$wrapper.remove(),this.$wrapper=null,this.unsubscribeEvents(),this.initialized=!1)},r.prototype.unsubscribeEvents=function(){this.$element.off("click"),this.$element.off("nodeChecked"),this.$element.off("nodeCollapsed"),this.$element.off("nodeDisabled"),this.$element.off("nodeEnabled"),this.$element.off("nodeExpanded"),this.$element.off("nodeSelected"),this.$element.off("nodeUnchecked"),this.$element.off("nodeUnselected"),this.$element.off("searchComplete"),this.$element.off("searchCleared")},r.prototype.subscribeEvents=function(){this.unsubscribeEvents(),this.$element.on("click",e.proxy(this.clickHandler,this)),"function"==typeof this.options.onNodeChecked&&this.$element.on("nodeChecked",this.options.onNodeChecked),"function"==typeof this.options.onNodeCollapsed&&this.$element.on("nodeCollapsed",this.options.onNodeCollapsed),"function"==typeof this.options.onNodeDisabled&&this.$element.on("nodeDisabled",this.options.onNodeDisabled),"function"==typeof this.options.onNodeEnabled&&this.$element.on("nodeEnabled",this.options.onNodeEnabled),"function"==typeof this.options.onNodeExpanded&&this.$element.on("nodeExpanded",this.options.onNodeExpanded),"function"==typeof this.options.onNodeSelected&&this.$element.on("nodeSelected",this.options.onNodeSelected),"function"==typeof this.options.onNodeUnchecked&&this.$element.on("nodeUnchecked",this.options.onNodeUnchecked),"function"==typeof this.options.onNodeUnselected&&this.$element.on("nodeUnselected",this.options.onNodeUnselected),"function"==typeof this.options.onSearchComplete&&this.$element.on("searchComplete",this.options.onSearchComplete),"function"==typeof this.options.onSearchCleared&&this.$element.on("searchCleared",this.options.onSearchCleared)},r.prototype.setInitialStates=function(t,s){if(t.nodes){s+=1;var i=t,n=this;e.each(t.nodes,function(e,t){t.nodeId=n.nodes.length,t.parentId=i.nodeId,t.hasOwnProperty("selectable")||(t.selectable=!0),t.state=t.state||{},t.state.hasOwnProperty("checked")||(t.state.checked=!1),t.state.hasOwnProperty("disabled")||(t.state.disabled=!1),t.state.hasOwnProperty("expanded")||(!t.state.disabled&&s<n.options.levels&&t.nodes&&t.nodes.length>0?t.state.expanded=!0:t.state.expanded=!1),t.state.hasOwnProperty("selected")||(t.state.selected=!1),n.nodes.push(t),t.nodes&&n.setInitialStates(t,s)})}},r.prototype.clickHandler=function(t){this.options.enableLinks||t.preventDefault();var s=e(t.target),i=this.findNode(s);if(i){var n=s.attr("class")?s.attr("class").split(" "):[];if(n.indexOf("expand-icon")!==-1)this.toggleExpandedState(i,o.options),this.render();else if(n.indexOf("check-icon")!==-1){if(i.state.disabled)return;this.toggleCheckedState(i,o.options),this.render()}else i.selectable?this.toggleSelectedState(i,o.options):this.toggleExpandedState(i,o.options),this.render()}},r.prototype.findNode=function(e){var t=e.closest("li.list-group-item").attr("data-nodeid"),s=this.nodes[t];return s||console.log("Error: node does not exist"),s},r.prototype.toggleExpandedState=function(e,t){e&&this.setExpandedState(e,!e.state.expanded,t)},r.prototype.setExpandedState=function(t,s,i){s!==t.state.expanded&&(s&&t.nodes?(t.state.expanded=!0,i.silent||this.$element.trigger("nodeExpanded",e.extend(!0,{},t))):s||(t.state.expanded=!1,i.silent||this.$element.trigger("nodeCollapsed",e.extend(!0,{},t)),t.nodes&&!i.ignoreChildren&&e.each(t.nodes,e.proxy(function(e,t){this.setExpandedState(t,!1,i)},this))))},r.prototype.toggleSelectedState=function(e,t){e&&this.setSelectedState(e,!e.state.selected,t)},r.prototype.setSelectedState=function(t,s,i){s!==t.state.selected&&(s?(this.options.multiSelect||e.each(this.findNodes("true","g","state.selected"),e.proxy(function(e,t){this.setSelectedState(t,!1,i)},this)),t.state.selected=!0,i.silent||this.$element.trigger("nodeSelected",e.extend(!0,{},t))):(t.state.selected=!1,i.silent||this.$element.trigger("nodeUnselected",e.extend(!0,{},t))))},r.prototype.toggleCheckedState=function(e,t){e&&this.setCheckedState(e,!e.state.checked,t)},r.prototype.setCheckedState=function(t,s,i){var n,o,r=this;s!==t.state.checked&&(n=!!s,o=s?"nodeChecked":"nodeUnchecked",t.state.checked=n,(r.options.enableUpCascade||r.options.enableDownCascade)&&(r.childsNodes=[],r.parentNodes=[],r.options.enableDownCascade&&(r.getChilds(t),r.childsNodes&&r.childsNodes.length&&e.each(r.childsNodes,function(e,t){t.state.checked=n})),r.options.enableUpCascade&&(r.getParents(t),e.each(r.parentNodes,function(e,t){var s=r.getChecked(t);s.length==t.nodes.length&&(t.state.checked=!0)}))),i.silent||r.$element.trigger(o,e.extend(!0,{},t)))},r.prototype.setDisabledState=function(t,s,i){s!==t.state.disabled&&(s?(t.state.disabled=!0,this.setExpandedState(t,!1,i),this.setSelectedState(t,!1,i),this.setCheckedState(t,!1,i),i.silent||this.$element.trigger("nodeDisabled",e.extend(!0,{},t))):(t.state.disabled=!1,i.silent||this.$element.trigger("nodeEnabled",e.extend(!0,{},t))))},r.prototype.render=function(){this.initialized||(this.$element.addClass(n),this.$wrapper=e(this.template.list),this.injectStyle(),this.initialized=!0),this.$element.empty().append(this.$wrapper.empty()),this.buildTree(this.tree,0)},r.prototype.buildTree=function(t,s){if(t){s+=1;var i=this;e.each(t,function(t,n){for(var o=e(i.template.item).addClass("node-"+i.elementId).addClass(n.state.checked?"node-checked":"").addClass(n.state.disabled?"node-disabled":"").addClass(n.state.selected?"node-selected":"").addClass(n.searchResult?"search-result":"").attr("data-nodeid",n.nodeId).attr("style",i.buildStyleOverride(n)),r=0;r<s-1;r++)o.append(i.template.indent);var a=[];if(n.nodes?(a.push("expand-icon"),n.state.expanded?a.push(i.options.collapseIcon):a.push(i.options.expandIcon)):a.push(i.options.emptyIcon),o.append(e(i.template.icon).addClass(a.join(" "))),i.options.showIcon){var a=["node-icon"];a.push(n.icon||i.options.nodeIcon),n.state.selected&&(a.pop(),a.push(n.selectedIcon||i.options.selectedIcon||n.icon||i.options.nodeIcon)),o.append(e(i.template.icon).addClass(a.join(" ")))}if(i.options.showCheckbox){var a=["check-icon"];n.state.checked?a.push(i.options.checkedIcon):a.push(i.options.uncheckedIcon),o.append(e(i.template.icon).addClass(a.join(" ")))}if(i.options.enableLinks?o.append(e(i.template.link).attr("href",n.href).append(n.text)):o.append(n.text),i.options.showTags&&n.tags&&e.each(n.tags,function(t,s){o.append(e(i.template.badge).append(s))}),i.$wrapper.append(o),n.nodes&&n.state.expanded)return i.buildTree(n.nodes,s)})}},r.prototype.buildStyleOverride=function(e){var t=e.color,s=e.backColor;return this.options.highlightSelected&&e.state.selected&&(this.options.selectedColor&&(t=this.options.selectedColor),this.options.selectedBackColor&&(s=this.options.selectedBackColor)),this.options.highlightSearchResults&&e.searchResult&&(this.options.searchResultColor&&(t=this.options.searchResultColor),this.options.searchResultBackColor&&(s=this.options.searchResultBackColor)),"color:"+t+";background-color:"+s+";"},r.prototype.injectStyle=function(){this.options.injectStyle&&!s.getElementById(this.styleId)&&e('<style type="text/css" id="'+this.styleId+'"> '+this.buildStyle()+" </style>").appendTo("head")},r.prototype.buildStyle=function(){var e=".node-"+this.elementId+"{";return this.options.color&&(e+="color:"+this.options.color+";"),this.options.backColor&&(e+="background-color:"+this.options.backColor+";"),this.options.showBorder?this.options.borderColor&&(e+="border:1px solid "+this.options.borderColor+";"):e+="border:none;",e+="}",e+=this.options.onhoverColor?".node-"+this.elementId+":not(.node-disabled):hover{background-color:"+this.options.onhoverColor+";}":".node-"+this.elementId+"{cursor:default !important}",this.css+e},r.prototype.template={list:'<ul class="list-group"></ul>',item:'<li class="list-group-item"></li>',indent:'<span class="indent"></span>',icon:'<span class="icon"></span>',link:'<a href="#" style="color:inherit;"></a>',badge:'<span class="badge"></span>'},r.prototype.css=".treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}",r.prototype.getNode=function(e){return this.nodes[e]},r.prototype.getAllNodes=function(e){return this.nodes},r.prototype.getParent=function(e){var t=this.identifyNode(e);return this.nodes[t.parentId]},r.prototype.getParents=function(e){var t=this.getParent(e);t&&(this.parentNodes.push(t),this.getParents(t))},r.prototype.getChilds=function(t){var s=this,i=this.identifyNode(t);i.nodes&&e.each(i.nodes,function(e,t){s.childsNodes.push(t),s.getChilds(t)})},r.prototype.getSiblings=function(e){var t=this.identifyNode(e),s=this.getParent(t),i=s?s.nodes:this.tree;return i.filter(function(e){return e.nodeId!==t.nodeId})},r.prototype.getSelected=function(){return this.findNodes("true","g","state.selected")},r.prototype.getUnselected=function(){return this.findNodes("false","g","state.selected")},r.prototype.getExpanded=function(){return this.findNodes("true","g","state.expanded")},r.prototype.getCollapsed=function(){return this.findNodes("false","g","state.expanded")},r.prototype.getChecked=function(e){return e&&e.nodes?e.nodes.filter(function(e){return e.state.checked}):this.findNodes("true","g","state.checked")},r.prototype.getUnchecked=function(){return this.findNodes("false","g","state.checked")},r.prototype.getDisabled=function(){return this.findNodes("true","g","state.disabled")},r.prototype.getEnabled=function(){return this.findNodes("false","g","state.disabled")},r.prototype.selectNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setSelectedState(e,!0,t)},this)),this.render()},r.prototype.unselectNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setSelectedState(e,!1,t)},this)),this.render()},r.prototype.toggleNodeSelected=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.toggleSelectedState(e,t)},this)),this.render()},r.prototype.collapseAll=function(t){var s=this.findNodes("true","g","state.expanded");this.forEachIdentifier(s,t,e.proxy(function(e,t){this.setExpandedState(e,!1,t)},this)),this.render()},r.prototype.collapseNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setExpandedState(e,!1,t)},this)),this.render()},r.prototype.expandAll=function(t){if(t=e.extend({},o.options,t),t&&t.levels)this.expandLevels(this.tree,t.levels,t);else{var s=this.findNodes("false","g","state.expanded");this.forEachIdentifier(s,t,e.proxy(function(e,t){this.setExpandedState(e,!0,t)},this))}this.render()},r.prototype.expandNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setExpandedState(e,!0,t),e.nodes&&t&&t.levels&&this.expandLevels(e.nodes,t.levels-1,t)},this)),this.render()},r.prototype.expandLevels=function(t,s,i){i=e.extend({},o.options,i),e.each(t,e.proxy(function(e,t){this.setExpandedState(t,s>0,i),t.nodes&&this.expandLevels(t.nodes,s-1,i)},this))},r.prototype.revealNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){for(var s=this.getParent(e);s;)this.setExpandedState(s,!0,t),s=this.getParent(s)},this)),this.render()},r.prototype.toggleNodeExpanded=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.toggleExpandedState(e,t)},this)),this.render()},r.prototype.checkAll=function(t){var s=this.findNodes("false","g","state.checked");this.forEachIdentifier(s,t,e.proxy(function(e,t){this.setCheckedState(e,!0,t)},this)),this.render()},r.prototype.checkNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setCheckedState(e,!0,t)},this)),this.render()},r.prototype.uncheckAll=function(t){var s=this.findNodes("true","g","state.checked");this.forEachIdentifier(s,t,e.proxy(function(e,t){this.setCheckedState(e,!1,t)},this)),this.render()},r.prototype.uncheckNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setCheckedState(e,!1,t)},this)),this.render()},r.prototype.toggleNodeChecked=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.toggleCheckedState(e,t)},this)),this.render()},r.prototype.disableAll=function(t){var s=this.findNodes("false","g","state.disabled");this.forEachIdentifier(s,t,e.proxy(function(e,t){this.setDisabledState(e,!0,t)},this)),this.render()},r.prototype.disableNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setDisabledState(e,!0,t)},this)),this.render()},r.prototype.enableAll=function(t){var s=this.findNodes("true","g","state.disabled");this.forEachIdentifier(s,t,e.proxy(function(e,t){this.setDisabledState(e,!1,t)},this)),this.render()},r.prototype.enableNode=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setDisabledState(e,!1,t)},this)),this.render()},r.prototype.toggleNodeDisabled=function(t,s){this.forEachIdentifier(t,s,e.proxy(function(e,t){this.setDisabledState(e,!e.state.disabled,t)},this)),this.render()},r.prototype.forEachIdentifier=function(t,s,i){s=e.extend({},o.options,s),t instanceof Array||(t=[t]),e.each(t,e.proxy(function(e,t){i(this.identifyNode(t),s)},this))},r.prototype.identifyNode=function(e){return"number"==typeof e?this.nodes[e]:e},r.prototype.search=function(t,s){s=e.extend({},o.searchOptions,s),this.clearSearch({render:!1});var i=[];if(t&&t.length>0){s.exactMatch&&(t="^"+t+"$");var n="g";s.ignoreCase&&(n+="i"),i=this.findNodes(t,n),e.each(i,function(e,t){t.searchResult=!0})}return s.revealResults?this.revealNode(i):this.render(),this.$element.trigger("searchComplete",e.extend(!0,{},i)),i},r.prototype.clearSearch=function(t){t=e.extend({},{render:!0},t);var s=e.each(this.findNodes("true","g","searchResult"),function(e,t){t.searchResult=!1});t.render&&this.render(),this.$element.trigger("searchCleared",e.extend(!0,{},s))},r.prototype.findNodes=function(t,s,i){s=s||"g",i=i||"text";var n=this;return e.grep(this.nodes,function(e){var o=n.getNodeValue(e,i);if("string"==typeof o)return o.match(new RegExp(t,s))})},r.prototype.getNodeValue=function(e,t){var s=t.indexOf(".");if(s>0){var n=e[t.substring(0,s)],o=t.substring(s+1,t.length);return this.getNodeValue(n,o)}return e.hasOwnProperty(t)?e[t].toString():i};var a=function(e){t.console&&t.console.error(e)};e.fn[n]=function(t,s){var i;return this.each(function(){var o=e.data(this,n);"string"==typeof t?o?e.isFunction(o[t])&&"_"!==t.charAt(0)?(s instanceof Array||(s=[s]),i=o[t].apply(o,s)):a("No such method : "+t):a("Not initialized, can not call method : "+t):"boolean"==typeof t?i=o:e.data(this,n,new r(this,e.extend(!0,{},t)))}),i||this}}(jQuery,window,document),function(e,t,s,i){function n(s){function i(e,t){var s=t.pid,i=e.map;if(i[t.id]=t,t.open&&(t.state={expanded:!0}),null===s||0===s)e.res.push(t);else{var n=i[s];n?n.hasOwnProperty("nodes")?n.nodes.push(t):n.nodes=[t]:e.res.push(t)}return e}var n=t.JSON.stringify(s);return n=n.replace(/name/g,"text"),s=e.parseJSON(n),s.reduce(i,{res:[],map:{}}).res}function o(e,t,s){var n=e.treeview("getParent",t);return n!=i&&n.id?(s.push(n),void o(e,n,s)):s}function r(e,t){var s,i,n,r=new Array;if(1==t.length&&0==t[0].nodeId)r.push(t[0]);else for(var a=0;a<t.length;a++){s=t[a],i=new Array,n=new Array,o(e,s,i);for(var l=0;l<i.length;l++)i[l].state.checked&&n.push(i[l]);n.length>0?(s=n.sortNode()[0],r.containsNode(s)||r.push(s)):r.containsNode(s)||r.push(s)}return r}function a(t,s){return this.element=e(t),this.defaults=d,this.name=l,this.init(s),{settings:this.settings,init:e.proxy(this.init,this),getChecked:e.proxy(this.getChecked,this),setDefaults:e.proxy(this.setDefaults,this)}}var l="treeViewSelect",d={apiUrl:"",type:"GET",dataType:"jsonp",timeout:3e3,data:null,showSearch:!0,placeholder:"请选择...",defaultVals:null,enableUpCascade:!0,enableDownCascade:!0,cascadeText:!1,cascadeTextSeparator:"-",successCallback:null,errorCallback:null,exceptionCallback:null,onCompleted:i,bootstrapTreeParams:{levels:2,multiSelect:!0,checkedIcon:"glyphicon glyphicon-stop",showBorder:!1}};Array.prototype.containsNode=function(e){for(var t=0;t<this.length;t++)if(this[t].nodeId===e.nodeId)return!0;return!1},Array.prototype.sortNode=function(){for(var e,t=this,s=0;s<t.length;s++)for(var i=0;i<t.length-s-1;i++)t[i].nodeId>t[i+1].nodeId&&(e=t[i],t[i]=t[i+1],t[i+1]=e);return t},a.prototype.init=function(t){this.settings?this.settings=e.extend({},this.settings,t):this.settings=e.extend(!0,this.defaults,t),this.treeContainer=e(this.template.treeContainer),this.tree=e(this.template.tree),this.searchInput=e(this.template.searchInput),this.placeholder=e(this.template.placeholder).html(this.settings.placeholder),this.defaultVals=this.element.attr("data-id")?this.element.attr("data-id").split(","):[],this.destroy(),this.subscribeEvents(),this.setInitialStates()},a.prototype.destroy=function(){this.element.off("click"),e("html").off("click"),this.searchInput.off("keyup"),this.element.empty(),this.treeContainer.empty(),this.initialized=!1},a.prototype.subscribeEvents=function(){this.unsubscribeEvents(),"function"==typeof this.settings.onCompleted&&this.element.on("completed",this.settings.onCompleted)},a.prototype.unsubscribeEvents=function(){this.element.off("nodeChecked"),this.element.off("nodeUnchecked"),this.element.off("nodeSelected"),this.element.off("nodeUnselected"),this.element.off("nodesCleared"),this.element.off("completed")},a.prototype.setInitialStates=function(){var t=this;if(t.element.attr("data-tree"))t.treeData=e.parseJSON(t.element.attr("data-tree")),t.buildTreeSelect();else try{e.ajax({url:t.settings.apiUrl,type:t.settings.type,timeout:t.settings.timeout,dataType:t.settings.dataType,data:t.settings.data,success:function(s){s&&"1"==s.status?s.data&&(t.initialized=!0,"string"==typeof s.data?t.treeData=e.parseJSON(s.data):t.treeData=s.data,t.buildTreeSelect(),t.settings.successCallback&&successCallback()):t.settings.exceptionCallback&&t.settings.exceptionCallback()},error:function(e){t.settings.errorCallback&&t.settings.errorCallback()}})}catch(s){h(s),t.settings.errorCallback&&t.settings.errorCallback()}},a.prototype.buildTreeSelect=function(){var t;this.element.addClass("treeviewSelect-selection"),this.element.append(e(this.placeholder)),this.element.append(e(this.template.listGroup)),this.element.append(e(this.template.listOpGroup)),t="treeContainerId_"+parseInt(e(".treeviewSelect-container").length+1),this.treeContainer.attr("id",t),this.settings.showSearch&&this.treeContainer.append(this.searchInput),this.treeContainer.append(this.tree),this.element.parent().append(this.treeContainer),this.setTree(),this.setSelectList(),this.renderItems(!0)},a.prototype.setTree=function(){var e=this.settings.bootstrapTreeParams;e.data=n(this.treeData),e.showCheckbox=this.settings.bootstrapTreeParams.multiSelect,e.highlightSelected=!this.settings.bootstrapTreeParams.multiSelect,e.onhoverColor=this.settings.bootstrapTreeParams.multiSelect?"":"#F5F5F5",e.enableUpCascade=this.settings.enableUpCascade,e.enableDownCascade=this.settings.enableDownCascade,this.tree.treeview(e),this.bindTreeEvents(),this.setTreePosition()},a.prototype.bindTreeEvents=function(){var t=this;t.searchInput.keyup(function(s){var i=e(this),n=t.searchNodes(e.trim(i.val()));if(n&&n.length>0){var o=t.tree.find("li[data-nodeid="+n[0].nodeId+"]");o.length>0?t.tree.scrollTop(o.position().top-60):t.tree.scrollTop(0)}}),t.settings.bootstrapTreeParams.multiSelect?t.tree.on("nodeChecked nodeUnchecked",function(e,s){t.renderItems()}):t.tree.on("nodeSelected",function(e,s){t.treeContainer.addClass("hide"),t.renderItems()})},a.prototype.setSelectList=function(){var t=this;t.element.on("click",function(){var s;return e(".treeviewSelect-container").each(function(s,i){e(i).attr("id")!=t.treeContainer.attr("id")&&e(i).addClass("hide")}),t.treeContainer.hasClass("hide")&&t.initialized?(t.treeContainer.removeClass("hide"),t.searchInput.val(""),t.tree.treeview("clearSearch"),t.element.find(".treeviewselect-item").each(function(i,n){var o,r=e(n).attr("nodeid");if(r){if(o=t.getNodeById(r),t.setNodeState(o,!0),o.nodes)t.tree.treeview("expandNode",[o,{levels:1,silent:!0}]);else{var a=t.tree.treeview("getParent",o);a.nodeId&&t.tree.treeview("expandNode",[a,{levels:1,silent:!0}])}0===i&&(s=r)}}),t.goToFirstNodePosition(s)):t.treeContainer.addClass("hide"),!1}),e("html").on("click",function(t){var s=e(t.target);s.hasClass("list-group-item")||s.hasClass("check-icon")||s.hasClass("treeview-search-input")||s.hasClass("expand-icon")||s.hasClass("treeviewSelect-container")||e(".treeviewSelect-container").addClass("hide")})},a.prototype.renderItems=function(t){var s,i,n,a,l,d,h,c,p,u=this,f="";if(t&&this.defaultVals&&this.defaultVals.length>0&&this.defaultVals&&this.defaultVals.length>0)for(var g=0;g<this.defaultVals.length;g++)l=u.getNodeById(this.defaultVals[g]),u.settings.bootstrapTreeParams.multiSelect?u.tree.treeview("checkNode",[l,{silent:!0}]):u.tree.treeview("selectNode",[l,{silent:!0}]);if(u.settings.bootstrapTreeParams.multiSelect?(s=u.tree.treeview("getChecked"),i=s,(u.settings.enableUpCascade||u.settings.enableDownCascade)&&(i=r(u.tree,s))):i=u.tree.treeview("getSelected"),h=e(u.template.clearItem),p=e(u.template.ellipsisItem),d=u.element.find(".treeviewselect-listGroup ul"),d.empty(),u.element.find(".treeviewselect-listOpGroup .treeviewselect-clear").remove(),i&&i.length>0){u.placeholder.hide();for(var g=0;g<i.length;g++)n=0,a=[],o(u.tree,i[g],a),i[g].level=a.length+1,c=u.genTreeSelectItem(i[g]),u.settings.bootstrapTreeParams.multiSelect?(c.css("visibility","hidden"),d.append(c),d.width()-d.position().left>e(".treeviewselect-listOpGroup").position().left-38?(c.hide(),f+=i[g].text+";"):c.css("visibility","visible")):d.append(c);f&&(p.css("visibility","visible").attr({"data-toggle":"tooltip","data-placement":"top",title:f}),d.append(p))}else u.placeholder.show();u.settings.bootstrapTreeParams.multiSelect&&i.length&&(h.find(".glyphicon-remove").on("click",function(){d.empty(),u.placeholder.show(),u.element.find(".treeviewselect-listOpGroup .treeviewselect-clear").remove(),u.tree.treeview("uncheckAll",{silent:!0})}),u.element.find(".treeviewselect-listOpGroup ul").prepend(h)),e('[data-toggle="tooltip"]').tooltip("destroy"),e('[data-toggle="tooltip"]').tooltip(),t||u.element.trigger("completed",[i])},a.prototype.setNodeState=function(e,t,s){this.settings.bootstrapTreeParams.multiSelect?t?this.tree.treeview("checkNode",[e,{silent:!1}]):this.tree.treeview("uncheckNode",[e,{silent:!1}]):this.tree.treeview("selectNode",[e,{silent:!1}])},a.prototype.genTreeSelectItem=function(t){var s,i=this,n=[];if(s=e(i.settings.bootstrapTreeParams.multiSelect?i.template.item:i.template.singleItem),s.attr("nodeid",t.id),i.settings.cascadeText&&!i.settings.bootstrapTreeParams.multiSelect){var r="";if(o(i.tree,t,n),n){for(var a=n.length-1;a>=0;a--)r+=n[a].text+i.settings.cascadeTextSeparator;s.find("span").html(r+t.text)}else s.find("span").html(t.text)}else s.find("span").html(t.text);return t.text.length>3&&s.attr({"data-toggle":"tooltip","data-placement":"top",title:t.text}),s.find(".glyphicon-remove").on("click",function(){var t=e(this),s=i.getNodeById(t.parent().attr("nodeid"));return i.setNodeState(s,!1),0===e(".treeviewselect-listGroup .selected-item").length&&e(".treeviewselect-listOpGroup .treeviewselect-clear").remove(),t.parent().remove(),!1}),s},a.prototype.setTreePosition=function(){var e=this,t=e.element.position(),s=e.element.css("padding-top").replace("px",""),i=e.element.css("padding-bottom").replace("px",""),n=e.element.css("padding-left").replace("px",""),o=e.element.css("padding-right").replace("px",""),r=250,a=e.element.width()+parseInt(n)+parseInt(o),l=t.top+e.element.height()+parseInt(s)+parseInt(i),d=t.left;r=40*e.treeContainer.find("li.list-group-item").length*.2,r=r<250?250:r,e.treeContainer.css({top:l,left:d}),e.tree.css({height:r,width:a}),e.element.css("width",a)},a.prototype.searchNodes=function(e){var t={ignoreCase:!0,exactMatch:!1,revealResults:!0},s=this.tree.treeview("search",[e,t]);return s},a.prototype.getChecked=function(){var t,s=this,i=new Array;if(s.settings.bootstrapTreeParams.multiSelect){if(t=s.tree.treeview("getChecked"))for(var n=0;n<t.length;n++)i.push(t[n].id)}else s.element.find(".treeviewselect-item").each(function(t,s){e(s).hasClass("ellipsis-item")||i.push(e(s).attr("nodeid"))});return i},a.prototype.setDefaults=function(e){e&&e.length&&(this.defaultVals=e,this.renderItems(!0))},a.prototype.getNodeById=function(e){var t,s=this,i=s.tree.treeview("getAllNodes");if(i&&i.length>0)for(var n=i.length-1;n>=0&&(t=i[n],t.id!=e);n--);return t},a.prototype.goToFirstNodePosition=function(e){var t,s,i,n=this,o=n.getNodeById(e);o&&(t=n.tree.find("li[data-nodeid="+o.nodeId+"]"),t.length>0?(s=t.prevAll(),i=t.height()+parseInt(t.css("padding-top").replace("px",""))+parseInt(t.css("padding-bottom").replace("px","")),n.tree.scrollTop(i*s.length-60)):n.tree.scrollTop(0))},a.prototype.template={listGroup:'<li class="treeviewselect-listGroup"><ul></ul></li>',listOpGroup:'<li class="treeviewselect-listOpGroup"><ul></ul></li>',item:'<li class="treeviewselect-item selected-item"><i class="glyphicon glyphicon-remove"></i><span></span></li>',clearItem:'<li class="treeviewselect-clear"><i class="glyphicon glyphicon-remove"></i></li>',ellipsisItem:'<li class="treeviewselect-item ellipsis-item">....</li>',singleItem:'<li class="treeviewselect-item"><span></span></li>',bottomArrowItem:'<li class="treeviewselect-arrow"><i class="glyphicon glyphicon-triangle-bottom"></i></li>',inlineInput:'<li><input type="text" class="treeviewSelect-inline-input"></li>',treeContainer:'<ul class="treeviewSelect-container hide"></ul>',searchInput:'<input class="treeview-search-input" placeholder="请搜索..."></input>',tree:'<div class="treeviewSelect-tree"></div>',placeholder:'<li class="treeviewselect-placeholder"></li>'};var h=function(e){t.console&&t.console.error(e)};e.fn[l]=function(t,s){var i;return this.each(function(){var n=e.data(this,l);"string"==typeof t?n?e.isFunction(n[t])&&"_"!==t.charAt(0)?i=n[t].apply(n,s):h("No such method : "+t):h("Not initialized, can not call method : "+t):"object"==typeof t&&(n?n.init.call(n,t):e.data(this,l,new a(this,e.extend(!0,{},t))))}),i||this}}(jQuery,window,document);
+/* =========================================================
+ * bootstrap-treeview.js v1.2.0
+ * =========================================================
+ * Copyright 2013 Jonathan Miles
+ * Project URL : http://www.jondmiles.com/bootstrap-treeview
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ========================================================= */
+
+;
+(function($, window, document, undefined) {
+
+    /*global jQuery, console*/
+
+    'use strict';
+
+    var pluginName = 'treeview';
+
+    var _default = {};
+
+    _default.settings = {
+
+        injectStyle: true,
+
+        levels: 2,
+
+        expandIcon: 'glyphicon glyphicon-plus',
+        collapseIcon: 'glyphicon glyphicon-minus',
+        emptyIcon: 'glyphicon',
+        nodeIcon: '',
+        selectedIcon: '',
+        checkedIcon: 'glyphicon glyphicon-check',
+        uncheckedIcon: 'glyphicon glyphicon-unchecked',
+
+        color: undefined, // '#000000',
+        backColor: undefined, // '#FFFFFF',
+        borderColor: undefined, // '#dddddd',
+        onhoverColor: '#F5F5F5',
+        selectedColor: '#FFFFFF',
+        selectedBackColor: '#428bca',
+        searchResultColor: '#D9534F',
+        searchResultBackColor: undefined, //'#FFFFFF',
+
+        enableUpCascade: true,
+        enableDownCascade: true,
+        enableLinks: false,
+        highlightSelected: true,
+        highlightSearchResults: true,
+        showBorder: true,
+        showIcon: true,
+        showSearch: false,
+        showCheckbox: false,
+        showTags: false,
+        multiSelect: false,
+
+        // Event handlers
+        onNodeChecked: undefined,
+        onNodeCollapsed: undefined,
+        onNodeDisabled: undefined,
+        onNodeEnabled: undefined,
+        onNodeExpanded: undefined,
+        onNodeSelected: undefined,
+        onNodeUnchecked: undefined,
+        onNodeUnselected: undefined,
+        onSearchComplete: undefined,
+        onSearchCleared: undefined
+    };
+
+    _default.options = {
+        silent: false,
+        ignoreChildren: false
+    };
+
+    _default.searchOptions = {
+        ignoreCase: true,
+        exactMatch: false,
+        revealResults: true
+    };
+
+    var Tree = function(element, options) {
+
+        this.$element = $(element);
+        this.elementId = element.id;
+        this.styleId = this.elementId + '-style';
+
+        this.init(options);
+
+        return {
+
+            // Options (public access)
+            options: this.options,
+
+            // Initialize / destroy methods
+            init: $.proxy(this.init, this),
+            remove: $.proxy(this.remove, this),
+
+            // Get methods
+            getNode: $.proxy(this.getNode, this),
+            getAllNodes: $.proxy(this.getAllNodes, this),
+            getParent: $.proxy(this.getParent, this),
+            getParents: $.proxy(this.getParents, this),
+            getSiblings: $.proxy(this.getSiblings, this),
+            getSelected: $.proxy(this.getSelected, this),
+            getUnselected: $.proxy(this.getUnselected, this),
+            getExpanded: $.proxy(this.getExpanded, this),
+            getCollapsed: $.proxy(this.getCollapsed, this),
+            getChecked: $.proxy(this.getChecked, this),
+            getUnchecked: $.proxy(this.getUnchecked, this),
+            getDisabled: $.proxy(this.getDisabled, this),
+            getEnabled: $.proxy(this.getEnabled, this),
+
+            // Select methods
+            selectNode: $.proxy(this.selectNode, this),
+            unselectNode: $.proxy(this.unselectNode, this),
+            toggleNodeSelected: $.proxy(this.toggleNodeSelected, this),
+
+            // Expand / collapse methods
+            collapseAll: $.proxy(this.collapseAll, this),
+            collapseNode: $.proxy(this.collapseNode, this),
+            expandAll: $.proxy(this.expandAll, this),
+            expandNode: $.proxy(this.expandNode, this),
+            toggleNodeExpanded: $.proxy(this.toggleNodeExpanded, this),
+            revealNode: $.proxy(this.revealNode, this),
+
+            // Expand / collapse methods
+            checkAll: $.proxy(this.checkAll, this),
+            checkNode: $.proxy(this.checkNode, this),
+            uncheckAll: $.proxy(this.uncheckAll, this),
+            uncheckNode: $.proxy(this.uncheckNode, this),
+            toggleNodeChecked: $.proxy(this.toggleNodeChecked, this),
+
+            // Disable / enable methods
+            disableAll: $.proxy(this.disableAll, this),
+            disableNode: $.proxy(this.disableNode, this),
+            enableAll: $.proxy(this.enableAll, this),
+            enableNode: $.proxy(this.enableNode, this),
+            toggleNodeDisabled: $.proxy(this.toggleNodeDisabled, this),
+
+            // Search methods
+            search: $.proxy(this.search, this),
+            clearSearch: $.proxy(this.clearSearch, this)
+        };
+    };
+
+    Tree.prototype.init = function(options) {
+
+        this.tree = [];
+        this.nodes = [];
+        this.childsNodes = []; // nodes array from getting recursion childs  
+        this.parentNodes = []; //// nodes array from getting recursion parents 
+
+        if (options.data) {
+            if (typeof options.data === 'string') {
+                options.data = $.parseJSON(options.data);
+            }
+            this.tree = $.extend(true, [], options.data);
+            delete options.data;
+        }
+        this.options = $.extend({}, _default.settings, options);
+
+        this.destroy();
+        this.subscribeEvents();
+        this.setInitialStates({
+            nodes: this.tree
+        }, 0);
+        this.render();
+    };
+
+    Tree.prototype.remove = function() {
+        this.destroy();
+        $.removeData(this, pluginName);
+        $('#' + this.styleId).remove();
+    };
+
+    Tree.prototype.destroy = function() {
+
+        if (!this.initialized) return;
+
+        this.$wrapper.remove();
+        this.$wrapper = null;
+
+        // Switch off events
+        this.unsubscribeEvents();
+
+        // Reset this.initialized flag
+        this.initialized = false;
+    };
+
+    Tree.prototype.unsubscribeEvents = function() {
+
+        this.$element.off('click');
+        this.$element.off('nodeChecked');
+        this.$element.off('nodeCollapsed');
+        this.$element.off('nodeDisabled');
+        this.$element.off('nodeEnabled');
+        this.$element.off('nodeExpanded');
+        this.$element.off('nodeSelected');
+        this.$element.off('nodeUnchecked');
+        this.$element.off('nodeUnselected');
+        this.$element.off('searchComplete');
+        this.$element.off('searchCleared');
+    };
+
+    Tree.prototype.subscribeEvents = function() {
+
+        this.unsubscribeEvents();
+
+        this.$element.on('click', $.proxy(this.clickHandler, this));
+
+        if (typeof(this.options.onNodeChecked) === 'function') {
+            this.$element.on('nodeChecked', this.options.onNodeChecked);
+        }
+
+        if (typeof(this.options.onNodeCollapsed) === 'function') {
+            this.$element.on('nodeCollapsed', this.options.onNodeCollapsed);
+        }
+
+        if (typeof(this.options.onNodeDisabled) === 'function') {
+            this.$element.on('nodeDisabled', this.options.onNodeDisabled);
+        }
+
+        if (typeof(this.options.onNodeEnabled) === 'function') {
+            this.$element.on('nodeEnabled', this.options.onNodeEnabled);
+        }
+
+        if (typeof(this.options.onNodeExpanded) === 'function') {
+            this.$element.on('nodeExpanded', this.options.onNodeExpanded);
+        }
+
+        if (typeof(this.options.onNodeSelected) === 'function') {
+            this.$element.on('nodeSelected', this.options.onNodeSelected);
+        }
+
+        if (typeof(this.options.onNodeUnchecked) === 'function') {
+            this.$element.on('nodeUnchecked', this.options.onNodeUnchecked);
+        }
+
+        if (typeof(this.options.onNodeUnselected) === 'function') {
+            this.$element.on('nodeUnselected', this.options.onNodeUnselected);
+        }
+
+        if (typeof(this.options.onSearchComplete) === 'function') {
+            this.$element.on('searchComplete', this.options.onSearchComplete);
+        }
+
+        if (typeof(this.options.onSearchCleared) === 'function') {
+            this.$element.on('searchCleared', this.options.onSearchCleared);
+        }
+    };
+
+    /*
+        Recurse the tree structure and ensure all nodes have
+        valid initial states.  User defined states will be preserved.
+        For performance we also take this opportunity to
+        index nodes in a flattened structure
+    */
+    Tree.prototype.setInitialStates = function(node, level) {
+
+        if (!node.nodes) return;
+        level += 1;
+
+        var parent = node;
+        var _this = this;
+        $.each(node.nodes, function checkStates(index, node) {
+
+            // nodeId : unique, incremental identifier
+            node.nodeId = _this.nodes.length;
+
+            // parentId : transversing up the tree
+            node.parentId = parent.nodeId;
+
+            // if not provided set selectable default value
+            if (!node.hasOwnProperty('selectable')) {
+                node.selectable = true;
+            }
+
+            // where provided we should preserve states
+            node.state = node.state || {};
+
+            // set checked state; unless set always false
+            if (!node.state.hasOwnProperty('checked')) {
+                node.state.checked = false;
+            }
+
+            // set enabled state; unless set always false
+            if (!node.state.hasOwnProperty('disabled')) {
+                node.state.disabled = false;
+            }
+
+            // set expanded state; if not provided based on levels
+            if (!node.state.hasOwnProperty('expanded')) {
+                if (!node.state.disabled &&
+                    (level < _this.options.levels) &&
+                    (node.nodes && node.nodes.length > 0)) {
+                    node.state.expanded = true;
+                } else {
+                    node.state.expanded = false;
+                }
+            }
+
+            // set selected state; unless set always false
+            if (!node.state.hasOwnProperty('selected')) {
+                node.state.selected = false;
+            }
+
+            // index nodes in a flattened structure for use later
+            _this.nodes.push(node);
+
+            // recurse child nodes and transverse the tree
+            if (node.nodes) {
+                _this.setInitialStates(node, level);
+            }
+        });
+    };
+
+    Tree.prototype.clickHandler = function(event) {
+        if (!this.options.enableLinks) event.preventDefault();
+
+        var target = $(event.target);
+        var node = this.findNode(target);
+        if (!node) return;
+
+        var classList = target.attr('class') ? target.attr('class').split(' ') : [];
+        if ((classList.indexOf('expand-icon') !== -1)) {
+            this.toggleExpandedState(node, _default.options);
+            this.render();
+        } else if ((classList.indexOf('check-icon') !== -1)) {
+            if (node.state.disabled) {
+                return;
+            }
+            this.toggleCheckedState(node, _default.options);
+            this.render();
+        } else {
+
+            if (node.selectable) {
+                this.toggleSelectedState(node, _default.options);
+            } else {
+                this.toggleExpandedState(node, _default.options);
+            }
+
+            this.render();
+        }
+    };
+
+    // Looks up the DOM for the closest parent list item to retrieve the
+    // data attribute nodeid, which is used to lookup the node in the flattened structure.
+    Tree.prototype.findNode = function(target) {
+
+        var nodeId = target.closest('li.list-group-item').attr('data-nodeid');
+        var node = this.nodes[nodeId];
+
+        if (!node) {
+            console.log('Error: node does not exist');
+        }
+        return node;
+    };
+
+    Tree.prototype.toggleExpandedState = function(node, options) {
+        if (!node) return;
+        this.setExpandedState(node, !node.state.expanded, options);
+    };
+
+    Tree.prototype.setExpandedState = function(node, state, options) {
+
+        if (state === node.state.expanded) return;
+
+        if (state && node.nodes) {
+
+            // Expand a node
+            node.state.expanded = true;
+            if (!options.silent) {
+                this.$element.trigger('nodeExpanded', $.extend(true, {}, node));
+            }
+        } else if (!state) {
+
+            // Collapse a node
+            node.state.expanded = false;
+            if (!options.silent) {
+                this.$element.trigger('nodeCollapsed', $.extend(true, {}, node));
+            }
+
+            // Collapse child nodes
+            if (node.nodes && !options.ignoreChildren) {
+                $.each(node.nodes, $.proxy(function(index, node) {
+                    this.setExpandedState(node, false, options);
+                }, this));
+            }
+        }
+    };
+
+    Tree.prototype.toggleSelectedState = function(node, options) {
+        if (!node) return;
+        this.setSelectedState(node, !node.state.selected, options);
+    };
+
+    Tree.prototype.setSelectedState = function(node, state, options) {
+
+        if (state === node.state.selected) return;
+
+        if (state) {
+
+            // If multiSelect false, unselect previously selected
+            if (!this.options.multiSelect) {
+                $.each(this.findNodes('true', 'g', 'state.selected'), $.proxy(function(index, node) {
+                    this.setSelectedState(node, false, options);
+                }, this));
+            }
+
+            // Continue selecting node
+            node.state.selected = true;
+            if (!options.silent) {
+                this.$element.trigger('nodeSelected', $.extend(true, {}, node));
+            }
+        } else {
+
+            // Unselect node
+            node.state.selected = false;
+            if (!options.silent) {
+                this.$element.trigger('nodeUnselected', $.extend(true, {}, node));
+            }
+        }
+    };
+
+    Tree.prototype.toggleCheckedState = function(node, options) {
+        if (!node) return;
+        this.setCheckedState(node, !node.state.checked, options);
+    };
+
+    Tree.prototype.setCheckedState = function(node, state, options) {
+        var _this = this;
+        var stateFlag, eventType;
+        if (state === node.state.checked) return;
+
+        stateFlag = state ? true : false;
+        eventType = state ? 'nodeChecked' : 'nodeUnchecked';
+
+        node.state.checked = stateFlag;
+
+        if (_this.options.enableUpCascade || _this.options.enableDownCascade) {
+            //reset nodes array
+            _this.childsNodes = [];
+            _this.parentNodes = [];
+
+            if (_this.options.enableDownCascade) {
+                //Recurse the tree structure and get all child nodes
+                _this.getChilds(node);
+
+                if (_this.childsNodes && _this.childsNodes.length) {
+                    $.each(_this.childsNodes, function(index, el) {
+                        el.state.checked = stateFlag;
+                    });
+                }
+            }
+
+            if (_this.options.enableUpCascade) {
+                //Recurse the tree structure and get all parent nodes
+                _this.getParents(node);
+
+                $.each(_this.parentNodes, function(index, node) {
+                    var checkedNodes = _this.getChecked(node);
+                    if (checkedNodes.length == node.nodes.length) {
+                        node.state.checked = true;
+                    }
+                    else{
+                        node.state.checked=false;
+                    }
+                });
+            }
+        }
+
+        //Trigger the Event
+
+        if (!options.silent) {
+            _this.$element.trigger(eventType, $.extend(true, {}, node));
+        }
+    };
+
+    Tree.prototype.setDisabledState = function(node, state, options) {
+
+        if (state === node.state.disabled) return;
+
+        if (state) {
+
+            // Disable node
+            node.state.disabled = true;
+
+            // Disable all other states
+            this.setExpandedState(node, false, options);
+            this.setSelectedState(node, false, options);
+            this.setCheckedState(node, false, options);
+
+            if (!options.silent) {
+                this.$element.trigger('nodeDisabled', $.extend(true, {}, node));
+            }
+        } else {
+
+            // Enabled node
+            node.state.disabled = false;
+            if (!options.silent) {
+                this.$element.trigger('nodeEnabled', $.extend(true, {}, node));
+            }
+        }
+    };
+
+    Tree.prototype.render = function() {
+
+        if (!this.initialized) {
+
+            // Setup first time only components
+            this.$element.addClass(pluginName);
+            this.$wrapper = $(this.template.list);
+
+            this.injectStyle();
+
+            this.initialized = true;
+        }
+
+        this.$element.empty().append(this.$wrapper.empty());
+
+        // Build tree
+        this.buildTree(this.tree, 0);
+    };
+
+    // Starting from the root node, and recursing down the
+    // structure we build the tree one node at a time
+    Tree.prototype.buildTree = function(nodes, level) {
+
+        if (!nodes) return;
+        level += 1;
+
+        var _this = this;
+        $.each(nodes, function addNodes(id, node) {
+
+            var treeItem = $(_this.template.item)
+                .addClass('node-' + _this.elementId)
+                .addClass(node.state.checked ? 'node-checked' : '')
+                .addClass(node.state.disabled ? 'node-disabled' : '')
+                .addClass(node.state.selected ? 'node-selected' : '')
+                .addClass(node.searchResult ? 'search-result' : '')
+                .attr('data-nodeid', node.nodeId)
+                .attr('style', _this.buildStyleOverride(node));
+
+            // Add indent/spacer to mimic tree structure
+            for (var i = 0; i < (level - 1); i++) {
+                treeItem.append(_this.template.indent);
+            }
+
+            // Add expand, collapse or empty spacer icons
+            var classList = [];
+            if (node.nodes) {
+                classList.push('expand-icon');
+                if (node.state.expanded) {
+                    classList.push(_this.options.collapseIcon);
+                } else {
+                    classList.push(_this.options.expandIcon);
+                }
+            } else {
+                classList.push(_this.options.emptyIcon);
+            }
+
+            treeItem
+                .append($(_this.template.icon)
+                    .addClass(classList.join(' '))
+                );
+
+
+            // Add node icon
+            if (_this.options.showIcon) {
+
+                var classList = ['node-icon'];
+
+                classList.push(node.icon || _this.options.nodeIcon);
+                if (node.state.selected) {
+                    classList.pop();
+                    classList.push(node.selectedIcon || _this.options.selectedIcon ||
+                        node.icon || _this.options.nodeIcon);
+                }
+
+                treeItem
+                    .append($(_this.template.icon)
+                        .addClass(classList.join(' '))
+                    );
+            }
+
+            // Add check / unchecked icon
+            if (_this.options.showCheckbox) {
+
+                var classList = ['check-icon'];
+                if (node.state.checked) {
+                    classList.push(_this.options.checkedIcon);
+                } else {
+                    classList.push(_this.options.uncheckedIcon);
+                }
+
+                treeItem
+                    .append($(_this.template.icon)
+                        .addClass(classList.join(' '))
+                    );
+            }
+
+            // Add text
+            if (_this.options.enableLinks) {
+                // Add hyperlink
+                treeItem
+                    .append($(_this.template.link)
+                        .attr('href', node.href)
+                        .append(node.text)
+                    );
+            } else {
+                // otherwise just text
+                treeItem
+                    .append(node.text);
+            }
+
+            // Add tags as badges
+            if (_this.options.showTags && node.tags) {
+                $.each(node.tags, function addTag(id, tag) {
+                    treeItem
+                        .append($(_this.template.badge)
+                            .append(tag)
+                        );
+                });
+            }
+
+            // Add item to the tree
+            _this.$wrapper.append(treeItem);
+
+            // Recursively add child ndoes
+            // edit by yuxiaochen 2016-06-23
+            // when node.state.expanded is true and nodes.state.disabled is true, node can expand
+            // if (node.nodes && node.state.expanded && !node.state.disabled){
+            //  return _this.buildTree(node.nodes, level);
+            // }
+
+            if (node.nodes && node.state.expanded) {
+                return _this.buildTree(node.nodes, level);
+            }
+        });
+    };
+
+    // Define any node level style override for
+    // 1. selectedNode
+    // 2. node|data assigned color overrides
+    Tree.prototype.buildStyleOverride = function(node) {
+
+        // if (node.state.disabled) return '';
+
+        var color = node.color;
+        var backColor = node.backColor;
+
+        if (this.options.highlightSelected && node.state.selected) {
+            if (this.options.selectedColor) {
+                color = this.options.selectedColor;
+            }
+            if (this.options.selectedBackColor) {
+                backColor = this.options.selectedBackColor;
+            }
+        }
+
+        //edit by yuxiaochen 2016-06-23
+        // if (this.options.highlightSearchResults && node.searchResult && !node.state.disabled) {
+        //     if (this.options.searchResultColor) {
+        //         color = this.options.searchResultColor;
+        //     }
+        //     if (this.options.searchResultBackColor) {
+        //         backColor = this.options.searchResultBackColor;
+        //     }
+        // }
+
+        if (this.options.highlightSearchResults && node.searchResult) {
+            if (this.options.searchResultColor) {
+                color = this.options.searchResultColor;
+            }
+            if (this.options.searchResultBackColor) {
+                backColor = this.options.searchResultBackColor;
+            }
+        }
+
+        return 'color:' + color +
+            ';background-color:' + backColor + ';';
+    };
+
+    // Add inline style into head
+    Tree.prototype.injectStyle = function() {
+
+        if (this.options.injectStyle && !document.getElementById(this.styleId)) {
+            $('<style type="text/css" id="' + this.styleId + '"> ' + this.buildStyle() + ' </style>').appendTo('head');
+        }
+    };
+
+    // Construct trees style based on user options
+    Tree.prototype.buildStyle = function() {
+
+        var style = '.node-' + this.elementId + '{';
+
+        if (this.options.color) {
+            style += 'color:' + this.options.color + ';';
+        }
+
+        if (this.options.backColor) {
+            style += 'background-color:' + this.options.backColor + ';';
+        }
+
+        if (!this.options.showBorder) {
+            style += 'border:none;';
+        } else if (this.options.borderColor) {
+            style += 'border:1px solid ' + this.options.borderColor + ';';
+        }
+
+        style += '}';
+
+        if (this.options.onhoverColor) {
+            style += '.node-' + this.elementId + ':not(.node-disabled):hover{' +
+                'background-color:' + this.options.onhoverColor + ';' +
+                '}';
+        } else {
+            style += '.node-' + this.elementId + '{cursor:default !important}';
+        }
+
+        return this.css + style;
+    };
+
+    Tree.prototype.template = {
+        list: '<ul class="list-group"></ul>',
+        item: '<li class="list-group-item"></li>',
+        indent: '<span class="indent"></span>',
+        icon: '<span class="icon"></span>',
+        link: '<a href="#" style="color:inherit;"></a>',
+        badge: '<span class="badge"></span>'
+    };
+
+    Tree.prototype.css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'
+
+
+    /**
+        Returns a single node object that matches the given node id.
+        @param {Number} nodeId - A node's unique identifier
+        @return {Object} node - Matching node
+    */
+    Tree.prototype.getNode = function(nodeId) {
+        return this.nodes[nodeId];
+    };
+
+
+    //add by yuxiaochen 2016-06-28
+    /**
+        Returns a single node object that matches the given node id.
+        @param {Number} id - A node's unique identifier property
+        @return {Object} node - Matching node
+    */
+    Tree.prototype.getAllNodes = function(id) {
+        return this.nodes;
+    };
+
+    /**
+        Returns the parent node of a given node, if valid otherwise returns undefined.
+        @param {Object|Number} identifier - A valid node or node id
+        @returns {Object} node - The parent node
+    */
+    Tree.prototype.getParent = function(identifier) {
+        var node = this.identifyNode(identifier);
+        return this.nodes[node.parentId];
+    };
+
+
+    /**
+        get the parent node of a given node recursively
+        store the nodes in this.parentNodes;
+        @param {Object|Number} identifier - A valid node or node id
+    */
+    Tree.prototype.getParents = function(identifier) {
+        var node = this.getParent(identifier);
+
+        if (!node) {
+            return;
+        }
+
+        this.parentNodes.push(node);
+
+        this.getParents(node);
+    }
+
+
+    Tree.prototype.getChilds = function(identifier) {
+        var _this = this;
+        var node = this.identifyNode(identifier);
+        if (!node.nodes) {
+            return;
+        }
+
+        $.each(node.nodes, function(index, el) {
+            _this.childsNodes.push(el);
+
+            _this.getChilds(el);
+        });
+    }
+
+    /**
+        Returns an array of sibling nodes for a given node, if valid otherwise returns undefined.
+        @param {Object|Number} identifier - A valid node or node id
+        @returns {Array} nodes - Sibling nodes
+    */
+    Tree.prototype.getSiblings = function(identifier) {
+        var node = this.identifyNode(identifier);
+        var parent = this.getParent(node);
+        var nodes = parent ? parent.nodes : this.tree;
+        return nodes.filter(function(obj) {
+            return obj.nodeId !== node.nodeId;
+        });
+    };
+
+    /**
+        Returns an array of selected nodes.
+        @returns {Array} nodes - Selected nodes
+    */
+    Tree.prototype.getSelected = function() {
+        return this.findNodes('true', 'g', 'state.selected');
+    };
+
+    /**
+        Returns an array of unselected nodes.
+        @returns {Array} nodes - Unselected nodes
+    */
+    Tree.prototype.getUnselected = function() {
+        return this.findNodes('false', 'g', 'state.selected');
+    };
+
+    /**
+        Returns an array of expanded nodes.
+        @returns {Array} nodes - Expanded nodes
+    */
+    Tree.prototype.getExpanded = function() {
+        return this.findNodes('true', 'g', 'state.expanded');
+    };
+
+    /**
+        Returns an array of collapsed nodes.
+        @returns {Array} nodes - Collapsed nodes
+    */
+    Tree.prototype.getCollapsed = function() {
+        return this.findNodes('false', 'g', 'state.expanded');
+    };
+
+    /**
+        Returns an array of checked nodes.
+        @params:a given node
+        @returns {Array} nodes - Checked nodes
+    */
+    Tree.prototype.getChecked = function(node) {
+        if (!node || !node.nodes) {
+            return this.findNodes('true', 'g', 'state.checked');
+        } else {
+            return node.nodes.filter(function(obj) {
+                return obj.state.checked;
+            });
+        }
+    };
+
+    /**
+        Returns an array of unchecked nodes.
+        @returns {Array} nodes - Unchecked nodes
+    */
+    Tree.prototype.getUnchecked = function() {
+        return this.findNodes('false', 'g', 'state.checked');
+    };
+
+    /**
+        Returns an array of disabled nodes.
+        @returns {Array} nodes - Disabled nodes
+    */
+    Tree.prototype.getDisabled = function() {
+        return this.findNodes('true', 'g', 'state.disabled');
+    };
+
+    /**
+        Returns an array of enabled nodes.
+        @returns {Array} nodes - Enabled nodes
+    */
+    Tree.prototype.getEnabled = function() {
+        return this.findNodes('false', 'g', 'state.disabled');
+    };
+
+
+    /**
+        Set a node state to selected
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.selectNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setSelectedState(node, true, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Set a node state to unselected
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.unselectNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setSelectedState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Toggles a node selected state; selecting if unselected, unselecting if selected.
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.toggleNodeSelected = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.toggleSelectedState(node, options);
+        }, this));
+
+        this.render();
+    };
+
+
+    /**
+        Collapse all tree nodes
+        @param {optional Object} options
+    */
+    Tree.prototype.collapseAll = function(options) {
+        var identifiers = this.findNodes('true', 'g', 'state.expanded');
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setExpandedState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Collapse a given tree node
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.collapseNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setExpandedState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Expand all tree nodes
+        @param {optional Object} options
+    */
+    Tree.prototype.expandAll = function(options) {
+        options = $.extend({}, _default.options, options);
+
+        if (options && options.levels) {
+            this.expandLevels(this.tree, options.levels, options);
+        } else {
+            var identifiers = this.findNodes('false', 'g', 'state.expanded');
+            this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+                this.setExpandedState(node, true, options);
+            }, this));
+        }
+
+        this.render();
+    };
+
+    /**
+        Expand a given tree node
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.expandNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setExpandedState(node, true, options);
+            if (node.nodes && (options && options.levels)) {
+                this.expandLevels(node.nodes, options.levels - 1, options);
+            }
+        }, this));
+
+        this.render();
+    };
+
+    Tree.prototype.expandLevels = function(nodes, level, options) {
+        options = $.extend({}, _default.options, options);
+
+        $.each(nodes, $.proxy(function(index, node) {
+            this.setExpandedState(node, (level > 0) ? true : false, options);
+            if (node.nodes) {
+                this.expandLevels(node.nodes, level - 1, options);
+            }
+        }, this));
+    };
+
+    /**
+        Reveals a given tree node, expanding the tree from node to root.
+        @param {Object|Number|Array} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.revealNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            var parentNode = this.getParent(node);
+            while (parentNode) {
+                this.setExpandedState(parentNode, true, options);
+                parentNode = this.getParent(parentNode);
+            };
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Toggles a nodes expanded state; collapsing if expanded, expanding if collapsed.
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.toggleNodeExpanded = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.toggleExpandedState(node, options);
+        }, this));
+
+        this.render();
+    };
+
+
+    /**
+        Check all tree nodes
+        @param {optional Object} options
+    */
+    Tree.prototype.checkAll = function(options) {
+        var identifiers = this.findNodes('false', 'g', 'state.checked');
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setCheckedState(node, true, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Check a given tree node
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.checkNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setCheckedState(node, true, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Uncheck all tree nodes
+        @param {optional Object} options
+    */
+    Tree.prototype.uncheckAll = function(options) {
+        var identifiers = this.findNodes('true', 'g', 'state.checked');
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setCheckedState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Uncheck a given tree node
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.uncheckNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setCheckedState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Toggles a nodes checked state; checking if unchecked, unchecking if checked.
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.toggleNodeChecked = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.toggleCheckedState(node, options);
+        }, this));
+
+        this.render();
+    };
+
+
+    /**
+        Disable all tree nodes
+        @param {optional Object} options
+    */
+    Tree.prototype.disableAll = function(options) {
+        var identifiers = this.findNodes('false', 'g', 'state.disabled');
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setDisabledState(node, true, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Disable a given tree node
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.disableNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setDisabledState(node, true, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Enable all tree nodes
+        @param {optional Object} options
+    */
+    Tree.prototype.enableAll = function(options) {
+        var identifiers = this.findNodes('true', 'g', 'state.disabled');
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setDisabledState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Enable a given tree node
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.enableNode = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setDisabledState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+    /**
+        Toggles a nodes disabled state; disabling is enabled, enabling if disabled.
+        @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
+        @param {optional Object} options
+    */
+    Tree.prototype.toggleNodeDisabled = function(identifiers, options) {
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            this.setDisabledState(node, !node.state.disabled, options);
+        }, this));
+
+        this.render();
+    };
+
+
+    /**
+        Common code for processing multiple identifiers
+    */
+    Tree.prototype.forEachIdentifier = function(identifiers, options, callback) {
+
+        options = $.extend({}, _default.options, options);
+
+        if (!(identifiers instanceof Array)) {
+            identifiers = [identifiers];
+        }
+
+        $.each(identifiers, $.proxy(function(index, identifier) {
+            callback(this.identifyNode(identifier), options);
+        }, this));
+    };
+
+    /*
+        Identifies a node from either a node id or object
+    */
+    Tree.prototype.identifyNode = function(identifier) {
+        return ((typeof identifier) === 'number') ?
+            this.nodes[identifier] :
+            identifier;
+    };
+
+    /**
+        Searches the tree for nodes (text) that match given criteria
+        @param {String} pattern - A given string to match against
+        @param {optional Object} options - Search criteria options
+        @return {Array} nodes - Matching nodes
+    */
+    Tree.prototype.search = function(pattern, options) {
+        options = $.extend({}, _default.searchOptions, options);
+
+        this.clearSearch({
+            render: false
+        });
+
+        var results = [];
+        if (pattern && pattern.length > 0) {
+
+            if (options.exactMatch) {
+                pattern = '^' + pattern + '$';
+            }
+
+            var modifier = 'g';
+            if (options.ignoreCase) {
+                modifier += 'i';
+            }
+
+            results = this.findNodes(pattern, modifier);
+
+            // Add searchResult property to all matching nodes
+            // This will be used to apply custom styles
+            // and when identifying result to be cleared
+            $.each(results, function(index, node) {
+                node.searchResult = true;
+            })
+        }
+
+        // If revealResults, then render is triggered from revealNode
+        // otherwise we just call render.
+        if (options.revealResults) {
+            this.revealNode(results);
+        } else {
+            this.render();
+        }
+
+        this.$element.trigger('searchComplete', $.extend(true, {}, results));
+
+        return results;
+    };
+
+    /**
+        Clears previous search results
+    */
+    Tree.prototype.clearSearch = function(options) {
+
+        options = $.extend({}, {
+            render: true
+        }, options);
+
+        var results = $.each(this.findNodes('true', 'g', 'searchResult'), function(index, node) {
+            node.searchResult = false;
+        });
+
+        if (options.render) {
+            this.render();
+        }
+
+        this.$element.trigger('searchCleared', $.extend(true, {}, results));
+    };
+
+    /**
+        Find nodes that match a given criteria
+        @param {String} pattern - A given string to match against
+        @param {optional String} modifier - Valid RegEx modifiers
+        @param {optional String} attribute - Attribute to compare pattern against
+        @return {Array} nodes - Nodes that match your criteria
+    */
+    Tree.prototype.findNodes = function(pattern, modifier, attribute) {
+
+        modifier = modifier || 'g';
+        attribute = attribute || 'text';
+
+        var _this = this;
+        return $.grep(this.nodes, function(node) {
+            var val = _this.getNodeValue(node, attribute);
+            if (typeof val === 'string') {
+                return val.match(new RegExp(pattern, modifier));
+            }
+        });
+    };
+
+    /**
+        Recursive find for retrieving nested attributes values
+        All values are return as strings, unless invalid
+        @param {Object} obj - Typically a node, could be any object
+        @param {String} attr - Identifies an object property using dot notation
+        @return {String} value - Matching attributes string representation
+    */
+    Tree.prototype.getNodeValue = function(obj, attr) {
+        var index = attr.indexOf('.');
+        if (index > 0) {
+            var _obj = obj[attr.substring(0, index)];
+            var _attr = attr.substring(index + 1, attr.length);
+            return this.getNodeValue(_obj, _attr);
+        } else {
+            if (obj.hasOwnProperty(attr)) {
+                return obj[attr].toString();
+            } else {
+                return undefined;
+            }
+        }
+    };
+
+    var logError = function(message) {
+        if (window.console) {
+            window.console.error(message);
+        }
+    };
+
+    // Prevent against multiple instantiations,
+    // handle updates and method calls
+    $.fn[pluginName] = function(options, args) {
+
+        var result;
+
+        this.each(function() {
+            var _this = $.data(this, pluginName);
+            if (typeof options === 'string') {
+                if (!_this) {
+                    logError('Not initialized, can not call method : ' + options);
+                } else if (!$.isFunction(_this[options]) || options.charAt(0) === '_') {
+                    logError('No such method : ' + options);
+                } else {
+                    if (!(args instanceof Array)) {
+                        args = [args];
+                    }
+                    result = _this[options].apply(_this, args);
+                }
+            } else if (typeof options === 'boolean') {
+                result = _this;
+            } else {
+                $.data(this, pluginName, new Tree(this, $.extend(true, {}, options)));
+            }
+        });
+
+        return result || this;
+    };
+
+})(jQuery, window, document);
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. 插件名称：treeViewSelect
+2. 插件描述：树形下拉菜单选择插件
+3. 版本：1.0
+4. 原理：
+5. 使用范例：  
+    
+6. 未尽事宜：
+7. 作者：yuxiaochen@lifang.com
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+;
+(function($, window, document, undefined) {
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    定义相关插件参数
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    var pluginName = 'treeViewSelect',
+        defaults = {
+            /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            获取渲染tree数据的异步请求地址
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            apiUrl: '',
+
+            /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            请求方法，Get OR POST
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            type: 'GET',
+
+            /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            请求的数据类型
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            dataType: "jsonp",
+
+            /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            设置ajax请求的timeout 时间
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            timeout: 3000,
+
+            /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            异步请求报文
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            data: null,
+
+            /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            是否显示搜索框
+            -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            showSearch: true,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            placeholder 文本
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            placeholder: '请选择...',
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            defaultVals 默认值s
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            defaultVals: null,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            enableUpCascade 设置勾选节点是否影响上级节点,即向上递归
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            enableUpCascade: true,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            enableUpCascade 设置勾选节点是否影响上级节点,即向上递归
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            enableDownCascade: true,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            是否显示级联的文本，目前只支持单选的前提下。
+            默认为false ,表示 点击长宁区节点，选中项文本为 [长宁区]
+            为true时，选中项文本为[上海市-长宁区]
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            cascadeText: false,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            cascadeText 为true 的时候，选中项文本的分隔符
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            cascadeTextSeparator: '-',
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            树渲染完成后，执行的回调方法 
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            successCallback: null,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            ajax接口请求出错时候的回调方法 
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            errorCallback: null,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            ajax当接口返回结果码不为200时候，调用的接口方法 
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            exceptionCallback: null,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            勾选或者选中，选中项生成好了，回调事件
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            onCompleted: undefined,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+             bootstrap-treeview 参数配置
+             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            "bootstrapTreeParams": {
+                /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                设置继承树默认展开的级别,默认为2级
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+                "levels": 2,
+                /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                是否可以同时选择多个节点
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+                multiSelect: true,
+                /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                设置处于checked状态的复选框图标。
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+                checkedIcon: "glyphicon glyphicon-stop",
+
+                /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                是否在节点上显示边框
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+                showBorder: false
+            }
+        };
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    * ***************************************
+    *
+    *   构造函数与私有函数定义
+    *
+    *****************************************
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    定义treeNode Array containes
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    Array.prototype.containsNode = function(node) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i].nodeId === node.nodeId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    定义treeNode Array 排序方法
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    Array.prototype.sortNode = function() {
+        var tmpNode;
+
+        var tmpArr = this;
+
+        for (var i = 0; i < tmpArr.length; i++) {
+            for (var j = 0; j < tmpArr.length - i - 1; j++) {
+                if (tmpArr[j].nodeId > tmpArr[j + 1].nodeId) {
+                    tmpNode = tmpArr[j];
+                    tmpArr[j] = tmpArr[j + 1];
+                    tmpArr[j + 1] = tmpNode;
+                }
+            }
+        }
+
+        return tmpArr;
+    }
+
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    将flat Data format 转化为嵌套结构的数据
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    function flatToHierarchy(items) {
+        //replace content name to text 
+        var str = window.JSON.stringify(items);
+        str = str.replace(/name/g, 'text');
+        items = $.parseJSON(str);
+
+        return items.reduce(insert, {
+            res: [],
+            map: {}
+        }).res;
+
+        function insert(obj, item) {
+            var parent = item.pid;
+            var map = obj.map;
+            map[item.id] = item;
+
+            if (item.open) {
+                item.state = {
+                    expanded: true
+                };
+            }
+
+            if (parent === null || parent === 0) {
+                obj.res.push(item);
+            } else {
+                var parentItem = map[parent];
+
+                if (parentItem) {
+                    if (parentItem.hasOwnProperty("nodes"))
+                        parentItem.nodes.push(item);
+                    else parentItem.nodes = [item];
+                } else {
+                    obj.res.push(item);
+                }
+            }
+
+            return obj;
+        }
+    }
+
+    //获取当前节点的所有父节点
+    function getParentNodes($tree, node, parentNodes) {
+        var pNode = $tree.treeview('getParent', node);
+        if (pNode != undefined && pNode.id) {
+            parentNodes.push(pNode);
+
+            getParentNodes($tree, pNode, parentNodes);
+        } else {
+            return parentNodes;
+        }
+    }
+
+    function getSelectedNode($tree, nodeArr) {
+        var tmpNode;
+        var pNodesArr, pCheckedArr;
+        var toShowNodeArr = new Array();
+
+        //如果选中的节点包括根节点，则直接返回根节点
+        if (nodeArr.length == 1 && nodeArr[0].nodeId == 0) {
+            toShowNodeArr.push(nodeArr[0]);
+        } else {
+            for (var i = 0; i < nodeArr.length; i++) {
+                tmpNode = nodeArr[i];
+                pNodesArr = new Array();
+                pCheckedArr = new Array();
+                getParentNodes($tree, tmpNode, pNodesArr);
+
+                //判断父节点中是否存在选中的节点
+                for (var j = 0; j < pNodesArr.length; j++) {
+                    if (pNodesArr[j].state.checked) {
+                        pCheckedArr.push(pNodesArr[j]);
+                    }
+                }
+
+                //如果存在父节点被选中
+                if (pCheckedArr.length > 0) {
+                    tmpNode = pCheckedArr.sortNode()[0];
+                    if (!toShowNodeArr.containsNode(tmpNode)) {
+                        toShowNodeArr.push(tmpNode);
+                    }
+                } else {
+                    if (!toShowNodeArr.containsNode(tmpNode)) {
+                        toShowNodeArr.push(tmpNode);
+                    }
+                }
+            }
+        }
+
+        //console.log(toShowNodeArr);
+        return toShowNodeArr;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    构造函数定义
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    function TreeViewSelect(element, options) {
+        this.element = $(element);
+        this.defaults = defaults;
+        this.name = pluginName;
+
+        this.init(options);
+
+        return {
+            settings: this.settings,
+
+            init: $.proxy(this.init, this),
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            获取所有的选中项或选择项
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            getChecked: $.proxy(this.getChecked, this),
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            设置默认值
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            setDefaults: $.proxy(this.setDefaults, this),
+        };
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    入口方法
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.init = function(options) {
+        if (this.settings) {
+            this.settings = $.extend({}, this.settings, options);
+        } else {
+            this.settings = $.extend(true, this.defaults, options);
+        }
+
+        this.treeContainer = $(this.template.treeContainer);
+        this.tree = $(this.template.tree);
+        this.searchInput = $(this.template.searchInput);
+        this.placeholder = $(this.template.placeholder).html(this.settings.placeholder);
+        this.defaultVals = this.element.attr("data-id") ? this.element.attr("data-id").split(',') : [];
+
+        /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        reset element state
+        --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+        this.destroy();
+
+        /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        订阅事件
+        --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+        this.subscribeEvents();
+
+        /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        设置或请求渲染树的数据
+        --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+        this.setInitialStates();
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    重置控件相关设置
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.destroy = function() {
+        // Switch off events
+        this.element.off('click');
+        $('html').off('click');
+        this.searchInput.off('keyup');
+
+        this.element.empty();
+        this.treeContainer.empty();
+
+        // Reset this.initialized flag
+        this.initialized = false;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    订阅事件
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.subscribeEvents = function() {
+
+        this.unsubscribeEvents();
+
+        if (typeof(this.settings.onCompleted) === 'function') {
+            this.element.on('completed', this.settings.onCompleted);
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    取消所有订阅事件
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.unsubscribeEvents = function() {
+        this.element.off('nodeChecked');
+        this.element.off('nodeUnchecked');
+        this.element.off('nodeSelected');
+        this.element.off('nodeUnselected');
+        this.element.off('nodesCleared');
+        this.element.off('completed');
+    };
+
+
+    TreeViewSelect.prototype.setInitialStates = function() {
+        var _ = this;
+
+        if (_.element.attr('data-tree')) {
+            _.treeData = $.parseJSON(_.element.attr('data-tree'));
+            _.buildTreeSelect();
+        } else {
+            try {
+                $.ajax({
+                    url: _.settings.apiUrl,
+                    type: _.settings.type,
+                    timeout: _.settings.timeout,
+                    dataType: _.settings.dataType,
+                    data: _.settings.data,
+                    success: function(resp) {
+                        if (resp && resp.status == '1') {
+                            if (resp.data) {
+                                _.initialized = true;
+                                if (typeof resp.data === "string") {
+                                    _.treeData = $.parseJSON(resp.data);
+                                } else {
+                                    _.treeData = resp.data;
+                                }
+
+                                _.buildTreeSelect();
+
+                                if (_.settings.successCallback) {
+                                    successCallback();
+                                }
+                            }
+                        } else {
+                            if (_.settings.exceptionCallback) {
+                                _.settings.exceptionCallback();
+                            }
+                        }
+                    },
+                    error: function(e) {
+                        if (_.settings.errorCallback) {
+                            _.settings.errorCallback();
+                        }
+                    }
+                })
+            } catch (e) {
+                logError(e);
+                if (_.settings.errorCallback) {
+                    _.settings.errorCallback();
+                }
+            }
+        }
+
+    }
+
+    TreeViewSelect.prototype.buildTreeSelect = function() {
+        var treeContainerId;
+
+        //选项项容器部分
+        this.element.addClass('treeviewSelect-selection');
+        this.element.append($(this.placeholder));
+        this.element.append($(this.template.listGroup));
+        this.element.append($(this.template.listOpGroup));
+
+        //tree
+        treeContainerId = 'treeContainerId_' + parseInt($('.treeviewSelect-container').length + 1);
+        this.treeContainer.attr('id', treeContainerId);
+        if (this.settings.showSearch) {
+            this.treeContainer.append(this.searchInput);
+        }
+        this.treeContainer.append(this.tree);
+        this.element.parent().append(this.treeContainer);
+
+        this.setTree();
+
+        this.setSelectList();
+
+        this.renderItems(true);
+    }
+
+    TreeViewSelect.prototype.setTree = function() {
+        var tConfig = this.settings.bootstrapTreeParams;
+
+        tConfig.data = flatToHierarchy(this.treeData);
+        tConfig.showCheckbox = this.settings.bootstrapTreeParams.multiSelect;
+        tConfig.highlightSelected = !this.settings.bootstrapTreeParams.multiSelect;
+        tConfig.onhoverColor = this.settings.bootstrapTreeParams.multiSelect ? "" : "#F5F5F5";
+        tConfig.enableUpCascade = this.settings.enableUpCascade;
+        tConfig.enableDownCascade = this.settings.enableDownCascade;
+
+        this.tree.treeview(tConfig);
+
+        this.bindTreeEvents();
+
+        this.setTreePosition();
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    给tree 绑定事件
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.bindTreeEvents = function() {
+        var _ = this;
+
+        //搜索框绑定相关事件
+        _.searchInput.keyup(function(event) {
+            var _this = $(this);
+
+            var sNodes = _.searchNodes($.trim(_this.val()));
+
+            if (sNodes && sNodes.length > 0) {
+                //scroll to first checked node postion
+                var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
+                if ($firstNode.length > 0) {
+                    _.tree.scrollTop($firstNode.position().top - 60);
+                } else {
+                    _.tree.scrollTop(0);
+                }
+            }
+
+        });
+
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
+                _.renderItems();
+            });
+
+        } else {
+            _.tree.on('nodeSelected', function(event, node) {
+                _.treeContainer.addClass('hide');
+                _.renderItems();
+            });
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    初始化已选择列表
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.setSelectList = function() {
+        var _ = this;
+
+        //绑定点击事件
+        _.element.on('click', function() {
+            var firstNodeId, $firstNode;
+            //先隐藏掉其他treeViewSelect
+            $('.treeviewSelect-container').each(function(index, el) {
+                if ($(el).attr('id') != _.treeContainer.attr('id')) {
+                    $(el).addClass('hide');
+                }
+            });
+
+            //设置tree 点击是否显示
+            if (_.treeContainer.hasClass('hide') && _.initialized) {
+
+                //显示tree
+                _.treeContainer.removeClass('hide');
+
+                //重置搜索框
+                _.searchInput.val('');
+                _.tree.treeview('clearSearch');
+
+
+                //循环遍历所有选中项，勾选对应节点，并展开
+                _.element.find('.treeviewselect-item').each(function(index, el) {
+                    var nodeId = $(el).attr('nodeid'),
+                        node;
+
+                    if (nodeId) {
+                        node = _.getNodeById(nodeId);
+                        _.setNodeState(node, true);
+
+                        //展开节点
+                        if (node['nodes']) { //如存在子节点
+                            _.tree.treeview('expandNode', [node, {
+                                levels: 1,
+                                silent: true
+                            }]);
+
+                        } else { //不存在子节点，就展开对应的父节点
+                            var pNode = _.tree.treeview('getParent', node);
+                            if (pNode.nodeId) {
+                                _.tree.treeview('expandNode', [pNode, {
+                                    levels: 1,
+                                    silent: true
+                                }]);
+                            }
+                        }
+
+                        //记录第一个节点
+                        if (index === 0) {
+                            firstNodeId = nodeId;
+                        }
+                    }
+                });
+
+                //滑动到第一个node的位置
+                _.goToFirstNodePosition(firstNodeId);
+
+            } else {
+                _.treeContainer.addClass('hide');
+            }
+
+            return false;
+        });
+
+        //outside click hide the treecontainer
+        $('html').on('click', function(eventObject) {
+            var $el = $(eventObject.target);
+
+            if (!$el.hasClass('list-group-item') && !$el.hasClass('check-icon') && !$el.hasClass('treeview-search-input') && !$el.hasClass('expand-icon') && !$el.hasClass('treeviewSelect-container')) {
+                $('.treeviewSelect-container').addClass('hide');
+            }
+        });
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    渲染选择项
+    params:
+    @isDefault:是否设置默认选项
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.renderItems = function(isDefault) {
+        var _ = this;
+        var checkedNodes, listNodes, totalWidth, pNodesArr, nodeIds, tmpNode;
+        var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
+        var hiddenNodeStrs = '';
+
+        if (isDefault) {
+            if (this.defaultVals && this.defaultVals.length > 0) {
+                if (this.defaultVals && this.defaultVals.length > 0) {
+                    for (var i = 0; i < this.defaultVals.length; i++) {
+                        tmpNode = _.getNodeById(this.defaultVals[i]);
+                        if (_.settings.bootstrapTreeParams.multiSelect) {
+                            _.tree.treeview('checkNode', [tmpNode, {
+                                silent: true
+                            }]);
+
+                        } else {
+                            _.tree.treeview('selectNode', [tmpNode, {
+                                silent: true
+                            }]);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            checkedNodes = _.tree.treeview('getChecked');
+            listNodes = checkedNodes;
+            if (_.settings.enableUpCascade || _.settings.enableDownCascade) {
+                listNodes = getSelectedNode(_.tree, checkedNodes);
+            }
+        } else {
+            listNodes = _.tree.treeview('getSelected');
+        }
+
+
+        $clearItem = $(_.template.clearItem);
+        $ellipsisItem = $(_.template.ellipsisItem);
+        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
+        $itemLisGroup.empty();
+        _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
+
+        if (listNodes && listNodes.length > 0) {
+            //隐藏placeholder
+            _.placeholder.hide();
+
+            for (var i = 0; i < listNodes.length; i++) {
+                totalWidth = 0;
+                pNodesArr = [];
+
+                //取出指定节点的父节点的数量，并给节点赋值，父节点的数量就是节点的level 值
+                getParentNodes(_.tree, listNodes[i], pNodesArr);
+                listNodes[i].level = pNodesArr.length + 1;
+
+                //生成选中项
+                $selectedItem = _.genTreeSelectItem(listNodes[i]);
+
+                //如果支持多选但是不支持多行，则超出部分显示省略号
+                if (_.settings.bootstrapTreeParams.multiSelect) {
+                    $selectedItem.css('visibility', 'hidden');
+                    $itemLisGroup.append($selectedItem);
+
+                    if (($itemLisGroup.width() - $itemLisGroup.position().left) > ($('.treeviewselect-listOpGroup').position().left) - 38) {
+                        $selectedItem.hide();
+                        hiddenNodeStrs += listNodes[i].text + ';';
+                    } else {
+                        $selectedItem.css('visibility', 'visible');
+                    }
+                } else {
+                    $itemLisGroup.append($selectedItem);
+                }
+            }
+
+            if (hiddenNodeStrs) {
+                $ellipsisItem.css('visibility', 'visible').attr({
+                    'data-toggle': 'tooltip',
+                    'data-placement': 'top',
+                    'title': hiddenNodeStrs
+                });
+                $itemLisGroup.append($ellipsisItem);
+            }
+        } else {
+            _.placeholder.show();
+        }
+
+
+        //支持多选则添加清空按钮
+        if (_.settings.bootstrapTreeParams.multiSelect && listNodes.length) {
+            //重置筛选条件按钮绑定事件
+            $clearItem.find('.glyphicon-remove').on('click', function() {
+                $itemLisGroup.empty();
+                _.placeholder.show();
+                _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
+
+                _.tree.treeview('uncheckAll', {
+                    silent: true
+                });
+            });
+
+            //添加重置筛选条件        
+            _.element.find('.treeviewselect-listOpGroup ul').prepend($clearItem);
+        }
+
+        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $('[data-toggle="tooltip"]').tooltip();
+
+        if (!isDefault) {
+            _.element.trigger('completed', [listNodes]);
+        }
+
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    设置Tree 节点的状态
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.setNodeState = function(node, state, options) {
+        if (this.settings.bootstrapTreeParams.multiSelect) {
+            if (state) {
+                this.tree.treeview('checkNode', [node, {
+                    silent: false
+                }]);
+            } else {
+                this.tree.treeview('uncheckNode', [node, {
+                    silent: false
+                }]);
+            }
+
+        } else {
+            this.tree.treeview('selectNode', [node, {
+                silent: false
+            }]);
+        }
+    }
+
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    生成选中项
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.genTreeSelectItem = function(node) {
+        var _ = this;
+        var $selectedItem, pNodes = [];
+
+        //判断是否支持多选
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            $selectedItem = $(_.template.item);
+        } else {
+            $selectedItem = $(_.template.singleItem);
+        }
+
+        $selectedItem.attr('nodeid', node.id);
+
+        if (_.settings.cascadeText && !_.settings.bootstrapTreeParams.multiSelect) {
+            var tText = '';
+            getParentNodes(_.tree, node, pNodes);
+            if (pNodes) {
+                for (var i = pNodes.length - 1; i >= 0; i--) {
+                    tText += pNodes[i].text + _.settings.cascadeTextSeparator;
+                }
+
+                $selectedItem.find('span').html(tText + node.text);
+            } else {
+                $selectedItem.find('span').html(node.text);
+            }
+        } else {
+            $selectedItem.find('span').html(node.text);
+        }
+
+        if (node.text.length > 3) {
+            $selectedItem.attr({
+                'data-toggle': 'tooltip',
+                'data-placement': 'top',
+                'title': node.text
+            });
+        }
+
+        $selectedItem.find('.glyphicon-remove').on('click', function() {
+            var _this = $(this);
+
+            var node = _.getNodeById(_this.parent().attr('nodeid'));
+
+            _.setNodeState(node, false);
+
+            if ($('.treeviewselect-listGroup .selected-item').length === 0) {
+                $('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
+            }
+
+            _this.parent().remove();
+
+            return false;
+        });
+
+        return $selectedItem;
+    }
+
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    设置treeConainer的位置
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.setTreePosition = function() {
+        var _ = this;
+
+        var sOffset = _.element.position();
+        var sPaddingTop = _.element.css('padding-top').replace('px', '');
+        var sPaddingBottom = _.element.css('padding-bottom').replace('px', '');
+        var sPaddingLeft = _.element.css('padding-left').replace('px', '');
+        var sPaddingRight = _.element.css('padding-right').replace('px', '');
+
+        var tHeight = 250; //treeView的高度,默认为300px
+        var tWidth = _.element.width() + parseInt(sPaddingLeft) + parseInt(sPaddingRight); //treeView的宽度
+        var tTop = sOffset.top + _.element.height() + parseInt(sPaddingTop) + parseInt(sPaddingBottom); + 5;
+        var tLeft = sOffset.left;
+
+        tHeight = _.treeContainer.find('li.list-group-item').length * 40 * 0.2;
+        // tWidth = tWidth < 250 ? 250 : tWidth;
+        tHeight = tHeight < 250 ? 250 : tHeight;
+
+
+        _.treeContainer.css({
+            'top': tTop,
+            'left': tLeft
+        });
+
+        _.tree.css({
+            'height': tHeight,
+            'width': tWidth
+        });
+
+        _.element.css('width', tWidth);
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    搜索节点
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.searchNodes = function(sText) {
+        var options = {
+            ignoreCase: true,
+            exactMatch: false,
+            revealResults: true
+        };
+
+        var sResults = this.tree.treeview('search', [sText, options]);
+
+        return sResults;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    获取当前所有选中节点
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.getChecked = function() {
+        var _ = this;
+        var checkedNodes;
+
+        var idArray = new Array();
+
+        if (!_.settings.bootstrapTreeParams.multiSelect) {
+            _.element.find('.treeviewselect-item').each(function(index, el) {
+                if (!$(el).hasClass('ellipsis-item')) {
+                    idArray.push($(el).attr('nodeid'));
+                }
+            });
+        } else {
+            checkedNodes = _.tree.treeview('getChecked');
+            if (checkedNodes) {
+                for (var i = 0; i < checkedNodes.length; i++) {
+                    idArray.push(checkedNodes[i].id);
+                }
+            }
+        }
+
+
+        return idArray;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    设置默认值
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.setDefaults = function(vals) {
+        if (!vals || !vals.length) {
+            return;
+        }
+        this.defaultVals = vals;
+
+        this.renderItems(true);
+    }
+
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    根据ID属性获取tree Node
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.getNodeById = function(id) {
+        var _ = this;
+        var tmpNode;
+        var nodes = _.tree.treeview('getAllNodes');
+        if (nodes && nodes.length > 0) {
+            for (var i = nodes.length - 1; i >= 0; i--) {
+                tmpNode = nodes[i];
+                if (tmpNode.id == id) {
+                    break;
+                }
+            }
+        }
+
+        return tmpNode;
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    滑动到第一个node的位置
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.goToFirstNodePosition = function(nodeId) {
+        var _ = this;
+        var $firstLi, preNodes, liHeight;
+
+        var node = _.getNodeById(nodeId);
+
+        if (!node) {
+            return;
+        }
+
+        $firstLi = _.tree.find('li[data-nodeid=' + node.nodeId + ']');
+
+        if ($firstLi.length > 0) {
+            preNodes = $firstLi.prevAll();
+            liHeight = $firstLi.height() + parseInt($firstLi.css('padding-top').replace('px', '')) + parseInt($firstLi.css('padding-bottom').replace('px', ''));
+            _.tree.scrollTop(liHeight * preNodes.length - 60);
+        } else {
+            _.tree.scrollTop(0);
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    相关模板定义
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.template = {
+        listGroup: '<li class="treeviewselect-listGroup"><ul></ul></li>',
+        listOpGroup: '<li class="treeviewselect-listOpGroup"><ul></ul></li>',
+        item: '<li class="treeviewselect-item selected-item"><i class="glyphicon glyphicon-remove"></i><span></span></li>',
+        clearItem: '<li class="treeviewselect-clear"><i class="glyphicon glyphicon-remove"></i></li>',
+        ellipsisItem: '<li class="treeviewselect-item ellipsis-item">....</li>',
+        singleItem: '<li class="treeviewselect-item"><span></span></li>',
+        bottomArrowItem: '<li class="treeviewselect-arrow"><i class="glyphicon glyphicon-triangle-bottom"></i></li>',
+        inlineInput: '<li><input type="text" class="treeviewSelect-inline-input"></li>',
+        treeContainer: '<ul class="treeviewSelect-container hide"></ul>',
+        searchInput: '<input class="treeview-search-input" placeholder="请搜索..."></input>',
+        tree: '<div class="treeviewSelect-tree"></div>',
+        placeholder: '<li class="treeviewselect-placeholder"></li>'
+    }
+
+    var logError = function(message) {
+        if (window.console) {
+            window.console.error(message);
+        }
+    };
+
+    $.fn[pluginName] = function(options, args) {
+        var result;
+
+        this.each(function() {
+            var _this = $.data(this, pluginName);
+
+            if (typeof options === 'string') {
+                if (!_this) {
+                    logError('Not initialized, can not call method : ' + options);
+
+                } else if (!$.isFunction(_this[options]) || options.charAt(0) === '_') {
+                    logError('No such method : ' + options);
+                } else {
+                    result = _this[options].apply(_this, args);
+                }
+            } else if (typeof(options) === 'object') {
+                if (!_this) {
+                    $.data(this, pluginName, new TreeViewSelect(this, $.extend(true, {}, options)));
+                } else {
+                    _this['init'].call(_this, options);
+                }
+            }
+        });
+
+
+
+        return result || this;
+    };
+
+})(jQuery, window, document);

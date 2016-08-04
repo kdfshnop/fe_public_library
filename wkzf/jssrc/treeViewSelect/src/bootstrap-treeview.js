@@ -471,6 +471,9 @@
                     if (checkedNodes.length == node.nodes.length) {
                         node.state.checked = true;
                     }
+                    else{
+                        node.state.checked=false;
+                    }
                 });
             }
         }
