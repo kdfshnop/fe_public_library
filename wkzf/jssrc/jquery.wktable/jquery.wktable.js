@@ -503,7 +503,8 @@ opitons:{
         //发送请求
         $.ajax({
             url: this.options.url,
-            data: params,
+            //坑爹后台，post非得要转成字符串
+            data: this.options.method.toLowerCase() == "post"? JSON.stringify(params): params,
             type: this.options.method,
             dataType: "json",
             contentType: this.options.contentType,
