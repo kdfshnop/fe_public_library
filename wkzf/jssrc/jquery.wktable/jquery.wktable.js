@@ -317,14 +317,31 @@ opitons:{
         });
         $('.less', this.$navigation).click(function() {
             clearHeadSortClass.call(self);
-            var half = Math.floor(this.options.tableNavigation.paginationPageCount / 2.0);
+            var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex - half);
         });
         $('.more', this.$navigation).click(function() {
-            clearheadSortClass.call(self);
-            var half = Math.floor(this.options.tableNavigation.paginationPageCount / 2.0);
+            clearHeadSortClass.call(self);
+            var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex + half);
         });
+        $('.page-jump input',this.$navigation).on('keypress',function(e){
+                if(e.keyCode == '13'){
+                    self.goto($(this).val());
+                }
+        }).on('keyup',function(){
+            var val = this.value.replace(/\D/gi,"");
+            if(val){
+                if(val<1){
+                    val = 1;
+                }         
+                if(val > self.pageInfo.pageTotal){
+                    val = self.pageInfo.pageTotal;
+                }
+            }
+
+            this.value = val;
+        });    
     }
 
     //给列头绑定排序事件
@@ -563,6 +580,9 @@ opitons:{
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     //跳转到指定页数
     DataTable.prototype.goto = function(pageIndex) {
+        if(pageIndex == this.pageInfo.pageIndex){
+            return;
+        }
         if (pageIndex < 1) {
             pageIndex = 1;
         }
@@ -638,7 +658,7 @@ opitons:{
         return this.each(function() {
             var $this = $(this);
             var data = $this.data('wk.table');
-            var options = $.extend({}, DataTable.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend(true,{}, DataTable.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
                 $this.data('wk.table', (data = new DataTable(this, options)));
