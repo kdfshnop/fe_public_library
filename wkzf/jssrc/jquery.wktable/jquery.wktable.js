@@ -321,7 +321,7 @@ opitons:{
             self.goto(self.pageInfo.pageIndex - half);
         });
         $('.more', this.$navigation).click(function() {
-            headSortClass.call(self);
+            clearheadSortClass.call(self);
             var half = Math.floor(this.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex + half);
         });
@@ -444,10 +444,10 @@ opitons:{
 
         //页跳转
         if (this.options.tableNavigation.displayPageJump) {
-            $pageJump.append('<input type="text" value="' + this.pageInfo.pageIndex + '" /><button class="go">Go</button>');
+            $pageJump.append('<input type="text" value="' + this.pageInfo.pageIndex + '" /><button class="go">跳转</button>');
         }
 
-        this.$navigation.append("<div class='info'><span class=''>" + ((this.pageInfo.pageIndex - 1) * this.pageInfo.pageSize + 1) + "-" + this.pageInfo.pageIndex * this.pageInfo.pageSize + "</span>/共<span>"+this.pageInfo.pageTotal+"</span>条</div>");
+        this.$navigation.append("<div class='info'><span class=''>" + ((this.pageInfo.pageIndex - 1) * this.pageInfo.pageSize + 1) + "-" + this.pageInfo.pageIndex * this.pageInfo.pageSize + "</span>/共<span>"+this.pageInfo.total+"</span>条</div>");
         //绑定导航的事件
         bindNavigationEvent.call(this);
     };
