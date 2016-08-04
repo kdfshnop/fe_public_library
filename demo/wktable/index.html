@@ -5,7 +5,7 @@
 		<link href="../../wkzf/jssrc/jquery.wktable/wktable.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<div class="container" style="margin:20px auto">
+		<div class="container" style="margin:20px auto;padding:50px">
 		<form id='myform'>
 			<input type="text" name="name" />
 			<input type="text" name="country" />
@@ -36,11 +36,7 @@
 					{
 						text:"姓名",
 						field:"name",
-						sortable:true,
-						subColumns:[
-							{text:'小名',field:'name',sortable:true},
-							{text:'大名',field:'name'}
-						]
+						sortable:true
 					},
 					{text:"年龄",sortable:true,sortField:'age',field:function(row){
 						return row.age;
@@ -52,11 +48,7 @@
 					},
 					{
 						text:"性别",
-						field:"gender",
-						subColumns:[
-							{text:"性别1",field:"gender"},
-							{text:"性别2",field:"gender"},
-						]
+						field:"gender"
 					},
 					{
 						text:"操作",
@@ -85,7 +77,7 @@
 					{name:"sum",age:24,country:'China'}
 					
 				]*/
-				url:'/activity/data.php',
+				url:'/activity_template/data.php',
 				parse:function(data){//映射
 					return {
 						pageInfo:{
