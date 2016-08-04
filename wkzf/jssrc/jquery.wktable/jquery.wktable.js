@@ -31,8 +31,10 @@ opitons:{
             pageSizeSet: [10, 20, 50, 100, 200, 500], //页面大小结合
             paginationPageCount: 5, //分页中显示的页数
         },
-    sortInfo:{
-        
+    sortClasses:{
+        sortAscClass:"",
+        sortDescClass:"",
+        sortClass:""
     },
     pageSize:10,
     pageInfoMapping:{
@@ -56,6 +58,7 @@ opitons:{
 
 + function($) {
     'use strict';
+    //构造函数
     var DataTable = function(element, options) {
         this.options = options;
         this.pageInfo = {
@@ -67,13 +70,15 @@ opitons:{
         };
         this.sort = "";
         this.sortType = "";
-        this.init(element);
-        this.renderHeader();
+        init.call(this,element);
+        renderHeader.call(this);
         this.goto(1);
     }
-
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+私有方法
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     //初始化table的dom结构，会先清空table的内容
-    DataTable.prototype.init = function(element) {
+    function init(element) {
         this.$table = $(element);
         this.$table.empty();
         this.$thead = $('<thead></thead>');
@@ -163,7 +168,7 @@ opitons:{
         }
     }
     //绘制表头
-    DataTable.prototype.renderHeader = function() {
+    function renderHeader() {
         //清空表头
         this.$thead.empty();
         //收集columns
@@ -227,7 +232,7 @@ opitons:{
     };
 
     //绘制表体
-    DataTable.prototype.renderBody = function(items) {
+    function renderBody(items) {
         var self = this;
         //清空表体
         this.$tbody.empty();
@@ -275,9 +280,10 @@ opitons:{
     }
 
     function clearHeadSortClass() {
-        $('.sort', this.$thead).removeClass('sort-asc').removeClass('sort-desc');
+        $('.'+this.options.sortClasses.sortClass, this.$thead).removeClass(this.options.sortClasses.sortAscClass).removeClass(this.options.sortClasses.sortDescClass);
     }
 
+    //给表格底部的导航绑定事件
     function bindNavigationEvent() {
         var self = this;
         $('.page-index', this.$navigation).click(function(e) {
@@ -321,26 +327,28 @@ opitons:{
         });
     }
 
+    //给列头绑定排序事件
     function bindSortEvent() {
         var self = this;
-        $('.sort', this.$thead).off('click').click(function() {
+        $('.'+self.options.sortClasses.sortClass, this.$thead).off('click').click(function() {
             var $this = $(this);
             var fieldName = $this.data('field');
             self.sort = fieldName;
-            if ($this.hasClass('sort-asc')) { //当前升序，本次操作降序
+            if ($this.hasClass(self.options.sortClasses.sortAscClass)) { //当前升序，本次操作降序
                 self.sortType = "desc";
-                $('.sort', self.$thead).removeClass('sort-desc').removeClass('sort-asc');
-                $this.addClass('sort-desc');
+                $('.'+self.options.sortClasses.sortClass, self.$thead).removeClass(self.options.sortClasses.sortDescClass).removeClass(self.options.sortClasses.sortAscClass);
+                $this.addClass(self.options.sortClasses.sortDescClass);
             } else { //本次操作升序
                 self.sortType = "asc";
-                $('.sort', self.$thead).removeClass('sort-desc').removeClass('sort-asc');
-                $this.addClass('sort-asc');
+                $('.'+self.options.sortClasses.sortClass, self.$thead).removeClass(self.options.sortClasses.sortDescClass).removeClass(self.options.sortClasses.sortAscClass);
+                $this.addClass(self.options.sortClasses.sortAscClass);
             }
 
             self.goto(1);
         });
     }
 
+    //显示loading效果
     function showLoading() {
         //计算表格的中心位置
         var width = this.$loading.width(),
@@ -355,12 +363,13 @@ opitons:{
         this.$loading.css({ left: left, top: top }).show();
     }
 
+    //隐藏loading效果
     function hideLoading() {
         this.$loading.hide();
     }
 
     //绘制分页
-    DataTable.prototype.renderPagination = function() {
+    function renderPagination() {
         //不显示表格导航，直接返回
         if (!this.options.tableNavigation.displayTableNavigation) {
             return;
@@ -372,7 +381,7 @@ opitons:{
         this.$navigation.empty();
 
         var $pagination = $('<div class="pagination"></div>');
-        var $pageSizeSelect = $('<select class="page-size-select form-control"></select>');
+        var $pageSizeSelect = $('<select class="page-size-select"></select>');
         var $pageJump = $('<div class="page-jump"></div>');
         this.$navigation.append($pagination).append($('<div class="page-size-div"></div>').append($pageSizeSelect)).append($pageJump);
         $pageSizeSelect.before("每页显示 ").after(" 条").wrap($('<div></div>'));
@@ -435,7 +444,7 @@ opitons:{
 
         //页跳转
         if (this.options.tableNavigation.displayPageJump) {
-            $pageJump.append('<input type="text" class="form-control" value="' + this.pageInfo.pageIndex + '" /><button class="go">Go</button>');
+            $pageJump.append('<input type="text" value="' + this.pageInfo.pageIndex + '" /><button class="go">Go</button>');
         }
 
         this.$navigation.append("<div class='info'><span class=''>" + ((this.pageInfo.pageIndex - 1) * this.pageInfo.pageSize + 1) + "-" + this.pageInfo.pageIndex * this.pageInfo.pageSize + "</span>/共<span>"+this.pageInfo.pageTotal+"</span>条</div>");
@@ -444,17 +453,17 @@ opitons:{
     };
 
     //获取数据
-    DataTable.prototype.fetch = function(pageIndex) {
+    function fetch(pageIndex) {
         showTable.call(this);
         if (this.options.data) { //根据配置中的data来区分是远程获取数据还是使用本地数据
-            this.localFetch(pageIndex);
+            localFetch.call(this,pageIndex);
         } else {
-            this.remoteFetch(pageIndex);
+            remoteFetch.call(this,pageIndex);
         }
     };
 
     //远程获取数据
-    DataTable.prototype.remoteFetch = function(pageIndex) {
+    function remoteFetch(pageIndex)  {
         var self = this;
         //收集分页和排序参数
         var pi = pageIndex || this.pageInfo.pageIndex + 1;
@@ -483,7 +492,7 @@ opitons:{
                 hideLoading.call(self);
                 if (data && data.status == 1) {
                     data = self.options.parse && self.options.parse.call(self, data) || self.parse(data);
-                    self.render(data);
+                    render.call(self,data);
                 } else {
                     var msg = data && data.message || "查询数据失败";
                     self.options.error && self.options.error.call(self, msg);
@@ -499,7 +508,7 @@ opitons:{
     };
 
     //本地获取数据
-    DataTable.prototype.localFetch = function(pageIndex) {
+    function localFetch(pageIndex) {
         //收集分页和排序参数
         var pi = pageIndex || this.pageInfo.pageIndex + 1;
         var ps = this.pageInfo.pageSize;
@@ -527,9 +536,31 @@ opitons:{
             return ind >= (pi - 1) * ps && ind < pi * ps;
         });
 
-        this.render({ pageInfo: { total: total, pageTotal: pageTotal, pageIndex: pi }, items: data });
+        render.call(this,{ pageInfo: { total: total, pageTotal: pageTotal, pageIndex: pi }, items: data });
     };
 
+    //绘制整个表格
+    function render(data) {
+        //分析返回数据
+        this.pageInfo.pageIndex = data.pageInfo.pageIndex || this.pageInfo.pageIndex + 1;
+        this.pageInfo.pageSize = data.pageInfo.pageSize || this.pageInfo.pageSize;
+        this.pageInfo.total = data.pageInfo.total;
+        this.pageInfo.pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);
+        this.pageInfo.size = data.items.length;
+
+        if (!(data.items && data.items.length > 0)) {
+            showEmptyMessage.call(this);
+        }
+
+        renderBody.call(this,data.items);
+        renderPagination.call(this);
+
+        //绘制成功触发ready回调
+        this.options.ready && this.options.ready.call(this);
+    };
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+公有方法
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     //跳转到指定页数
     DataTable.prototype.goto = function(pageIndex) {
         if (pageIndex < 1) {
@@ -538,7 +569,7 @@ opitons:{
         if (pageIndex > this.pageInfo.pageTotal) {
             pageIndex = this.pageInfo.pageTotal;
         }
-        this.fetch(pageIndex);
+        fetch.call(this,pageIndex);
     };
 
     //下一页
@@ -552,27 +583,7 @@ opitons:{
         var pageIndex = this.pageInfo.pageIndex - 1;
         this.goto(pageIndex < 1 ? 1 : pageIndex);
     };
-
-    //绘制整个表格
-    DataTable.prototype.render = function(data) {
-        //分析返回数据
-        this.pageInfo.pageIndex = data.pageInfo.pageIndex || this.pageInfo.pageIndex + 1;
-        this.pageInfo.pageSize = data.pageInfo.pageSize || this.pageInfo.pageSize;
-        this.pageInfo.total = data.pageInfo.total;
-        this.pageInfo.pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);
-        this.pageInfo.size = data.items.length;
-
-        if (!(data.items && data.items.length > 0)) {
-            showEmptyMessage.call(this);
-        }
-
-        this.renderBody(data.items);
-        this.renderPagination();
-
-        //绘制成功触发ready回调
-        this.options.ready && this.options.ready.call(this);
-    };
-
+    
     //刷新当前页
     DataTable.prototype.refresh = function() {
         this.goto(this.pageInfo.pageIndex);
@@ -581,27 +592,6 @@ opitons:{
     //转换数据
     DataTable.prototype.parse = function(data) {
         return data.data;
-    };
-
-    DataTable.DEFAULTS = {
-        method: 'get', //发送请求的method
-        data: null, //本地数据
-        params: {}, //请求参数  
-        tableNavigation: {
-            displayTableNavigation: true, //是否显示表格导航
-            displayPagination: true, //是否显示分页信息         
-            displayPageJump: true, //是否显示页跳转
-            displayPageSizeSelection: true, //是否显示页面大小选择框
-            pageSizeSet: [10, 20, 50, 100, 200, 500], //页面大小结合
-            paginationPageCount: 5, //分页中显示的页数
-        },
-        pageSize: 10, //页大小
-        pageInfoMapping: {
-            pageSize: 'pageSize',
-            pageIndex: 'pageIndex',
-            sort: 'sort',
-            sortType: 'sortType'
-        } //查询参数中分页参数的映射
     };
 
     //设置options
@@ -615,6 +605,34 @@ opitons:{
         this.setOptions({ params: params });
         this.goto(1);
     }
+
+
+    //默认配置
+    DataTable.DEFAULTS = {
+        method: 'get', //发送请求的method
+        data: null, //本地数据
+        params: {}, //请求参数  
+        tableNavigation: {
+            displayTableNavigation: true, //是否显示表格导航
+            displayPagination: true, //是否显示分页信息         
+            displayPageJump: true, //是否显示页跳转
+            displayPageSizeSelection: true, //是否显示页面大小选择框
+            pageSizeSet: [10, 20, 50, 100, 200, 500], //页面大小结合
+            paginationPageCount: 5, //分页中显示的页数
+        },
+        sortClasses:{
+            sortClass:'sort',
+            sortAscClass:'sort-asc',
+            sortDescClass:'sort-desc'
+        },
+        pageSize: 10, //页大小
+        pageInfoMapping: {
+            pageSize: 'pageSize',
+            pageIndex: 'pageIndex',
+            sort: 'sort',
+            sortType: 'sortType'
+        } //查询参数中分页参数的映射
+    };
 
     function Plugin(option, _relatedTarget) {
         return this.each(function() {
@@ -631,11 +649,12 @@ opitons:{
         });
     }
 
-    //暴露到jquery上，并提供处理冲突的方法
+    //暴露到jquery上
     var old = $.fn.wktable;
     $.fn.wktable = Plugin
     $.fn.wktable.Constructor = DataTable
 
+    //解决冲突
     $.fn.wktable.noConflit = function() {
         $.fn.wktable = old;
         return this;
