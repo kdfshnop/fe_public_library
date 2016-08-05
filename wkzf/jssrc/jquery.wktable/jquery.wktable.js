@@ -62,8 +62,8 @@ opitons:{
     var DataTable = function(element, options) {
             this.options = options;
             this.pageInfo = {
-                pageIndex: 0,
-                pageSize: 10,
+                pageIndex: this.options.pageIndex,
+                pageSize: this.options.pageSize,
                 pageTotal: 0,
                 total: 100,
                 size: 0
@@ -72,7 +72,7 @@ opitons:{
             this.sortType = this.options.sortType;
             init.call(this, element);
             renderHeader.call(this);
-            this.goto(1);
+            this.options.autoRequestAtTheFirstTime && this.goto(1);
         }
         /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
         私有方法
@@ -391,16 +391,15 @@ opitons:{
 
     //绘制分页
     function renderPagination() {
+        //清空导航信息
+        this.$navigation.empty();
+
         //不显示表格导航，直接返回
         if (!this.options.tableNavigation.displayTableNavigation) {
             return;
         }
 
         var self = this;
-
-        //清空导航信息
-        this.$navigation.empty();
-
         var $pagination = $('<div class="pagination"></div>');
         var $pageSizeSelect = $('<select class="page-size-select"></select>');
         var $pageJump = $('<div class="page-jump"></div>');
@@ -504,7 +503,7 @@ opitons:{
         $.ajax({
             url: this.options.url,
             //坑爹后台，post非得要转成字符串
-            data: this.options.method.toLowerCase() == "post"? JSON.stringify(params): params,
+            data: this.options.method.toLowerCase() == "post" ? JSON.stringify(params) : params,
             type: this.options.method,
             dataType: "json",
             contentType: this.options.contentType,
@@ -644,7 +643,7 @@ opitons:{
     //默认配置
     DataTable.DEFAULTS = {
         method: 'get', //发送请求的method
-        contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
         data: null, //本地数据
         params: {}, //请求参数  
         tableNavigation: {
@@ -661,13 +660,15 @@ opitons:{
             sortDescClass: 'sort-desc'
         },
         pageSize: 10, //页大小
+        pageIndex: 0,
         pageInfoMapping: {
             pageSize: 'pageSize',
             pageIndex: 'pageIndex',
             sort: 'sort',
             sortType: 'sortType'
         }, //查询参数中分页参数的映射
-        uniqueId:"id"
+        uniqueId: "id",
+        autoRequestAtTheFirstTime: true
     };
 
     function Plugin(option, _relatedTarget) {
