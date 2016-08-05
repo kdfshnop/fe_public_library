@@ -84,7 +84,7 @@ opitons:{
         this.$thead = $('<thead></thead>');
         this.$tbody = $('<tbody></tbody>');
         this.$navigation = $('<div class="table-navigation"></div>');
-        this.$empty = $('<div class="data-empty">请求数据为空:)</div>').hide();
+        this.$empty = $('<div class="no-data text-danger"><i class="iconfont icon-chucuo"></i><span>抱歉，找不到您想要的数据！</span></div>').hide();
         this.$loading = $('<div class="loading"><img src="http://dev01.fe.wkzf/fe_public_library/wkzf/css/images/loading.gif" /></loading>').hide();
         this.$table.append(this.$thead).append(this.$tbody);
         this.$table.after(this.$navigation);
@@ -546,7 +546,7 @@ opitons:{
         });
         var total = data.length;
         var pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);
-        if (sort !== '') {
+        if (sort !== '' && sort != undefined) {
             data = data.sort(function(a, b) { //排序
                 if (sortType === "desc") {
                     return b[sort].toString().localCompare(a[sort].toString());
