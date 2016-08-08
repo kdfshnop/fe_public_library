@@ -540,7 +540,7 @@ opitons:{
         var data = this.options.data.filter(function(ele) { //先过滤
             var properties = Object.getOwnPropertyNames(params);
             return properties.length === 0 || properties.filter(function(p) {
-                return ele[p] == params[p];
+                return ele[p] == params[p] || params[p] == null || params[p] == '';
             }).length === properties.length;
         });
         var total = data.length;

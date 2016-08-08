@@ -3,21 +3,20 @@
 
 <head>
     <meta charset="utf-8">
-    <link href="../../wkzf/js/util/jquery.wktable/wktable.min.css" rel="stylesheet" />
+    <link href="../../../wkzf/js/util/jquery.wktable/wktable.min.css" rel="stylesheet" />
 </head>
 
 <body>
     <div class="container" style="margin:20px auto;padding:50px">
         <form id='myform'>
-            <input type="text" name="name" id="name" />
-            <input type="text" name="country" />
+            <input type="text" name="name" id="name" placeholder="姓名" />            
             <input type="button" id="btn" value="click" />
         </form>
         <br/>
         <table id="myTable" class="table"></table>
     </div>
-    <script src="../../wkzf/js/lib/jquery/jquery-2.0.3.min.js"></script>
-    <script src="../../wkzf/jssrc/jquery.wktable/jquery.wktable.js"></script>    
+    <script src="../../../wkzf/js/lib/jquery/jquery-2.0.3.min.js"></script>
+    <script src="../../../wkzf/jssrc/jquery.wktable/jquery.wktable.js"></script>    
     <script>
     $(function() {
         $('#btn').click(function() {
@@ -78,7 +77,7 @@
             tableNavigation:{
             	paginationPageCount:7
             },
-            /*data:[
+            data:[
             	{name:"mks",age:12,country:'China'},
             	{name:"sum",age:24,country:'China'},
             	{name:"john",age:122,country:'China'},
@@ -97,8 +96,8 @@
             	{name:"mks",age:12,country:'England'},
             	{name:"sum",age:24,country:'China'}
             	
-            ]*/
-            url: '/activity/data.php',
+            ],
+            /*url: '/activity/data.php',*/
             parse: function(data) { //映射
                 return {
                     pageInfo: {
