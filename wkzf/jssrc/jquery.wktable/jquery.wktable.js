@@ -588,12 +588,13 @@ opitons:{
         /*if(pageIndex == this.pageInfo.pageIndex){
             return;
         }*/
-        if (pageIndex < 1) {
-            pageIndex = 1;
-        }
         if (pageIndex > this.pageInfo.pageTotal) {
             pageIndex = this.pageInfo.pageTotal;
         }
+        if (pageIndex < 1) {
+            pageIndex = 1;
+        }
+        
         fetch.call(this, pageIndex);
     };
 
