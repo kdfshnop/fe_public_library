@@ -1713,6 +1713,7 @@
                     timeout: _.settings.timeout,
                     dataType: _.settings.dataType,
                     data: _.settings.data,
+                    async:false,
                     success: function(resp) {
                         if (resp && resp.status == '1') {
                             if (resp.data) {
