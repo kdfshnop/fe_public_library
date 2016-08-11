@@ -292,7 +292,7 @@
         if (this.settings) {
             this.settings = $.extend({}, this.settings, options);
         } else {
-            this.settings = $.extend(true, this.defaults, options);
+            this.settings = $.extend(true, {}, this.defaults, options);
         }
 
         this.treeContainer = $(this.template.treeContainer);
@@ -372,7 +372,6 @@
                     timeout: _.settings.timeout,
                     dataType: _.settings.dataType,
                     data: _.settings.data,
-                    async:false,
                     success: function(resp) {
                         if (resp && resp.status == '1') {
                             if (resp.data) {
