@@ -1633,7 +1633,7 @@
         if (this.settings) {
             this.settings = $.extend({}, this.settings, options);
         } else {
-            this.settings = $.extend(true, this.defaults, options);
+            this.settings = $.extend(true, {}, this.defaults, options);
         }
 
         this.treeContainer = $(this.template.treeContainer);
