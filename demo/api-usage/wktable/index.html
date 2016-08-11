@@ -14,6 +14,8 @@
         </form>
         <br/>
         <table id="myTable" class="table"></table>
+
+        <table id="remoteTable" class='table'></table>
     </div>
     <script src="../../../wkzf/js/lib/jQuery/jquery-2.0.3.min.js"></script>
     <script src="../../../wkzf/jssrc/jquery.wktable/jquery.wktable.js"></script>    
@@ -108,6 +110,52 @@
                     items: data.data.contents
                 };
             }
+        });
+
+        $('#remoteTable').wktable({
+            url:"/activity/data.php",
+            columns: [
+            {
+                text:"序号",
+                field:function(row,index){
+                    return index + 1;
+                }               
+            },
+            {
+                text:"<input type='checkbox' />",
+                field:function(){
+                    return '<input type="checkbox" />';
+                }
+            },
+            {
+                text: "姓名",
+                field: "name",
+                sortable: true
+            }, {
+                text: "年龄",
+                sortable: true,
+                sortField: 'age',
+                field: function(row) {
+                    return row.age;
+                }
+            }, {
+                text: '国籍',
+                field: 'country',
+                sortable: true
+            }, {
+                text: "性别",
+                field: "gender"
+            }, {
+                text: "操作",
+                field: function() {
+                    return "<a href='#' class='delete'>删除</a>" + "&nbsp;&nbsp;<a href='#' class='edit'>编辑</a>";
+                }
+            }],
+            tableNavigation:{
+                paginationPageCount:7
+                //displayTableNavigation:false
+            }
+
         });
     });
     </script>
