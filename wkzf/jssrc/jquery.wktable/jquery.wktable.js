@@ -47,7 +47,7 @@ opitons:{
     parse:function(data){
     
     },
-    ready:function(){
+    ready:function(data){
     
     },  
     error:function(msg){
@@ -578,7 +578,7 @@ opitons:{
         renderPagination.call(this);
 
         //绘制成功触发ready回调
-        this.options.ready && this.options.ready.call(this);
+        this.options.ready && this.options.ready.call(this,data.items);
     };
     /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     公有方法
