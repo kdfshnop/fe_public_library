@@ -1409,6 +1409,11 @@
             exceptionCallback: null,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            勾选或者选中，选中项生成好了，回调事件
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            onCompleted: undefined,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
              bootstrap-treeview 参数配置
              --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             "bootstrapTreeParams": {
@@ -1668,6 +1673,10 @@
         if (typeof(this.settings.onNodeSelected) === 'function') {
             this.element.on('nodeSelected', this.settings.onNodeSelected);
         }
+
+        if (typeof(this.settings.onCompleted) === 'function') {
+            this.element.on('completed', this.settings.onCompleted);
+        }
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1679,6 +1688,7 @@
         this.element.off('nodeSelected');
         this.element.off('nodeUnselected');
         this.element.off('nodesCleared');
+        this.element.off('completed');
     };
 
 
@@ -1786,11 +1796,36 @@
         });
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
-            _.tree.on('nodeChecked nodeUnchecked', function(event, node) {});
+            _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
+                _.renderItems();
+            });
 
         } else {
-            _.tree.on('nodeSelected', function(event, node) {});
+            _.tree.on('nodeSelected', function(event, node) {
+                _.renderItems();
+            });
         }
+    }
+
+
+
+    SimpleTreeView.prototype.renderItems = function() {
+        var _=this;
+
+        var checkedNodes, listNodes, totalWidth, pNodesArr, nodeIds, tmpNode;
+
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            checkedNodes = _.tree.treeview('getChecked');
+            listNodes = checkedNodes;
+            if (_.settings.enableUpCascade || _.settings.enableDownCascade) {
+                listNodes = getSelectedNode(_.tree, checkedNodes);
+            }
+        } else {
+            listNodes = _.tree.treeview('getSelected');
+        }
+
+
+        _.element.trigger('completed', [listNodes]);
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

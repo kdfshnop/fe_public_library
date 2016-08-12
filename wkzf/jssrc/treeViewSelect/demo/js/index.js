@@ -3,9 +3,8 @@
 	        apiUrl: 'http://dev.01.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/demo/data/dep.json',
 	        dataType: 'json',
 	        cascadeText:true,
-	        showTree:true,
 	        bootstrapTreeParams: {
-	            multiSelect: false,
+	            multiSelect: true,
 	            enableCascade:false
 	        }
 	    });
