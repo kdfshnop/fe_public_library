@@ -1,26 +1,24 @@
 	$(function() {
 	    $('#area').treeViewSelect({
-	        sourceUrl: 'http://dev01.fe.wkzf/fe_public_library/bootstrap/plugins/bootstrap-treeview/src/js/bootstrap-treeview.js',
-	        apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/demo/data/3.json',
+	        apiUrl: 'http://dev.01.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/demo/data/dep.json',
 	        dataType: 'json',
 	        cascadeText:true,
-	        enableUpCascade:false,
-	        enableDownCascade:true,
+	        showTree:true,
 	        bootstrapTreeParams: {
-	            multiSelect: true,
+	            multiSelect: false,
 	            enableCascade:false
 	        }
 	    });
 
 
 
-	    $('#area2').treeViewSelect({
-	        apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/city.json',
-	        dataType: 'json',
-	        bootstrapTreeParams: {
-	            multiSelect: false
-	        }
-	    });
+	    // $('#area2').treeViewSelect({
+	    //     apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/city.json',
+	    //     dataType: 'json',
+	    //     bootstrapTreeParams: {
+	    //         multiSelect: false
+	    //     }
+	    // });
 
 
 	    $('#btnTest').on('click', function() {

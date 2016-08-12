@@ -1,0 +1,134 @@
+{
+    "status": 1,
+    "message": "操作成功",
+    "data": [{
+        "id": 1,
+        "text": "业务部",
+        "t": "id=1",
+        "state": {
+            "disabled":true,
+            "checked":true
+        },
+        "nodes": [{
+            "id": 4,
+            "text": "默认派单组",
+            "t": "id=4",
+            "state": null,
+            "nodes": [{
+                "id": 17,
+                "text": "张三",
+                "t": "id=17",
+                "state": null,
+                "nodes": null,
+                "pid": 4
+            }, {
+                "id": 42,
+                "text": "嗖",
+                "t": "id=42",
+                "state": null,
+                "nodes": null,
+                "pid": 4
+            }],
+            "pid": 1
+        }],
+        "pid": 0
+    }, {
+        "id": 2,
+        "text": "BD部",
+        "t": "id=2",
+        "state": null,
+        "nodes": [{
+            "id": 7,
+            "text": "超凡队",
+            "t": "id=7",
+            "state": null,
+            "nodes": [{
+                "id": 5,
+                "text": "bb",
+                "t": "id=5",
+                "state": null,
+                "nodes": null,
+                "pid": 7
+            }, {
+                "id": 6,
+                "text": "猎鹰队",
+                "t": "id=6",
+                "state": null,
+                "nodes": null,
+                "pid": 7
+            }, {
+                "id": 35,
+                "text": "部门aaabbbccc",
+                "t": "id=35",
+                "state": null,
+                "nodes": null,
+                "pid": 7
+            }, {
+                "id": 47,
+                "text": "chao3",
+                "t": "id=47",
+                "state": null,
+                "nodes": null,
+                "pid": 7
+            }],
+            "pid": 2
+        }, {
+            "id": 56,
+            "text": "尖沙咀",
+            "t": "id=56",
+            "state": null,
+            "nodes": [{
+                "id": 57,
+                "text": "嘻嘻嘻",
+                "t": "id=57",
+                "state": null,
+                "nodes": null,
+                "pid": 56
+            }],
+            "pid": 2
+        }],
+        "pid": 0
+    }, {
+        "id": 19,
+        "text": "研发部",
+        "t": "id=19",
+        "state": null,
+        "nodes": [{
+            "id": 20,
+            "text": "前端组",
+            "t": "id=20",
+            "state": null,
+            "nodes": null,
+            "pid": 19
+        }],
+        "pid": 0
+    }, {
+        "id": 22,
+        "text": "a",
+        "t": "id=22",
+        "state": null,
+        "nodes": [{
+            "id": 25,
+            "text": "爱爱爱111111",
+            "t": "id=25",
+            "state": null,
+            "nodes": [{
+                "id": 33,
+                "text": "阿布",
+                "t": "id=33",
+                "state": null,
+                "nodes": null,
+                "pid": 25
+            }, {
+                "id": 44,
+                "text": "单元测试添加的部门",
+                "t": "id=44",
+                "state": null,
+                "nodes": null,
+                "pid": 25
+            }],
+            "pid": 22
+        }],
+        "pid": 0
+    }]
+}
