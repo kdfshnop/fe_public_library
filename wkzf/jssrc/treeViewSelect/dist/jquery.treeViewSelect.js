@@ -1407,6 +1407,11 @@
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             enableDownCascade: true,
 
+            /*-----------------------------------------------------------------------------------------------------------
+            设置默认是否显示树形
+            -----------------------------------------------------------------------------------------------------------*/
+            showTree: false,
+
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             是否显示级联的文本，目前只支持单选的前提下。
             默认为false ,表示 点击长宁区节点，选中项文本为 [长宁区]
@@ -1766,8 +1771,15 @@
         if (this.settings.showSearch) {
             this.treeContainer.append(this.searchInput);
         }
+
+        if (this.settings.showTree) {
+            this.treeContainer.removeClass('hide');
+        }
+
         this.treeContainer.append(this.tree);
         this.element.parent().append(this.treeContainer);
+
+
 
         this.setTree();
 
@@ -1824,7 +1836,10 @@
 
         } else {
             _.tree.on('nodeSelected', function(event, node) {
-                _.treeContainer.addClass('hide');
+                if (!_.settings.showTree) {
+                    _.treeContainer.addClass('hide');
+                }
+
                 _.renderItems();
             });
         }
@@ -1835,6 +1850,11 @@
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.setSelectList = function() {
         var _ = this;
+
+        //如果默认是显示树形控件的，则无需绑定点击事件
+        if (_.settings.showTree) {
+            return;
+        }
 
         //绑定点击事件
         _.element.on('click', function() {
@@ -2003,16 +2023,22 @@
 
 
         //支持多选则添加清空按钮
-        if (_.settings.bootstrapTreeParams.multiSelect && listNodes.length) {
+        if (listNodes.length) {
             //重置筛选条件按钮绑定事件
             $clearItem.find('.glyphicon-remove').on('click', function() {
                 $itemLisGroup.empty();
                 _.placeholder.show();
                 _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
-                _.tree.treeview('uncheckAll', {
-                    silent: true
-                });
+                if (_.settings.bootstrapTreeParams.multiSelect) {
+                    _.tree.treeview('uncheckAll', {
+                        silent: true
+                    });
+                } else {
+                    _.tree.treeview('unselectNode', [listNodes[0], {
+                        silent: true
+                    }]);
+                }
             });
 
             //添加重置筛选条件        
@@ -2125,7 +2151,7 @@
 
         var tHeight = 250; //treeView的高度,默认为300px
         var tWidth = _.element.width() + parseInt(sPaddingLeft) + parseInt(sPaddingRight); //treeView的宽度
-        var tTop = sOffset.top + _.element.height() + parseInt(sPaddingTop) + parseInt(sPaddingBottom); + 5;
+        var tTop = sOffset.top + _.element.height() + parseInt(sPaddingTop) + parseInt(sPaddingBottom) + 5;
         var tLeft = sOffset.left;
 
         tHeight = _.treeContainer.find('li.list-group-item').length * 40 * 0.2;

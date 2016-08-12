@@ -13,6 +13,10 @@ $(function(){
 	});
 
 	$("#tree").on('nodeChecked',function(e,node){
+		// console.log(node);
+	});
+
+	$("#tree").on('completed',function(e,node){
 		console.log(node);
 	});
 
