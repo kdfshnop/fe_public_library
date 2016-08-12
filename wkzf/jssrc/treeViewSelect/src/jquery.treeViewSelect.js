@@ -694,7 +694,7 @@
                         silent: true
                     });
                 } else {
-                    _.tree.treeview('unselectNode', [listNodes, {
+                    _.tree.treeview('unselectNode', [listNodes[0], {
                         silent: true
                     }]);
                 }
