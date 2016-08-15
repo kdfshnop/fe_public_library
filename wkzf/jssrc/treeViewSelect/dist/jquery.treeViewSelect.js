@@ -2021,7 +2021,6 @@
             _.placeholder.show();
         }
 
-
         //支持多选则添加清空按钮
         if (listNodes.length) {
             //重置筛选条件按钮绑定事件
@@ -2039,6 +2038,7 @@
                         silent: true
                     }]);
                 }
+                _.element.trigger('completed', [[]]);
             });
 
             //添加重置筛选条件        
