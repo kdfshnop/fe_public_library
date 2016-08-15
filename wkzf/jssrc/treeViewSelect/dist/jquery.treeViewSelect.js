@@ -1731,7 +1731,7 @@
                                 _.buildTreeSelect();
 
                                 if (_.settings.successCallback) {
-                                    successCallback();
+                                    _.settings.successCallback();
                                 }
                             }
                         } else {
