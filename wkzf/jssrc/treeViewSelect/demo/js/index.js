@@ -1,6 +1,6 @@
 	$(function() {
 	    $('#area').treeViewSelect({
-	        apiUrl: 'http://dev.01.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/demo/data/dep.json',
+	        apiUrl: 'http://dev.01.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/demo/data/3.json',
 	        dataType: 'json',
 	        cascadeText:true,
 	        bootstrapTreeParams: {

@@ -136,6 +136,7 @@
             checkAll: $.proxy(this.checkAll, this),
             checkNode: $.proxy(this.checkNode, this),
             uncheckAll: $.proxy(this.uncheckAll, this),
+            uncheckRealAll: $.proxy(this.uncheckRealAll, this),
             uncheckNode: $.proxy(this.uncheckNode, this),
             toggleNodeChecked: $.proxy(this.toggleNodeChecked, this),
 
@@ -439,6 +440,7 @@
     Tree.prototype.setCheckedState = function(node, state, options) {
         var _this = this;
         var stateFlag, eventType;
+
         if (state === node.state.checked) return;
 
         stateFlag = state ? true : false;
@@ -457,7 +459,9 @@
 
                 if (_this.childsNodes && _this.childsNodes.length) {
                     $.each(_this.childsNodes, function(index, el) {
-                        el.state.checked = stateFlag;
+                        if (!el.state.disabled) {
+                            el.state.checked = stateFlag;
+                        }
                     });
                 }
             }
@@ -467,12 +471,13 @@
                 _this.getParents(node);
 
                 $.each(_this.parentNodes, function(index, node) {
-                    var checkedNodes = _this.getChecked(node);
-                    if (checkedNodes.length == node.nodes.length) {
-                        node.state.checked = true;
-                    }
-                    else{
-                        node.state.checked=false;
+                    if (!node.state.disabled) {
+                        var checkedNodes = _this.getChecked(node);
+                        if (checkedNodes.length == node.nodes.length) {
+                            node.state.checked = true;
+                        } else {
+                            node.state.checked = false;
+                        }
                     }
                 });
             }
@@ -1068,6 +1073,18 @@
         var identifiers = this.findNodes('true', 'g', 'state.checked');
         this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
             this.setCheckedState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+
+    Tree.prototype.uncheckRealAll = function(options) {
+        var identifiers = this.findNodes('true', 'g', 'state.checked');
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            if (!node.state.disabled) {
+                this.setCheckedState(node, false, options);
+            }
         }, this));
 
         this.render();
