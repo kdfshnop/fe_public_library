@@ -1720,7 +1720,7 @@
                                 _.buildTreeSelect();
 
                                 if (_.settings.successCallback) {
-                                    successCallback();
+                                    _.settings.successCallback();
                                 }
                             }
                         } else {
@@ -1777,22 +1777,20 @@
     SimpleTreeView.prototype.bindTreeEvents = function() {
         var _ = this;
 
-        //搜索框绑定相关事件
-        _.searchInput.keyup(function(event) {
+        _.searchInput.off('keypress');
+        _.searchInput.on('keypress', function(event) {
             var _this = $(this);
+            if (event.keyCode == "13") {
 
-            var sNodes = _.searchNodes($.trim(_this.val()));
-
-            if (sNodes && sNodes.length > 0) {
-                //scroll to first checked node postion
-                var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
-                if ($firstNode.length > 0) {
-                    _.tree.scrollTop($firstNode.position().top - 60);
-                } else {
-                    _.tree.scrollTop(0);
+                //对于| 这个值进行特殊处理
+                if (_this.val() == "|") {
+                    return false;
                 }
-            }
 
+                var sNodes = _.searchNodes($.trim(_this.val()));
+
+                return false;
+            }
         });
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -1805,12 +1803,29 @@
                 _.renderItems();
             });
         }
+
+        _.tree.on('searchComplete', function(eventType, nodes) {
+            if (nodes) {
+                //scroll to first checked node postion
+                var $firstNode = _.tree.find('li[data-nodeid=' + nodes[0].nodeId + ']');
+
+                //get node index in the node container;
+                var n_Index = $firstNode.index();
+
+                //get node real height 
+                var n_Height = $firstNode.height() + parseInt($firstNode.css('padding-top').replace('px', '')) * 2;
+
+                if ($firstNode.length > 0) {
+                    _.tree.scrollTop(n_Index * n_Height);
+                } else {
+                    _.tree.scrollTop(0);
+                }
+            }
+        });
     }
 
-
-
     SimpleTreeView.prototype.renderItems = function() {
-        var _=this;
+        var _ = this;
 
         var checkedNodes, listNodes, totalWidth, pNodesArr, nodeIds, tmpNode;
 

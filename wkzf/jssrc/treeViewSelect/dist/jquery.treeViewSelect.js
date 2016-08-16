@@ -136,6 +136,7 @@
             checkAll: $.proxy(this.checkAll, this),
             checkNode: $.proxy(this.checkNode, this),
             uncheckAll: $.proxy(this.uncheckAll, this),
+            uncheckRealAll: $.proxy(this.uncheckRealAll, this),
             uncheckNode: $.proxy(this.uncheckNode, this),
             toggleNodeChecked: $.proxy(this.toggleNodeChecked, this),
 
@@ -439,6 +440,7 @@
     Tree.prototype.setCheckedState = function(node, state, options) {
         var _this = this;
         var stateFlag, eventType;
+
         if (state === node.state.checked) return;
 
         stateFlag = state ? true : false;
@@ -457,7 +459,9 @@
 
                 if (_this.childsNodes && _this.childsNodes.length) {
                     $.each(_this.childsNodes, function(index, el) {
-                        el.state.checked = stateFlag;
+                        if (!el.state.disabled) {
+                            el.state.checked = stateFlag;
+                        }
                     });
                 }
             }
@@ -467,12 +471,13 @@
                 _this.getParents(node);
 
                 $.each(_this.parentNodes, function(index, node) {
-                    var checkedNodes = _this.getChecked(node);
-                    if (checkedNodes.length == node.nodes.length) {
-                        node.state.checked = true;
-                    }
-                    else{
-                        node.state.checked=false;
+                    if (!node.state.disabled) {
+                        var checkedNodes = _this.getChecked(node);
+                        if (checkedNodes.length == node.nodes.length) {
+                            node.state.checked = true;
+                        } else {
+                            node.state.checked = false;
+                        }
                     }
                 });
             }
@@ -1068,6 +1073,18 @@
         var identifiers = this.findNodes('true', 'g', 'state.checked');
         this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
             this.setCheckedState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+
+    Tree.prototype.uncheckRealAll = function(options) {
+        var identifiers = this.findNodes('true', 'g', 'state.checked');
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            if (!node.state.disabled) {
+                this.setCheckedState(node, false, options);
+            }
         }, this));
 
         this.render();
@@ -1731,7 +1748,7 @@
                                 _.buildTreeSelect();
 
                                 if (_.settings.successCallback) {
-                                    successCallback();
+                                    _.settings.successCallback();
                                 }
                             }
                         } else {
@@ -1812,21 +1829,20 @@
         var _ = this;
 
         //搜索框绑定相关事件
-        _.searchInput.keyup(function(event) {
+        _.searchInput.off('keypress');
+        _.searchInput.on('keypress', function(event) {
             var _this = $(this);
+            if (event.keyCode == "13") {
 
-            var sNodes = _.searchNodes($.trim(_this.val()));
-
-            if (sNodes && sNodes.length > 0) {
-                //scroll to first checked node postion
-                var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
-                if ($firstNode.length > 0) {
-                    _.tree.scrollTop($firstNode.position().top - 60);
-                } else {
-                    _.tree.scrollTop(0);
+                //对于| 这个值进行特殊处理
+                if (_this.val() == "|") {
+                    return false;
                 }
-            }
 
+                var sNodes = _.searchNodes($.trim(_this.val()));
+
+                return false;
+            }
         });
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -1843,6 +1859,25 @@
                 _.renderItems();
             });
         }
+
+        _.tree.on('searchComplete', function(eventType, nodes) {
+            if (nodes) {
+                //scroll to first checked node postion
+                var $firstNode = _.tree.find('li[data-nodeid=' + nodes[0].nodeId + ']');
+
+                //get node index in the node container;
+                var n_Index = $firstNode.index();
+
+                //get node real height 
+                var n_Height = $firstNode.height() + parseInt($firstNode.css('padding-top').replace('px', '')) * 2;
+
+                if ($firstNode.length > 0) {
+                    _.tree.scrollTop(n_Index * n_Height);
+                } else {
+                    _.tree.scrollTop(0);
+                }
+            }
+        });
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2012,7 +2047,7 @@
             if (hiddenNodeStrs) {
                 $ellipsisItem.css('visibility', 'visible').attr({
                     'data-toggle': 'tooltip',
-                    'data-placement': 'top',
+                    'data-placement': 'bottom',
                     'title': hiddenNodeStrs
                 });
                 $itemLisGroup.append($ellipsisItem);
@@ -2021,17 +2056,13 @@
             _.placeholder.show();
         }
 
-
         //支持多选则添加清空按钮
         if (listNodes.length) {
             //重置筛选条件按钮绑定事件
-            $clearItem.find('.glyphicon-remove').on('click', function() {
-                $itemLisGroup.empty();
-                _.placeholder.show();
-                _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
+            $clearItem.find('.glyphicon-remove').on('click', function(event) {
 
                 if (_.settings.bootstrapTreeParams.multiSelect) {
-                    _.tree.treeview('uncheckAll', {
+                    _.tree.treeview('uncheckRealAll', {
                         silent: true
                     });
                 } else {
@@ -2039,6 +2070,14 @@
                         silent: true
                     }]);
                 }
+
+                _.renderItems();
+
+                _.element.trigger('completed', [
+                    []
+                ]);
+
+                event.stopPropagation();
             });
 
             //添加重置筛选条件        
@@ -2093,6 +2132,12 @@
 
         $selectedItem.attr('nodeid', node.id);
 
+        if (node.state.disabled) {
+            $selectedItem.attr('disabled', node.state.disabled);
+            $selectedItem.addClass('disabled');
+        }
+
+
         if (_.settings.cascadeText && !_.settings.bootstrapTreeParams.multiSelect) {
             var tText = '';
             getParentNodes(_.tree, node, pNodes);
@@ -2112,7 +2157,7 @@
         if (node.text.length > 3) {
             $selectedItem.attr({
                 'data-toggle': 'tooltip',
-                'data-placement': 'top',
+                'data-placement': 'bottom',
                 'title': node.text
             });
         }
@@ -2121,6 +2166,11 @@
             var _this = $(this);
 
             var node = _.getNodeById(_this.parent().attr('nodeid'));
+
+            //如果节点状态是disabled ，则不可以点击删除
+            if (_this.parent().attr('disabled') == "disabled") {
+                return false;
+            }
 
             _.setNodeState(node, false);
 

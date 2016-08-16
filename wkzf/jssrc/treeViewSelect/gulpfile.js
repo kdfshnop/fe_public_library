@@ -17,7 +17,7 @@ var isTest = gulp.env.env === 'test';
 
 
 gulp.task('js', function() {
-    return gulp.src(['src/bootstrap-treeview.js','src/jquery.treeViewSelect.js'])
+    return gulp.src(['src/bootstrap-treeview.js', 'src/jquery.treeViewSelect.js'])
         .pipe(plumber())
         .pipe(concat("jquery.treeViewSelect.js"))
         .pipe(gulpif(isTest, uglify()))
@@ -25,11 +25,22 @@ gulp.task('js', function() {
 
 })
 
+gulp.task('less', function() {
+    return gulp.src(['less/treeViewSelect.less'])
+        .pipe(less())
+        .pipe(minifyCss())
+        .pipe(rename({
+            suffix: ".min"
+        }))
+        .pipe(gulp.dest("css"));
+})
+
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 定义watch 任务
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 gulp.task('watch', function() {
-    gulp.watch('src/*.js',['js']);
+    gulp.watch('src/*.js', ['js']);
+    gulp.watch('less/*.less', ['less']);
 })
 
 
@@ -49,7 +60,6 @@ gulp.task("clean", function() {
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 build task
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-gulp.task("build", gulpSequence("clean","js"));
+gulp.task("build", gulpSequence("clean", "js"));
 
-gulp.task('default',['watch']);
-
+gulp.task('default', ['watch']);
