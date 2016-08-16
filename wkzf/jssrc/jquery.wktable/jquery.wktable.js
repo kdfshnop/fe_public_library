@@ -568,7 +568,7 @@ opitons:{
         this.pageInfo.pageSize = data.pageInfo && data.pageInfo.pageSize || this.pageInfo.pageSize;
         this.pageInfo.total = data.pageInfo && data.pageInfo.total || 1;
         this.pageInfo.pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);
-        this.pageInfo.size = data.items.length;
+        this.pageInfo.size = data.items && data.items.length || 0;
 
         if (!(data.items && data.items.length > 0)) {
             showEmptyMessage.call(this);
