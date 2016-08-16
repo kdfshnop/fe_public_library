@@ -160,6 +160,14 @@ wktable默认样式
     margin-left: 5px;
 }
 
+.table-navigation .page-jump .refresh {
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #adadad;
+    padding: 6px 12px;
+    margin-left: 5px;
+}
+
 .table-navigation .info {
     font-size: 12px;
     float:right;
