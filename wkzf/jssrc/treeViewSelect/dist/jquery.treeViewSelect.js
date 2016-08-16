@@ -1725,6 +1725,7 @@
         var _ = this;
 
         if (_.element.attr('data-tree')) {
+            _.initialized = true;
             _.treeData = $.parseJSON(_.element.attr('data-tree'));
             _.buildTreeSelect();
         } else {
