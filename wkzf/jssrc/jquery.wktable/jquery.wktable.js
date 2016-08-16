@@ -47,7 +47,7 @@ opitons:{
     parse:function(data){
     
     },
-    ready:function(){
+    ready:function(data){
     
     },  
     error:function(msg){
@@ -85,7 +85,7 @@ opitons:{
         this.$tbody = $('<tbody></tbody>');
         this.$navigation = $('<div class="table-navigation"></div>');
         this.$empty = $('<div class="no-data text-danger"><i class="iconfont icon-chucuo"></i><span>抱歉，找不到您想要的数据！</span></div>').hide();
-        this.$loading = $('<div class="loading"><img src="http://dev01.fe.wkzf/fe_public_library/wkzf/css/images/loading.gif" /></loading>').hide();
+        this.$loading = $('<div class="loading"><img src="//dev01.fe.wkzf/fe_public_library/wkzf/css/images/loading.gif" /></loading>').hide();
         this.$table.append(this.$thead).append(this.$tbody);
         this.$table.after(this.$navigation);
         this.$table.after(this.$empty);
@@ -467,7 +467,7 @@ opitons:{
             $pageJump.append('<input type="text" value="' + this.pageInfo.pageIndex + '" /><button class="go">跳转</button>');
         }
 
-        this.$navigation.append("<div class='info'><span class=''>" + ((this.pageInfo.pageIndex - 1) * this.pageInfo.pageSize + 1) + "-" + this.pageInfo.pageIndex * this.pageInfo.pageSize + "</span>/共<span>" + this.pageInfo.total + "</span>条</div>");
+        this.$navigation.append("<div class='info'><span class=''>" + ((this.pageInfo.pageIndex - 1) * this.pageInfo.pageSize + 1) + "-" + ((this.pageInfo.pageIndex - 1)* this.pageInfo.pageSize + this.pageInfo.size)+ "</span>/共<span>" + this.pageInfo.total + "</span>条</div>");
         //绑定导航的事件
         bindNavigationEvent.call(this);
     };
@@ -564,9 +564,9 @@ opitons:{
     //绘制整个表格
     function render(data) {
         //分析返回数据
-        this.pageInfo.pageIndex = data.pageInfo.pageIndex || this.pageInfo.pageIndex + 1;
-        this.pageInfo.pageSize = data.pageInfo.pageSize || this.pageInfo.pageSize;
-        this.pageInfo.total = data.pageInfo.total;
+        this.pageInfo.pageIndex = data.pageInfo && data.pageInfo.pageIndex || this.pageInfo.pageIndex + 1;
+        this.pageInfo.pageSize = data.pageInfo && data.pageInfo.pageSize || this.pageInfo.pageSize;
+        this.pageInfo.total = data.pageInfo && data.pageInfo.total || 1;
         this.pageInfo.pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);
         this.pageInfo.size = data.items.length;
 
@@ -578,7 +578,7 @@ opitons:{
         renderPagination.call(this);
 
         //绘制成功触发ready回调
-        this.options.ready && this.options.ready.call(this);
+        this.options.ready && this.options.ready.call(this,data.items);
     };
     /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     公有方法

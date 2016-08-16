@@ -66,6 +66,11 @@
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             enableDownCascade: true,
 
+            /*-----------------------------------------------------------------------------------------------------------
+            设置默认是否显示树形
+            -----------------------------------------------------------------------------------------------------------*/
+            showTree: false,
+
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             是否显示级联的文本，目前只支持单选的前提下。
             默认为false ,表示 点击长宁区节点，选中项文本为 [长宁区]
@@ -292,7 +297,7 @@
         if (this.settings) {
             this.settings = $.extend({}, this.settings, options);
         } else {
-            this.settings = $.extend(true, this.defaults, options);
+            this.settings = $.extend(true, {}, this.defaults, options);
         }
 
         this.treeContainer = $(this.template.treeContainer);
@@ -362,6 +367,7 @@
         var _ = this;
 
         if (_.element.attr('data-tree')) {
+            _.initialized = true;
             _.treeData = $.parseJSON(_.element.attr('data-tree'));
             _.buildTreeSelect();
         } else {
@@ -385,7 +391,7 @@
                                 _.buildTreeSelect();
 
                                 if (_.settings.successCallback) {
-                                    successCallback();
+                                    _.settings.successCallback();
                                 }
                             }
                         } else {
@@ -425,8 +431,15 @@
         if (this.settings.showSearch) {
             this.treeContainer.append(this.searchInput);
         }
+
+        if (this.settings.showTree) {
+            this.treeContainer.removeClass('hide');
+        }
+
         this.treeContainer.append(this.tree);
         this.element.parent().append(this.treeContainer);
+
+
 
         this.setTree();
 
@@ -459,21 +472,38 @@
         var _ = this;
 
         //搜索框绑定相关事件
-        _.searchInput.keyup(function(event) {
+        _.searchInput.off('keypress');
+        _.searchInput.on('keypress', function(event) {
             var _this = $(this);
+            if (event.keyCode == "13") {
+                //对于| 这个值进行特殊处理
+                if (_this.val() == "|") {
+                    return false;
+                }
 
-            var sNodes = _.searchNodes($.trim(_this.val()));
+                var sNodes = _.searchNodes($.trim(_this.val()));
 
-            if (sNodes && sNodes.length > 0) {
-                //scroll to first checked node postion
-                var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
-                if ($firstNode.length > 0) {
-                    _.tree.scrollTop($firstNode.position().top - 60);
+                if (sNodes && sNodes.length > 0) {
+                    //scroll to first checked node postion
+                    var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
+
+                    //get node index in the node container;
+                    var n_Index = $firstNode.index();
+
+                    //get node real height 
+                    var n_Height = $firstNode.height() + parseInt($firstNode.css('padding-top').replace('px', '')) * 2;
+
+                    if ($firstNode.length > 0) {
+                        _.tree.scrollTop((n_Index - 1) * n_Height);
+                    } else {
+                        _.tree.scrollTop(0);
+                    }
                 } else {
                     _.tree.scrollTop(0);
                 }
-            }
 
+                return false;
+            }
         });
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
@@ -483,7 +513,10 @@
 
         } else {
             _.tree.on('nodeSelected', function(event, node) {
-                _.treeContainer.addClass('hide');
+                if (!_.settings.showTree) {
+                    _.treeContainer.addClass('hide');
+                }
+
                 _.renderItems();
             });
         }
@@ -494,6 +527,11 @@
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.setSelectList = function() {
         var _ = this;
+
+        //如果默认是显示树形控件的，则无需绑定点击事件
+        if (_.settings.showTree) {
+            return;
+        }
 
         //绑定点击事件
         _.element.on('click', function() {
@@ -651,7 +689,7 @@
             if (hiddenNodeStrs) {
                 $ellipsisItem.css('visibility', 'visible').attr({
                     'data-toggle': 'tooltip',
-                    'data-placement': 'top',
+                    'data-placement': 'bottom',
                     'title': hiddenNodeStrs
                 });
                 $itemLisGroup.append($ellipsisItem);
@@ -660,18 +698,28 @@
             _.placeholder.show();
         }
 
-
         //支持多选则添加清空按钮
-        if (_.settings.bootstrapTreeParams.multiSelect && listNodes.length) {
+        if (listNodes.length) {
             //重置筛选条件按钮绑定事件
-            $clearItem.find('.glyphicon-remove').on('click', function() {
-                $itemLisGroup.empty();
-                _.placeholder.show();
-                _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
+            $clearItem.find('.glyphicon-remove').on('click', function(event) {
 
-                _.tree.treeview('uncheckAll', {
-                    silent: true
-                });
+                if (_.settings.bootstrapTreeParams.multiSelect) {
+                    _.tree.treeview('uncheckRealAll', {
+                        silent: true
+                    });
+                } else {
+                    _.tree.treeview('unselectNode', [listNodes[0], {
+                        silent: true
+                    }]);
+                }
+
+                _.renderItems();
+
+                _.element.trigger('completed', [
+                    []
+                ]);
+
+                event.stopPropagation();
             });
 
             //添加重置筛选条件        
@@ -726,6 +774,12 @@
 
         $selectedItem.attr('nodeid', node.id);
 
+        if (node.state.disabled) {
+            $selectedItem.attr('disabled', node.state.disabled);
+            $selectedItem.addClass('disabled');
+        }
+
+
         if (_.settings.cascadeText && !_.settings.bootstrapTreeParams.multiSelect) {
             var tText = '';
             getParentNodes(_.tree, node, pNodes);
@@ -745,7 +799,7 @@
         if (node.text.length > 3) {
             $selectedItem.attr({
                 'data-toggle': 'tooltip',
-                'data-placement': 'top',
+                'data-placement': 'bottom',
                 'title': node.text
             });
         }
@@ -754,6 +808,11 @@
             var _this = $(this);
 
             var node = _.getNodeById(_this.parent().attr('nodeid'));
+
+            //如果节点状态是disabled ，则不可以点击删除
+            if (_this.parent().attr('disabled') == "disabled") {
+                return false;
+            }
 
             _.setNodeState(node, false);
 
@@ -784,7 +843,7 @@
 
         var tHeight = 250; //treeView的高度,默认为300px
         var tWidth = _.element.width() + parseInt(sPaddingLeft) + parseInt(sPaddingRight); //treeView的宽度
-        var tTop = sOffset.top + _.element.height() + parseInt(sPaddingTop) + parseInt(sPaddingBottom); + 5;
+        var tTop = sOffset.top + _.element.height() + parseInt(sPaddingTop) + parseInt(sPaddingBottom) + 5;
         var tLeft = sOffset.left;
 
         tHeight = _.treeContainer.find('li.list-group-item').length * 40 * 0.2;

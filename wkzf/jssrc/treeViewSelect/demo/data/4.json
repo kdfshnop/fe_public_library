@@ -1,0 +1,292 @@
+{
+    "status": 1,
+    "message": "操作成功",
+    "data": [{
+        "id": 0,
+        "text": "全部",
+        "t": "id=0",
+        "state": null,
+        "nodes": [{
+            "id": 1,
+            "text": "业务部",
+            "t": "id=1",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 1
+            },
+            "nodes": [{
+                "id": 4,
+                "text": "默认派单组",
+                "t": "id=4",
+                "state": {
+                    "expanded": true,
+                    "checked": true,
+                    "disabled": 1
+                },
+                "nodes": [{
+                    "id": 42,
+                    "text": "嗖",
+                    "t": "id=42",
+                    "state": {
+                        "expanded": true,
+                        "checked": true,
+                        "disabled": 1
+                    },
+                    "nodes": null,
+                    "pid": 4
+                }, {
+                    "id": 17,
+                    "text": "张三",
+                    "t": "id=17",
+                    "state": {
+                        "expanded": true,
+                        "checked": true,
+                        "disabled": 1
+                    },
+                    "nodes": null,
+                    "pid": 4
+                }],
+                "pid": 1
+            }, {
+                "id": 19,
+                "text": "研发部",
+                "t": "id=19",
+                "state": {
+                    "expanded": true,
+                    "checked": true,
+                    "disabled": 1
+                },
+                "nodes": [{
+                    "id": 20,
+                    "text": "前端组",
+                    "t": "id=20",
+                    "state": {
+                        "expanded": true,
+                        "checked": true,
+                        "disabled": 1
+                    },
+                    "nodes": null,
+                    "pid": 19
+                }, {
+                    "id": 62,
+                    "text": "研发",
+                    "t": "id=62",
+                    "state": {
+                        "expanded": true,
+                        "checked": true,
+                        "disabled": 1
+                    },
+                    "nodes": null,
+                    "pid": 19
+                }],
+                "pid": 1
+            }],
+            "pid": 0
+        }, {
+            "id": 60,
+            "text": "哈哈哈",
+            "t": "id=60",
+            "state": null,
+            "nodes": null,
+            "pid": 0
+        }, {
+            "id": 22,
+            "text": "a",
+            "t": "id=22",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 0
+            },
+            "nodes": [{
+                "id": 25,
+                "text": "爱爱爱111111",
+                "t": "id=25",
+                "state": {
+                    "expanded": true,
+                    "checked": true,
+                    "disabled": 0
+                },
+                "nodes": [{
+                    "id": 33,
+                    "text": "阿布",
+                    "t": "id=33",
+                    "state": {
+                        "expanded": true,
+                        "checked": true,
+                        "disabled": 0
+                    },
+                    "nodes": null,
+                    "pid": 25
+                }, {
+                    "id": 44,
+                    "text": "单元测试添加的部门",
+                    "t": "id=44",
+                    "state": {
+                        "expanded": true,
+                        "checked": true,
+                        "disabled": 0
+                    },
+                    "nodes": null,
+                    "pid": 25
+                }],
+                "pid": 22
+            }],
+            "pid": 0
+        }, {
+            "id": 59,
+            "text": "第一级",
+            "t": "id=59",
+            "state": null,
+            "nodes": null,
+            "pid": 0
+        }, {
+            "id": 56,
+            "text": "尖沙咀",
+            "t": "id=56",
+            "state": null,
+            "nodes": [{
+                "id": 57,
+                "text": "嘻嘻嘻",
+                "t": "id=57",
+                "state": null,
+                "nodes": null,
+                "pid": 56
+            }],
+            "pid": 0
+        }, {
+            "id": 55,
+            "text": "销售",
+            "t": "id=55",
+            "state": null,
+            "nodes": [{
+                "id": 58,
+                "text": "议一议hi",
+                "t": "id=58",
+                "state": null,
+                "nodes": null,
+                "pid": 55
+            }, {
+                "id": 61,
+                "text": "二二二",
+                "t": "id=61",
+                "state": null,
+                "nodes": null,
+                "pid": 55
+            }],
+            "pid": 0
+        }, {
+            "id": 12,
+            "text": "同步测试一部",
+            "t": "id=12",
+            "state": null,
+            "nodes": [{
+                "id": 13,
+                "text": "同步测试四部55",
+                "t": "id=13",
+                "state": null,
+                "nodes": [{
+                    "id": 16,
+                    "text": "同步测试五部",
+                    "t": "id=16",
+                    "state": null,
+                    "nodes": null,
+                    "pid": 13
+                }, {
+                    "id": 15,
+                    "text": "同步测试四部88",
+                    "t": "id=15",
+                    "state": null,
+                    "nodes": null,
+                    "pid": 13
+                }, {
+                    "id": 14,
+                    "text": "同步测试三部",
+                    "t": "id=14",
+                    "state": null,
+                    "nodes": null,
+                    "pid": 13
+                }],
+                "pid": 12
+            }],
+            "pid": 0
+        }, {
+            "id": 7,
+            "text": "超凡队",
+            "t": "id=7",
+            "state": null,
+            "nodes": [{
+                "id": 35,
+                "text": "部门aaabbbccc",
+                "t": "id=35",
+                "state": {
+                    "expanded": true,
+                    "checked": true,
+                    "disabled": 0
+                },
+                "nodes": null,
+                "pid": 7
+            }, {
+                "id": 6,
+                "text": "猎鹰队",
+                "t": "id=6",
+                "state": null,
+                "nodes": null,
+                "pid": 7
+            }, {
+                "id": 5,
+                "text": "bb",
+                "t": "id=5",
+                "state": null,
+                "nodes": null,
+                "pid": 7
+            }, {
+                "id": 47,
+                "text": "chao3",
+                "t": "id=47",
+                "state": null,
+                "nodes": null,
+                "pid": 7
+            }],
+            "pid": 0
+        }, {
+            "id": 49,
+            "text": "cc",
+            "t": "id=49",
+            "state": null,
+            "nodes": [{
+                "id": 34,
+                "text": "ppp",
+                "t": "id=34",
+                "state": null,
+                "nodes": null,
+                "pid": 49
+            }, {
+                "id": 52,
+                "text": "aaa",
+                "t": "id=52",
+                "state": {
+                    "expanded": true,
+                    "checked": true,
+                    "disabled": 0
+                },
+                "nodes": null,
+                "pid": 49
+            }],
+            "pid": 0
+        }, {
+            "id": 2,
+            "text": "BD部",
+            "t": "id=2",
+            "state": {
+                "expanded": true,
+                "checked": true,
+                "disabled": 0
+            },
+            "nodes": null,
+            "pid": 0
+        }],
+        "pid": -1
+    }]
+}

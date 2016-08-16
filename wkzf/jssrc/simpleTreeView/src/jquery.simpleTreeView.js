@@ -68,6 +68,11 @@
             exceptionCallback: null,
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            勾选或者选中，选中项生成好了，回调事件
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            onCompleted: undefined,
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
              bootstrap-treeview 参数配置
              --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             "bootstrapTreeParams": {
@@ -258,7 +263,7 @@
         if (this.settings) {
             this.settings = $.extend({}, this.settings, options);
         } else {
-            this.settings = $.extend(true, this.defaults, options);
+            this.settings = $.extend(true, {}, this.defaults, options);
         }
 
         this.tree = $(this.template.tree);
@@ -327,6 +332,10 @@
         if (typeof(this.settings.onNodeSelected) === 'function') {
             this.element.on('nodeSelected', this.settings.onNodeSelected);
         }
+
+        if (typeof(this.settings.onCompleted) === 'function') {
+            this.element.on('completed', this.settings.onCompleted);
+        }
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -338,6 +347,7 @@
         this.element.off('nodeSelected');
         this.element.off('nodeUnselected');
         this.element.off('nodesCleared');
+        this.element.off('completed');
     };
 
 
@@ -369,7 +379,7 @@
                                 _.buildTreeSelect();
 
                                 if (_.settings.successCallback) {
-                                    successCallback();
+                                    _.settings.successCallback();
                                 }
                             }
                         } else {
@@ -427,29 +437,70 @@
         var _ = this;
 
         //搜索框绑定相关事件
-        _.searchInput.keyup(function(event) {
+        _.searchInput.off('keypress');
+        _.searchInput.on('keypress', function(event) {
             var _this = $(this);
+            if (event.keyCode == "13") {
+                //对于| 这个值进行特殊处理
+                if (_this.val() == "|") {
+                    return false;
+                }
 
-            var sNodes = _.searchNodes($.trim(_this.val()));
+                var sNodes = _.searchNodes($.trim(_this.val()));
 
-            if (sNodes && sNodes.length > 0) {
-                //scroll to first checked node postion
-                var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
-                if ($firstNode.length > 0) {
-                    _.tree.scrollTop($firstNode.position().top - 60);
+                if (sNodes && sNodes.length > 0) {
+                    //scroll to first checked node postion
+                    var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
+
+                    //get node index in the node container;
+                    var n_Index = $firstNode.index();
+
+                    //get node real height 
+                    var n_Height = $firstNode.height() + parseInt($firstNode.css('padding-top').replace('px', '')) * 2;
+
+                    if ($firstNode.length > 0) {
+                        _.tree.scrollTop((n_Index - 1) * n_Height);
+                    } else {
+                        _.tree.scrollTop(0);
+                    }
                 } else {
                     _.tree.scrollTop(0);
                 }
-            }
 
+                return false;
+            }
         });
 
+
         if (_.settings.bootstrapTreeParams.multiSelect) {
-            _.tree.on('nodeChecked nodeUnchecked', function(event, node) {});
+            _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
+                _.renderItems();
+            });
 
         } else {
-            _.tree.on('nodeSelected', function(event, node) {});
+            _.tree.on('nodeSelected', function(event, node) {
+                _.renderItems();
+            });
         }
+    }
+
+    SimpleTreeView.prototype.renderItems = function() {
+        var _ = this;
+
+        var checkedNodes, listNodes, totalWidth, pNodesArr, nodeIds, tmpNode;
+
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            checkedNodes = _.tree.treeview('getChecked');
+            listNodes = checkedNodes;
+            if (_.settings.enableUpCascade || _.settings.enableDownCascade) {
+                listNodes = getSelectedNode(_.tree, checkedNodes);
+            }
+        } else {
+            listNodes = _.tree.treeview('getSelected');
+        }
+
+
+        _.element.trigger('completed', [listNodes]);
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

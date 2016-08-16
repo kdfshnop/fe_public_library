@@ -54,10 +54,13 @@ treeViewSelect 样式
         padding: 4px;
         margin-left: 10px;
         width: 80%;
+        margin-bottom: 5px;
     }
-
-    .treeviewSelect-tree{
+    .treeviewSelect-tree {
         overflow: auto;
+    }
+    * {
+        vertical-align: baseline;
     }
 }
 
@@ -71,6 +74,9 @@ treeViewSelect 样式
     height: auto;
     position: relative;
     margin-bottom: 0;
+    * {
+        vertical-align: baseline;
+    }
     &>li {
         border: none;
         float: left;
@@ -85,6 +91,7 @@ treeViewSelect 样式
                         background-color: #fff;
                         float: left;
                         margin-bottom: 3px;
+                        font-size: 14px;
                         padding: 0;
                     }
                     &.selected-item {
@@ -105,15 +112,18 @@ treeViewSelect 样式
                         margin-right: 3px;
                         visibility: hidden;
                     }
+                    &.disabled {
+                        color: silver;
+                    }
                 }
             }
         }
         &.treeviewselect-listOpGroup {
-           /* float: right;
+            /* float: right;
             width: 15px;*/
             position: absolute;
             right: 2px;
-            top:25%;
+            top: 25%;
             &>ul {
                 .clearfix();
                 padding-left: 0;
