@@ -314,10 +314,14 @@ opitons:{
             self.goto(1);
         });
         $('.go', this.$navigation).click(function() {
-            //验证输入数据
             var pi = $(this).prev().val();
             clearHeadSortClass.call(self);
             self.goto(pi);
+        });
+        $('.refresh', this.$navigation).click(function() {            
+            //var pi = $(this).prev().val();
+            clearHeadSortClass.call(self);
+            self.refresh();
         });
         $('.less', this.$navigation).click(function() {
             clearHeadSortClass.call(self);
@@ -345,7 +349,7 @@ opitons:{
             }
 
             this.value = val;
-        });
+        });        
     }
 
     //给列头绑定排序事件
@@ -467,6 +471,11 @@ opitons:{
             $pageJump.append('<input type="text" value="' + this.pageInfo.pageIndex + '" /><button class="go">跳转</button>');
         }
 
+        //刷新
+        if (this.options.tableNavigation.displayPageJump) {
+            $pageJump.append('<button class="refresh">刷新</button>');
+        }
+
         this.$navigation.append("<div class='info'><span class=''>" + ((this.pageInfo.pageIndex - 1) * this.pageInfo.pageSize + 1) + "-" + ((this.pageInfo.pageIndex - 1)* this.pageInfo.pageSize + this.pageInfo.size)+ "</span>/共<span>" + this.pageInfo.total + "</span>条</div>");
         //绑定导航的事件
         bindNavigationEvent.call(this);
@@ -568,7 +577,7 @@ opitons:{
         this.pageInfo.pageSize = data.pageInfo && data.pageInfo.pageSize || this.pageInfo.pageSize;
         this.pageInfo.total = data.pageInfo && data.pageInfo.total || 1;
         this.pageInfo.pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);
-        this.pageInfo.size = data.items.length;
+        this.pageInfo.size = data.items && data.items.length || 0;
 
         if (!(data.items && data.items.length > 0)) {
             showEmptyMessage.call(this);
@@ -652,6 +661,7 @@ opitons:{
             displayPagination: true, //是否显示分页信息         
             displayPageJump: true, //是否显示页跳转
             displayPageSizeSelection: true, //是否显示页面大小选择框
+            displayRefresh:true,//显示刷新按钮
             pageSizeSet: [10, 20, 50, 100, 200, 500], //页面大小结合
             paginationPageCount: 5, //分页中显示的页数
         },
