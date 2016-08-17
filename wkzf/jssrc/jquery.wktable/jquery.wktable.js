@@ -299,14 +299,16 @@ opitons:{
             clearHeadSortClass.call(self);
             self.goto(pi);
         });
-        $('.next', this.$navigation).click(function() {
+        $('.next', this.$navigation).click(function(e) {
             var pi = self.pageInfo.pageIndex;
             clearHeadSortClass.call(self);
             self.goto(pi + 1);
+            e.preventDefault();
         });
-        $('.prev', this.$navigation).click(function() {
+        $('.prev', this.$navigation).click(function(e) {
             var pi = self.pageInfo.pageIndex;
             self.goto(pi - 1);
+            e.preventDefault();
         });
         $('.page-size-select', this.$navigation).change(function() {
             self.pageInfo.pageSize = $(this).val();
@@ -323,15 +325,17 @@ opitons:{
             clearHeadSortClass.call(self);
             self.refresh();
         });
-        $('.less', this.$navigation).click(function() {
+        $('.less', this.$navigation).click(function(e) {
             clearHeadSortClass.call(self);
             var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex - half);
+            e.preventDefault();
         });
-        $('.more', this.$navigation).click(function() {
+        $('.more', this.$navigation).click(function(e) {
             clearHeadSortClass.call(self);
             var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex + half);
+            e.preventDefault();
         });
         $('.page-jump input', this.$navigation).on('keypress', function(e) {
             if (e.keyCode == '13') {
@@ -604,6 +608,7 @@ opitons:{
             pageIndex = 1;
         }
 
+        this.pageInfo.pageIndex = pageIndex - 1;        
         fetch.call(this, pageIndex);
     };
 
