@@ -51,8 +51,8 @@
         searchResultColor: '#D9534F',
         searchResultBackColor: undefined, //'#FFFFFF',
 
-        enableUpCascade: false,
-        enableDownCascade: false,
+        enableUpCascade: true,
+        enableDownCascade: true,
         enableLinks: false,
         highlightSelected: true,
         highlightSearchResults: true,
@@ -136,6 +136,7 @@
             checkAll: $.proxy(this.checkAll, this),
             checkNode: $.proxy(this.checkNode, this),
             uncheckAll: $.proxy(this.uncheckAll, this),
+            uncheckRealAll: $.proxy(this.uncheckRealAll, this),
             uncheckNode: $.proxy(this.uncheckNode, this),
             toggleNodeChecked: $.proxy(this.toggleNodeChecked, this),
 
@@ -439,6 +440,7 @@
     Tree.prototype.setCheckedState = function(node, state, options) {
         var _this = this;
         var stateFlag, eventType;
+
         if (state === node.state.checked) return;
 
         stateFlag = state ? true : false;
@@ -457,7 +459,9 @@
 
                 if (_this.childsNodes && _this.childsNodes.length) {
                     $.each(_this.childsNodes, function(index, el) {
-                        el.state.checked = stateFlag;
+                        if (!el.state.disabled) {
+                            el.state.checked = stateFlag;
+                        }
                     });
                 }
             }
@@ -467,12 +471,13 @@
                 _this.getParents(node);
 
                 $.each(_this.parentNodes, function(index, node) {
-                    var checkedNodes = _this.getChecked(node);
-                    if (checkedNodes.length == node.nodes.length) {
-                        node.state.checked = true;
-                    }
-                    else{
-                        node.state.checked = false;
+                    if (!node.state.disabled) {
+                        var checkedNodes = _this.getChecked(node);
+                        if (checkedNodes.length == node.nodes.length) {
+                            node.state.checked = true;
+                        } else {
+                            node.state.checked = false;
+                        }
                     }
                 });
             }
@@ -1068,6 +1073,18 @@
         var identifiers = this.findNodes('true', 'g', 'state.checked');
         this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
             this.setCheckedState(node, false, options);
+        }, this));
+
+        this.render();
+    };
+
+
+    Tree.prototype.uncheckRealAll = function(options) {
+        var identifiers = this.findNodes('true', 'g', 'state.checked');
+        this.forEachIdentifier(identifiers, options, $.proxy(function(node, options) {
+            if (!node.state.disabled) {
+                this.setCheckedState(node, false, options);
+            }
         }, this));
 
         this.render();
@@ -1778,22 +1795,40 @@
         var _ = this;
 
         //搜索框绑定相关事件
-        _.searchInput.keyup(function(event) {
+        _.searchInput.off('keypress');
+        _.searchInput.on('keypress', function(event) {
             var _this = $(this);
+            if (event.keyCode == "13") {
+                //对于| 这个值进行特殊处理
+                if (_this.val() == "|") {
+                    return false;
+                }
 
-            var sNodes = _.searchNodes($.trim(_this.val()));
+                var sNodes = _.searchNodes($.trim(_this.val()));
 
-            if (sNodes && sNodes.length > 0) {
-                //scroll to first checked node postion
-                var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
-                if ($firstNode.length > 0) {
-                    _.tree.scrollTop($firstNode.position().top - 60);
+                if (sNodes && sNodes.length > 0) {
+                    //scroll to first checked node postion
+                    var $firstNode = _.tree.find('li[data-nodeid=' + sNodes[0].nodeId + ']');
+
+                    //get node index in the node container;
+                    var n_Index = $firstNode.index();
+
+                    //get node real height 
+                    var n_Height = $firstNode.height() + parseInt($firstNode.css('padding-top').replace('px', '')) * 2;
+
+                    if ($firstNode.length > 0) {
+                        _.tree.scrollTop((n_Index - 1) * n_Height);
+                    } else {
+                        _.tree.scrollTop(0);
+                    }
                 } else {
                     _.tree.scrollTop(0);
                 }
-            }
 
+                return false;
+            }
         });
+
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
@@ -1807,10 +1842,8 @@
         }
     }
 
-
-
     SimpleTreeView.prototype.renderItems = function() {
-        var _=this;
+        var _ = this;
 
         var checkedNodes, listNodes, totalWidth, pNodesArr, nodeIds, tmpNode;
 

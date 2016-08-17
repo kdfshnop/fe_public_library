@@ -136,7 +136,6 @@ wktable默认样式
 .table-navigation .page-jump input {
     width: 100%;
     padding: 6px 12px;
-    font-size: 14px;
     color: #555;
     background-color: #fff;
     background-image: none;
@@ -154,6 +153,14 @@ wktable默认样式
 }
 
 .table-navigation .page-jump .go {
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #adadad;
+    padding: 6px 12px;
+    margin-left: 5px;
+}
+
+.table-navigation .page-jump .refresh {
     background-color: #fff;
     border-radius: 4px;
     border: 1px solid #adadad;
