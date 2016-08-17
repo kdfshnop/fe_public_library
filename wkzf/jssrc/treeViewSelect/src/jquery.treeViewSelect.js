@@ -708,9 +708,11 @@
                         silent: true
                     });
                 } else {
-                    _.tree.treeview('unselectNode', [listNodes[0], {
-                        silent: true
-                    }]);
+                    if (!listNodes[0].state.disabled) {
+                        _.tree.treeview('unselectNode', [listNodes[0], {
+                            silent: true
+                        }]);
+                    }
                 }
 
                 _.renderItems();
