@@ -85,7 +85,7 @@ opitons:{
         this.$tbody = $('<tbody></tbody>');
         this.$navigation = $('<div class="table-navigation"></div>');
         this.$empty = $('<div class="no-data text-danger"><i class="iconfont icon-chucuo"></i><span>抱歉，找不到您想要的数据！</span></div>').hide();
-        this.$loading = $('<div class="loading"><img src="//dev01.fe.wkzf/fe_public_library/wkzf/css/images/loading.gif" /></loading>').hide();
+        this.$loading = $('<div class="loading"></loading>').hide();
         this.$table.append(this.$thead).append(this.$tbody);
         this.$table.after(this.$navigation);
         this.$table.after(this.$empty);

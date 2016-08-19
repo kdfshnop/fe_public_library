@@ -39,6 +39,8 @@ wktable默认样式
     height: 80px;
     width: 80px;
     position: absolute;
+    background: url("./images/loading.gif") no-repeat center;
+    background-size: 100% 100%;
 }
 
 .wktable .loading img {
