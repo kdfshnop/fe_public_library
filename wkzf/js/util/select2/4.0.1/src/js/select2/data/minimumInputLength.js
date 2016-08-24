@@ -9,12 +9,13 @@ define([
 
   MinimumInputLength.prototype.query = function (decorated, params, callback) {
     params.term = params.term || '';
+    var minimumInputLength = typeof(this.minimumInputLength) == 'function' && this.minimumInputLength(params) || this.minimumInputLength;
 
-    if (params.term.length < this.minimumInputLength) {
+    if (params.term.length < minimumInputLength) {
       this.trigger('results:message', {
         message: 'inputTooShort',
         args: {
-          minimum: this.minimumInputLength,
+          minimum: minimumInputLength,
           input: params.term,
           params: params
         }
