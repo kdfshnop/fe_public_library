@@ -516,7 +516,7 @@ opitons:{
         $.ajax({
             url: this.options.url,
             //坑爹后台，post非得要转成字符串
-            data: this.options.dataStringify ? JSON.stringify(params) : params,
+            data: (this.options.method.toLowerCase() == "post" && this.options.dataStringify) ? JSON.stringify(params) : params,
             type: this.options.method,
             dataType: "json",
             contentType: this.options.contentType,
