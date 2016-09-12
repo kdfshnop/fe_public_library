@@ -472,12 +472,12 @@ opitons:{
 
         //页跳转
         if (this.options.tableNavigation.displayPageJump) {
-            $pageJump.append('<input type="text" value="' + this.pageInfo.pageIndex + '" /><button class="go">跳转</button>');
+            $pageJump.append('<input type="text" value="' + this.pageInfo.pageIndex + '" /><button type="button" class="go">跳转</button>');
         }
 
         //刷新
         if (this.options.tableNavigation.displayPageJump) {
-            $pageJump.append('<button class="refresh">刷新</button>');
+            $pageJump.append('<button type="button" class="refresh">刷新</button>');
         }
 
         this.$navigation.append("<div class='info'><span class=''>" + ((this.pageInfo.pageIndex - 1) * this.pageInfo.pageSize + 1) + "-" + ((this.pageInfo.pageIndex - 1) * this.pageInfo.pageSize + this.pageInfo.size) + "</span>/共<span>" + this.pageInfo.total + "</span>条</div>");
