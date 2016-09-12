@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" />
+	<title>EasyZoom</title>
+	<link rel="stylesheet" href="css/easyzoom.css" />
+	<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+	<script src="js/easyzoom.js"></script>
+</head>
+<body>
+	<div class="easyzoom easyzoom--overlay">
+		<a href="example-images/1_zoom.jpg">
+			<img src="example-images/1_standard.jpg" alt="" width="640" height="360" />
+		</a>
+	</div>
+
+	<div class="easyzoom easyzoom--adjacent">
+		<a href="example-images/2_zoom.jpg">
+			<img src="example-images/2_standard.jpg" alt="" width="310" height="400" />
+		</a>
+	</div>
+	<script>
+		// Instantiate EasyZoom plugin
+		var $easyzoom = $('.easyzoom').easyZoom();
+
+		// Get the instance API
+		//var api = $easyzoom.data('easyZoom');
+	</script>
+</body>
+</html>
