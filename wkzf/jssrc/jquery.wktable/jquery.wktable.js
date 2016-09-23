@@ -384,9 +384,9 @@ opitons:{
             height = this.$loading.height();
         var tableWidth = this.$table.width(),
             tableHeight = this.$table.height();
-        if (height > tableHeight / 2) {
+        /*if (height > tableHeight / 2) {
             return;
-        }
+        }*/
         var left = (tableWidth - width) / 2,
             top = (tableHeight - height) / 2;
         this.$loading.css({ left: left, top: top }).show();
