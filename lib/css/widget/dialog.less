@@ -1,0 +1,71 @@
+@background:#19baff;
+.ui-dialog{
+    border: 1px solid #efefef;
+    border-radius:6px;
+    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    height: 150px;
+    width: 300px;
+    text-align: center;
+    position: relative;
+    /*position: absolute;
+    top: 0px;
+    left: 0px;*/
+    overflow: hidden;
+    background: #fff;
+    .title{
+        text-align: left;
+        padding: 10px 20px ; 
+        background: @background;
+        h3{
+            color: #fff;
+        }
+        .close,.dialog-close{
+            float: right;
+            color: #efefef;
+            background: transparent;
+            border:none;
+        }
+    }
+    .wrap{
+       position: relative;
+    }
+    .content{
+        margin: auto;
+        padding:20px;
+        //max-height: 50px;
+        /*overflow: hidden;
+        position: absolute;
+        top:0;
+        left: 0;*/
+    }
+    .buttons{
+        position: absolute;
+        bottom: 15px;
+        left: 0;
+        width: 100%;
+        .dialog-ok{
+            background: @background;
+        }
+        button,.button{
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            white-space: nowrap;
+            vertical-align: middle;
+            touch-action: manipulation;
+            cursor: pointer;
+            border: 1px solid #efefef;
+            border-radius: 4px;
+            color: #fff;
+            
+            &:active{
+                //color: #f00;
+            }
+            
+        }
+        .dialog-cancel{
+            margin-left: 5px;
+        }
+    }
+}
