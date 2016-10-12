@@ -136,7 +136,7 @@ opitons:{
     }
 
     function showEmptyMessage() {
-        this.$table.hide();
+        //this.$table.hide();
         this.$navigation.hide();
         this.$empty.show();
     }
