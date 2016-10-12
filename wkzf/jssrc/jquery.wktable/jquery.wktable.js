@@ -139,12 +139,14 @@ opitons:{
         //this.$table.hide();
         this.$navigation.hide();
         this.$empty.show();
+        this.$tbody.hide();
     }
 
     function showTable() {
         this.$table.show();
         this.$navigation.show();
         this.$empty.hide();
+        this.$tbody.show();
     }
 
     //把列对象的自定义属性以字符串的形式返回
