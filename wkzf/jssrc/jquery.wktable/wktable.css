@@ -39,6 +39,8 @@ wktable默认样式
     height: 80px;
     width: 80px;
     position: absolute;
+    background: url("./images/loading.gif") no-repeat center;
+    background-size: 100% 100%;
 }
 
 .wktable .loading img {
@@ -160,6 +162,14 @@ wktable默认样式
     margin-left: 5px;
 }
 
+.table-navigation .page-jump .refresh {
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #adadad;
+    padding: 6px 12px;
+    margin-left: 5px;
+}
+
 .table-navigation .info {
     font-size: 12px;
     float:right;
@@ -168,4 +178,7 @@ wktable默认样式
 .table-navigation .info span {
 	padding:6px 5px;
 	color:#a94442;
+}
+.no-data{
+    margin-top:-20px;
 }

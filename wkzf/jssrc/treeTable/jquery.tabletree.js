@@ -121,8 +121,8 @@
 
             //如果有排序列参数则插入html
             if (opts.enableMove) {
-                $element.css('position', 'relative');
-                tableHtml.push('<div class="change-sort" style="position:absolute;top:50%;right:3%;font-size:30px;color:#337ab7">');
+                // $element.css('position', 'relative');
+                tableHtml.push('<div class="change-sort" style="position:absolute;top:50%;right:0;font-size:30px;color:#337ab7">');
                 tableHtml.push('<i class="glyphicon glyphicon-arrow-up move-up sort-change" style="display:block;margin-bottom:10px;cursor:pointer"></i>');
                 tableHtml.push('<i class="glyphicon glyphicon-arrow-down move-down sort-change" style="display:block;cursor:pointer"></i></div>');
             };
@@ -338,12 +338,10 @@
             $tbody.find('tr').on('click', function(event) {
                 event.preventDefault();
                 /* Act on the event */
-                var top = $(this).position().top;
                 $tbody.find('tr').removeClass('info');
                 $(this).addClass('info');
                 var obj = privateMethod.TopOrBottom($element, $(this).data('id'));
                 privateMethod.ControlSortArrow($element, obj);
-                $('.change-sort').css('top', top);
             });
 
             //更改顺序事件
@@ -431,6 +429,15 @@
                 if (event.which == 13) {
                     $thead.find('#tree-search').click();
                 }
+            });
+
+            //监听scroll
+            $(window).scroll(function(event) {
+                event.preventDefault();
+                /* Act on the event */
+                var scrollHeight = $(document).scrollTop();
+                var windowHeight = $(window).height();
+                $('.change-sort').css('top', scrollHeight + windowHeight / 2);
             });
         },
         /*-----------------------------------------------------------------------------------------------------------

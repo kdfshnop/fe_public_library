@@ -66,7 +66,7 @@ define([
         options.dataAdapter = SelectData;
       }
 
-      if (options.minimumInputLength > 0) {
+      if (options.minimumInputLength) {
         options.dataAdapter = Utils.Decorate(
           options.dataAdapter,
           MinimumInputLength
