@@ -26,7 +26,11 @@
             if (wktable) {
                 var self = wktable;
                 //选中
-                wktable.$table.on('click', 'tbody tr', function() {
+                wktable.$table.on('click', 'tbody tr', function(e) {
+                    var $target = $(e.target);
+                    if($target.is('button') || $target.is('a')){//点击的是tr中a或button，不影响该行的选中状态
+                        return;
+                    }
                     var icon = $(this).find('.icon-18');
                     if (icon.hasClass('icon-18-unchecked')) {
                         icon.removeClass('icon-18-unchecked');
