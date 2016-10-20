@@ -19,7 +19,7 @@
             $table.find('thead .icon-18').addClass('icon-18-unchecked');
         }
     }
-    $.fn.setCheckAll = function() {
+    $.fn.setCheckAll = function(cb) {
 
         return this.each(function() {
             var wktable = $(this).data('wk.table');
@@ -39,6 +39,8 @@
                     }
 
                     calculateCheckAll(self.$table);
+
+                    cb&&cb();
                 });
 
                 //全选
@@ -51,6 +53,8 @@
                         $this.addClass('icon-18-unchecked');
                         self.$table.find('tbody .icon-18').addClass('icon-18-unchecked');
                     }
+
+                    cb&&cb();
                 });
             }
         });

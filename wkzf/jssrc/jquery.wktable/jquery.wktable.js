@@ -507,11 +507,13 @@ opitons:{
         var pageIndexParamName = this.options.pageInfoMapping.pageIndex;
         var pageSizeParamName = this.options.pageInfoMapping.pageSize;
         var sortParamName = this.options.pageInfoMapping.sort;
-        var sortTypeParamName = this.options.pageInfoMapping.sortType;
-        obj[pageIndexParamName] = pi;
-        obj[pageSizeParamName] = ps;
+        var sortTypeParamName = this.options.pageInfoMapping.sortType;        
+        if(self.options.tableNavigation.displayTableNavigation){
+            obj[pageIndexParamName] = pi;
+            obj[pageSizeParamName] = ps;
+        }
         obj[sortParamName] = this.sort;
-        obj[sortTypeParamName] = this.sortType;
+            obj[sortTypeParamName] = this.sortType;
         var params = $.extend({}, this.options.params, obj);
 
         //发送请求
