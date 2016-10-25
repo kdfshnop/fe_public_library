@@ -56,6 +56,14 @@
 
                     cb&&cb();
                 });
+
+                if(wktable.options.ready){
+                    var originalReady = wktable.options.ready;
+                    wktable.options.ready = function(){
+                        wktable.$table.find('thead .icon-18').addClass('icon-18-unchecked');
+                        originalReady.call(wktable,arguments);
+                    }
+                }
             }
         });
     };
