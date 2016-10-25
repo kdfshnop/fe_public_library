@@ -131,7 +131,7 @@ opitons:{
     //获得列对象的自定义属性，排除插件使用的字段
     function getCustomProperties(col) {
         return Object.getOwnPropertyNames(col).filter(function(p) {
-            return p != "text" && p != "field" && p != "subColumns" && p != "value" && p != "sortable" && p != "sortField";
+            return p != "text" && p != "field" && p != "subColumns" && p != "value" && p != "sortable" && p != "sortField" && p!= "ascSort" && p!="descSort";
         });
     }
 
@@ -139,12 +139,14 @@ opitons:{
         //this.$table.hide();
         this.$navigation.hide();
         this.$empty.show();
+        this.$tbody.hide();
     }
 
     function showTable() {
         this.$table.show();
         this.$navigation.show();
         this.$empty.hide();
+        this.$tbody.show();
     }
 
     //把列对象的自定义属性以字符串的形式返回
@@ -237,7 +239,7 @@ opitons:{
         //清空表体
         this.$tbody.empty();
         var str = ""; //保存表体字符串
-
+        items = items || [];
         items.forEach(function(item, index) {
             if (item[self.options.uniqueId] != undefined) {
                 str += "<tr data-id='" + item[self.options.uniqueId] + "'>"
@@ -505,11 +507,13 @@ opitons:{
         var pageIndexParamName = this.options.pageInfoMapping.pageIndex;
         var pageSizeParamName = this.options.pageInfoMapping.pageSize;
         var sortParamName = this.options.pageInfoMapping.sort;
-        var sortTypeParamName = this.options.pageInfoMapping.sortType;
-        obj[pageIndexParamName] = pi;
-        obj[pageSizeParamName] = ps;
+        var sortTypeParamName = this.options.pageInfoMapping.sortType;        
+        if(self.options.tableNavigation.displayTableNavigation){
+            obj[pageIndexParamName] = pi;
+            obj[pageSizeParamName] = ps;
+        }
         obj[sortParamName] = this.sort;
-        obj[sortTypeParamName] = this.sortType;
+            obj[sortTypeParamName] = this.sortType;
         var params = $.extend({}, this.options.params, obj);
 
         //发送请求
@@ -544,6 +548,7 @@ opitons:{
 
     //本地获取数据
     function localFetch(pageIndex) {
+        var self = this;
         //收集分页和排序参数
         var pi = pageIndex || this.pageInfo.pageIndex + 1;
         var ps = this.pageInfo.pageSize;
@@ -557,15 +562,25 @@ opitons:{
             }).length === properties.length;
         });
         var total = data.length;
-        var pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);
+        var pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);        
+
+        var defaultAscSort = function(a, b) { //排序
+            return a[sort].toString().localeCompare(b[sort].toString());            
+        };
+        var defaultDescSort = function(a, b) { //排序
+            return b[sort].toString().localeCompare(a[sort].toString());            
+        };
         if (sort !== '' && sort != undefined) {
-            data = data.sort(function(a, b) { //排序
-                if (sortType === "desc") {
-                    return b[sort].toString().localCompare(a[sort].toString());
-                } else {
-                    return a[sort].toString().localCompare(b[sort].toString());
-                }
-            });
+            var column = this.options.columns.filter(function(col){
+                return col.sortField == sort || col.field == sort;
+            })[0];
+            var ascSort = column.ascSort || defaultAscSort;
+            var descSort = column.descSort || defaultDescSort;
+            if(sortType ==="desc"){
+                data = data.sort(descSort);
+            }else{
+                data = data.sort(ascSort);
+            }
         }
         data = data.filter(function(ele, ind) { //分页
             return ind >= (pi - 1) * ps && ind < pi * ps;
@@ -608,7 +623,7 @@ opitons:{
             pageIndex = 1;
         }
 
-        this.pageInfo.pageIndex = pageIndex - 1;        
+        this.pageInfo.pageIndex = pageIndex - 1;
         fetch.call(this, pageIndex);
     };
 
@@ -650,7 +665,7 @@ opitons:{
 
     //查询
     DataTable.prototype.search = function(params) {
-        this.setOptions({ params: params });
+        this.setOptions({ params: params });        
         this.goto(1);
     }
 
@@ -758,7 +773,7 @@ opitons:{
         }, //查询参数中分页参数的映射
         uniqueId: "id",
         autoRequestAtTheFirstTime: true,
-        dataStringify:true//
+        dataStringify: true //
     };
 
     function Plugin(option, _relatedTarget) {
