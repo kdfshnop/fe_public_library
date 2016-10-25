@@ -67,4 +67,18 @@
             }
         });
     };
+
+    $.fn.getCheckedItems = function(){
+        var wktable = $(this).data('wk.table');
+        if(wktable){
+            var trs = [];
+            wktable.$table.find('tbody .icon-18:not(.icon-18-unchecked)').closest('tr').each(function(index,ele){
+                trs.push(ele);
+            });
+
+            return trs;
+        }
+
+        return null;
+    }
 }(jQuery);
