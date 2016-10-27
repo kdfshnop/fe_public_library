@@ -2,15 +2,15 @@
 	"items":[
 		{
 			"id":1,
-			"text":"china"
+			"text":"shanghai"
 		},
 		{
 			"id":2,
-			"text":"us"
+			"text":"zhengzhou"
 		},
 		{
 			"id":3,
-			"text":"usa"
+			"text":"xuzhou"
 		}
 	]
 }
