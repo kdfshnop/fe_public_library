@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf8" />
     <link rel="stylesheet" type="text/css" href="/fe_public_library/wkzf/js/util/select2/4.0.1/dist/css/select2.min.css" />
-    <script type="text/javascript" src="/fe_public_library/wkzf/js/lib/jQuery/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="/fe_public_library/wkzf/js/lib/jQuery/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" src="/fe_public_library/wkzf/js/util/select2/4.0.1/dist/js/select2.min.js"></script>
     <script type="text/javascript" src="/fe_public_library/wkzf/js/util/select2/4.0.1/dist/js/i18n/zh-CN.js"></script>
     <script type="text/javascript" src="/fe_public_library/wkzf/jssrc/cascadingSelect2.js"></script>
@@ -18,11 +18,11 @@
 <body>
 	<h2>远程数据</h2>
 	<hr/>
-    国家：<select id="countryId"></select><br/><br/>
-    城市：<select id="cityId"></select><br/><br/>
-    区域：<select id="districtId"></select><br/><br/>
-    板块：<select id="townId"></select><br/><br/>
-    小区：<select id="estateId"></select>
+    国家：<select id="countryId" data-value="1"></select><br/><br/>
+    城市：<select id="cityId" data-value="1"></select><br/><br/>
+    区域：<select id="districtId" data-value="1"></select><br/><br/>
+    板块：<select id="townId" data-value="1"></select><br/><br/>
+    小区：<select id="estateId" data-value="1"></select>
     <h2>本地数据</h2>
     <hr/>
     国家：<select id="countryId2"></select><br/><br/>
@@ -45,6 +45,10 @@ $(function() {
             paramName: 'country', //查询的参数
             paramNameForNext: 'countryId', //查询的参数
             value: null,
+            placeholder:{
+                id:"",
+                text:"--请选择s--"
+            },
             data:{
             	name:"test",
             	age:11
@@ -52,12 +56,22 @@ $(function() {
             selected: function() {
                 console.log("country changed");
             }, //选中触发的事件
+            processResults:function(data){
+                if(this.placeholder){
+                    data.items.splice(0,0,this.placeholder);
+                }
+                return data.items;
+            }
         }, {
             ele: '#cityId', //select元素，jQuery对象
             url: 'city.json', //查询接口地址
             paramName: 'city', //查询的参数
             paramNameForNext: 'cityId', //查询的参数
             value: null,
+            placeholder:{
+                id:"",
+                text:"--请选择s--"
+            },
             data:{
             	look:"sdf",
             	isGood:true
@@ -65,32 +79,68 @@ $(function() {
             selected: function() {
                 console.log("city changed");
             }, //选中触发的事件
+            processResults:function(data){
+                if(this.placeholder){
+                    data.items.splice(0,0,this.placeholder);
+                }
+                return data.items;
+            }
         },{
             ele: '#districtId', //select元素，jQuery对象
             url: 'district.json', //查询接口地址
             paramName: 'district', //查询的参数
             paramNameForNext: 'districtId', //查询的参数
             value: null,
+            placeholder:{
+                id:"",
+                text:"--请选择s--"
+            },
             selected: function() {
                 console.log("district changed");
             }, //选中触发的事件
+            processResults:function(data){
+                if(this.placeholder){
+                    data.items.splice(0,0,this.placeholder);
+                }
+                return data.items;
+            }
         },{
             ele: '#townId', //select元素，jQuery对象
             url: 'town.json', //查询接口地址
             paramName: 'town', //查询的参数
             paramNameForNext: 'townId', //查询的参数
             value: null,
+            placeholder:{
+                id:"",
+                text:"--请选择s--"
+            },
             selected: function() {
                 console.log("town changed");
             }, //选中触发的事件
+            processResults:function(data){
+                if(this.placeholder){
+                    data.items.splice(0,0,this.placeholder);
+                }
+                return data.items;
+            }
         },{
             ele: '#estateId', //select元素，jQuery对象
             url: 'estate.json', //查询接口地址
             paramName: 'estate', //查询的参数
             value: null,
+            placeholder:{
+                id:"",
+                text:"--请选择s--"
+            },
             selected: function() {
                 console.log("city changed");
             }, //选中触发的事件
+            processResults:function(data){
+                if(this.placeholder){
+                    data.items.splice(0,0,this.placeholder);
+                }
+                return data.items;
+            }
         }]
     });
 

@@ -558,7 +558,7 @@ opitons:{
         var data = this.options.data.filter(function(ele) { //先过滤
             var properties = Object.getOwnPropertyNames(params);
             return properties.length === 0 || properties.filter(function(p) {
-                return ele[p] == params[p] || params[p] == null || params[p] == '';
+                return params[p] == null || params[p] == '' || ele[p] == params[p] || (ele[p] && (ele[p].toString()).indexOf((params[p]||"").toString())>-1);
             }).length === properties.length;
         });
         var total = data.length;
