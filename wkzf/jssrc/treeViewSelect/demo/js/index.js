@@ -7,8 +7,8 @@
 	            multiSelect: true,
 	            enableCascade:false
 	        },
-	        onRendered:function(e,nodes){
-	        	// console.log(nodes);
+	        successCallback:function(nodes){
+	        	console.log(nodes);
 	        }
 	    });
 
