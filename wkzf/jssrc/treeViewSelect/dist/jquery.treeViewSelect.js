@@ -2366,7 +2366,7 @@
                 } else if (!$.isFunction(_this[options]) || options.charAt(0) === '_') {
                     logError('No such method : ' + options);
                 } else {
-                    result = _this[options].apply(_this, args);
+                    result = _this[options].call(_this, args);
                 }
             } else if (typeof(options) === 'object') {
                 if (!_this) {
