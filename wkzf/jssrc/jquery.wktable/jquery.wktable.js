@@ -298,12 +298,12 @@ opitons:{
             if (pi == self.pageInfo.pageIndex) { //如果点击的是当前页码，不做处理
                 return;
             }
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi);
         });
         $('.next', this.$navigation).click(function(e) {
             var pi = self.pageInfo.pageIndex;
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi + 1);
             e.preventDefault();
         });
@@ -314,27 +314,27 @@ opitons:{
         });
         $('.page-size-select', this.$navigation).change(function() {
             self.pageInfo.pageSize = $(this).val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(1);
         });
         $('.go', this.$navigation).click(function() {
             var pi = $(this).prev().val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi);
         });
         $('.refresh', this.$navigation).click(function() {
             //var pi = $(this).prev().val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.refresh();
         });
         $('.less', this.$navigation).click(function(e) {
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex - half);
             e.preventDefault();
         });
         $('.more', this.$navigation).click(function(e) {
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex + half);
             e.preventDefault();
@@ -375,7 +375,8 @@ opitons:{
                 $this.addClass(self.options.sortClasses.sortAscClass);
             }
 
-            self.goto(1);
+            //self.goto(1);
+            self.refresh();
         });
     }
 

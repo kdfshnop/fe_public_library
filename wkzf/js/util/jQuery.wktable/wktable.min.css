@@ -6,8 +6,8 @@
 .wktable .loading{height:80px;width:80px;position:absolute;background:url(./images/loading.gif) no-repeat center;background-size:100% 100%}
 .wktable .loading img{width:100%}
 .wktable thead .sort{background:url(./images/sort_both.png) no-repeat right;cursor:pointer;padding-right:15px}
-.sort-asc{background:url(./images/sort_asc.png) no-repeat right}
-.sort-desc{background:url(./images/sort_desc.png) no-repeat right}
+.wktable thead .sort-asc{background:url(./images/sort_asc.png) no-repeat right}
+.wktable thead .sort-desc{background:url(./images/sort_desc.png) no-repeat right}
 .table-navigation{font-family:microsoft yahei,simsun;width:100%;clear:both;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
 .table-navigation .pagination a{background-image:none;color:#333;cursor:pointer;display:inline-block;font-size:12px;font-weight:400;padding:6px 12px;margin-bottom:0;margin-left:5px;line-height:1.42857143;text-align:center;text-decoration:none;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 .table-navigation .pagination a.next,.table-navigation .pagination a.page-index,.table-navigation .pagination a.prev{border:1px solid #adadad;border-radius:4px}

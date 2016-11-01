@@ -53,11 +53,11 @@ wktable默认样式
     padding-right:15px;
 }
 
-.sort-asc {
+.wktable thead .sort-asc {
     background: url("./images/sort_asc.png") no-repeat right;
 }
 
-.sort-desc {
+.wktable thead .sort-desc {
     background: url("./images/sort_desc.png") no-repeat right;
 }
 
