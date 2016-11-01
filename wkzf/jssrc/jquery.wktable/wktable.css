@@ -47,9 +47,10 @@ wktable默认样式
     width: 100%;
 }
 
-.sort {
+.wktable thead .sort {
     background: url("./images/sort_both.png") no-repeat right;
     cursor: pointer;
+    padding-right:15px;
 }
 
 .sort-asc {

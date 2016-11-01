@@ -5,7 +5,7 @@
 .wktable tbody tr td a{color:#337ab7;text-decoration:none}
 .wktable .loading{height:80px;width:80px;position:absolute;background:url(./images/loading.gif) no-repeat center;background-size:100% 100%}
 .wktable .loading img{width:100%}
-.sort{background:url(./images/sort_both.png) no-repeat right;cursor:pointer}
+.wktable thead .sort{background:url(./images/sort_both.png) no-repeat right;cursor:pointer;padding-right:15px}
 .sort-asc{background:url(./images/sort_asc.png) no-repeat right}
 .sort-desc{background:url(./images/sort_desc.png) no-repeat right}
 .table-navigation{font-family:microsoft yahei,simsun;width:100%;clear:both;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}

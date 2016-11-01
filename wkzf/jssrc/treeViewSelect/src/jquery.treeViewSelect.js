@@ -370,6 +370,10 @@
             _.initialized = true;
             _.treeData = $.parseJSON(_.element.attr('data-tree'));
             _.buildTreeSelect();
+
+            if (_.settings.successCallback) {
+                _.settings.successCallback(_.rendredNodes);
+            }
         } else {
             try {
                 $.ajax({
@@ -391,7 +395,7 @@
                                 _.buildTreeSelect();
 
                                 if (_.settings.successCallback) {
-                                    _.settings.successCallback();
+                                    _.settings.successCallback(_.rendredNodes);
                                 }
                             }
                         } else {
@@ -731,10 +735,12 @@
         $('[data-toggle="tooltip"]').tooltip('destroy');
         $('[data-toggle="tooltip"]').tooltip();
 
+        //记录当前已渲染的节点
+        _.rendredNodes = listNodes;
+
         if (!isDefault) {
             _.element.trigger('completed', [listNodes]);
         }
-
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1002,7 +1008,7 @@
                 } else if (!$.isFunction(_this[options]) || options.charAt(0) === '_') {
                     logError('No such method : ' + options);
                 } else {
-                    result = _this[options].apply(_this, args);
+                    result = _this[options].call(_this, args);
                 }
             } else if (typeof(options) === 'object') {
                 if (!_this) {
