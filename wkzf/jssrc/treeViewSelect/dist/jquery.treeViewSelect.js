@@ -2281,7 +2281,7 @@
             return;
         }
         this.defaultVals = vals;
-        debugger;
+        //debugger;
         this.renderItems(true);
     }
 
