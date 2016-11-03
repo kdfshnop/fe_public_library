@@ -513,7 +513,7 @@
         if (_.settings.bootstrapTreeParams.multiSelect) {
             _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
 
-                _.clicked=true;
+                _.clicked = true;
 
                 _.renderItems();
 
@@ -525,7 +525,7 @@
                 if (!_.settings.showTree) {
                     _.treeContainer.addClass('hide');
                 }
-                _.clicked=true;
+                _.clicked = true;
 
                 _.renderItems();
 
@@ -631,27 +631,12 @@
         var hiddenNodeStrs = '';
 
         console.log('renderItems');
-        if (isDefault) {
-            if (this.defaultVals && this.defaultVals.length > 0) {
-                if (this.defaultVals && this.defaultVals.length > 0) {
-                    for (var i = 0; i < this.defaultVals.length; i++) {
-                        tmpNode = _.getNodeById(this.defaultVals[i]);
-                        if (tmpNode) {
-                            if (_.settings.bootstrapTreeParams.multiSelect) {
-                                _.tree.treeview('checkNode', [tmpNode, {
-                                    silent: true
-                                }]);
 
-                            } else {
-                                _.tree.treeview('selectNode', [tmpNode, {
-                                    silent: true
-                                }]);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        $clearItem = $(_.template.clearItem);
+        $ellipsisItem = $(_.template.ellipsisItem);
+        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
+        $itemLisGroup.empty();
+        _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             checkedNodes = _.tree.treeview('getChecked');
@@ -662,13 +647,6 @@
         } else {
             listNodes = _.tree.treeview('getSelected');
         }
-
-
-        $clearItem = $(_.template.clearItem);
-        $ellipsisItem = $(_.template.ellipsisItem);
-        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
-        $itemLisGroup.empty();
-        _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
         if (listNodes && listNodes.length > 0) {
             //隐藏placeholder
@@ -729,7 +707,7 @@
                         }]);
                     }
                 }
-                _.clicked=true;
+                _.clicked = true;
 
                 _.renderItems();
 
@@ -930,16 +908,42 @@
     设置默认值
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.setDefaults = function(vals) {
-        if (this.clicked) {
-            return;
-        }
-
+        var _ = this;
+        var tmpNode;
         if (!vals || !vals.length) {
             return;
         }
 
-        this.clicked=false;
         this.defaultVals = vals;
+
+
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            _.tree.treeview('uncheckAll', { silent: true });
+        } else {
+            tmpNode = _.tree.treeview('getSelected');
+
+            if (tmpNode) {
+                _.tree.treeview('unselectNode', [tmpNode, {
+                    silent: true
+                }]);
+            }
+        }
+
+        for (var i = 0; i < this.defaultVals.length; i++) {
+            tmpNode = _.getNodeById(this.defaultVals[i])
+            if (tmpNode) {
+                if (_.settings.bootstrapTreeParams.multiSelect) {
+                    _.tree.treeview('checkNode', [tmpNode, {
+                        silent: true
+                    }]);
+
+                } else {
+                    _.tree.treeview('selectNode', [tmpNode, {
+                        silent: true
+                    }]);
+                }
+            }
+        }
 
         this.renderItems(true);
     }
