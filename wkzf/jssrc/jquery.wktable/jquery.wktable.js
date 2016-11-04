@@ -517,6 +517,13 @@ opitons:{
             obj[sortTypeParamName] = this.sortType;
         var params = $.extend({}, this.options.params, obj);
 
+        //删除空字符串属性
+        for(var v in params){
+            if(params[v] == null || params[v]==""){
+                delete params[v];
+            }
+        }
+
         //发送请求
         $.ajax({
             url: this.options.url,
