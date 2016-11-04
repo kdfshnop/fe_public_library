@@ -1988,8 +1988,6 @@
         var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
         var hiddenNodeStrs = '';
 
-        console.log('renderItems');
-
         $clearItem = $(_.template.clearItem);
         $ellipsisItem = $(_.template.ellipsisItem);
         $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
@@ -2017,7 +2015,8 @@
                 //取出指定节点的父节点的数量，并给节点赋值，父节点的数量就是节点的level 值
                 getParentNodes(_.tree, listNodes[i], pNodesArr);
                 listNodes[i].level = pNodesArr.length + 1;
-                listNodes[i].parents=pNodesArr;
+                //解决 $.extend() 中 对象循环指向导致的栈溢出，采取对象深复制
+                listNodes[i].parents=$.parseJSON(JSON.stringify(pNodesArr)) ;
 
                 //生成选中项
                 $selectedItem = _.genTreeSelectItem(listNodes[i]);
