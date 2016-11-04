@@ -36,7 +36,6 @@
 	        // console.log('itemsRendered');
 
 	        console.log(node);
-
 	        
 	        // window.location.reload();
 	    });
