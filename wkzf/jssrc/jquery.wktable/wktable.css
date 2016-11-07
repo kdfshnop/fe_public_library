@@ -47,16 +47,17 @@ wktable默认样式
     width: 100%;
 }
 
-.sort {
+.wktable thead .sort {
     background: url("./images/sort_both.png") no-repeat right;
     cursor: pointer;
+    padding-right:15px;
 }
 
-.sort-asc {
+.wktable thead .sort-asc {
     background: url("./images/sort_asc.png") no-repeat right;
 }
 
-.sort-desc {
+.wktable thead .sort-desc {
     background: url("./images/sort_desc.png") no-repeat right;
 }
 
@@ -178,4 +179,7 @@ wktable默认样式
 .table-navigation .info span {
 	padding:6px 5px;
 	color:#a94442;
+}
+.no-data{
+    margin-top:-20px;
 }

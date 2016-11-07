@@ -1390,9 +1390,9 @@
             dataType: "jsonp",
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            设置ajax请求的timeout 时间
+            设置ajax请求的timeout 时间,默认为1分钟
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            timeout: 3000,
+            timeout: 60000,
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             异步请求报文
@@ -1644,7 +1644,7 @@
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             设置默认值
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            setDefaults: $.proxy(this.setDefaults, this),
+            setDefaults: $.proxy(this.setDefaults, this)
         };
     }
 
@@ -1728,6 +1728,10 @@
             _.initialized = true;
             _.treeData = $.parseJSON(_.element.attr('data-tree'));
             _.buildTreeSelect();
+
+            if (_.settings.successCallback) {
+                _.settings.successCallback(_.rendredNodes);
+            }
         } else {
             try {
                 $.ajax({
@@ -1749,7 +1753,7 @@
                                 _.buildTreeSelect();
 
                                 if (_.settings.successCallback) {
-                                    _.settings.successCallback();
+                                    _.settings.successCallback(_.rendredNodes);
                                 }
                             }
                         } else {
@@ -1866,7 +1870,12 @@
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
+
+                _.clicked = true;
+
                 _.renderItems();
+
+                return false;
             });
 
         } else {
@@ -1874,8 +1883,11 @@
                 if (!_.settings.showTree) {
                     _.treeContainer.addClass('hide');
                 }
+                _.clicked = true;
 
                 _.renderItems();
+
+                return false;
             });
         }
     }
@@ -1976,25 +1988,11 @@
         var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
         var hiddenNodeStrs = '';
 
-        if (isDefault) {
-            if (this.defaultVals && this.defaultVals.length > 0) {
-                if (this.defaultVals && this.defaultVals.length > 0) {
-                    for (var i = 0; i < this.defaultVals.length; i++) {
-                        tmpNode = _.getNodeById(this.defaultVals[i]);
-                        if (_.settings.bootstrapTreeParams.multiSelect) {
-                            _.tree.treeview('checkNode', [tmpNode, {
-                                silent: true
-                            }]);
-
-                        } else {
-                            _.tree.treeview('selectNode', [tmpNode, {
-                                silent: true
-                            }]);
-                        }
-                    }
-                }
-            }
-        }
+        $clearItem = $(_.template.clearItem);
+        $ellipsisItem = $(_.template.ellipsisItem);
+        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
+        $itemLisGroup.empty();
+        _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             checkedNodes = _.tree.treeview('getChecked');
@@ -2005,13 +2003,6 @@
         } else {
             listNodes = _.tree.treeview('getSelected');
         }
-
-
-        $clearItem = $(_.template.clearItem);
-        $ellipsisItem = $(_.template.ellipsisItem);
-        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
-        $itemLisGroup.empty();
-        _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
         if (listNodes && listNodes.length > 0) {
             //隐藏placeholder
@@ -2024,6 +2015,8 @@
                 //取出指定节点的父节点的数量，并给节点赋值，父节点的数量就是节点的level 值
                 getParentNodes(_.tree, listNodes[i], pNodesArr);
                 listNodes[i].level = pNodesArr.length + 1;
+                //解决 $.extend() 中 对象循环指向导致的栈溢出，采取对象深复制
+                listNodes[i].parents=$.parseJSON(JSON.stringify(pNodesArr)) ;
 
                 //生成选中项
                 $selectedItem = _.genTreeSelectItem(listNodes[i]);
@@ -2059,7 +2052,7 @@
         //支持多选则添加清空按钮
         if (listNodes.length) {
             //重置筛选条件按钮绑定事件
-            $clearItem.find('.glyphicon-remove').on('click', function(event) {
+            $clearItem.find('.glyphicon-remove').off('click').on('click', function(event) {
 
                 if (_.settings.bootstrapTreeParams.multiSelect) {
                     _.tree.treeview('uncheckRealAll', {
@@ -2072,6 +2065,7 @@
                         }]);
                     }
                 }
+                _.clicked = true;
 
                 _.renderItems();
 
@@ -2089,10 +2083,12 @@
         $('[data-toggle="tooltip"]').tooltip('destroy');
         $('[data-toggle="tooltip"]').tooltip();
 
+        //记录当前已渲染的节点
+        _.rendredNodes = listNodes;
+
         if (!isDefault) {
             _.element.trigger('completed', [listNodes]);
         }
-
     }
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2263,7 +2259,6 @@
             }
         }
 
-
         return idArray;
     }
 
@@ -2271,10 +2266,42 @@
     设置默认值
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.setDefaults = function(vals) {
+        var _ = this;
+        var tmpNode;
         if (!vals || !vals.length) {
             return;
         }
+
         this.defaultVals = vals;
+
+
+        if (_.settings.bootstrapTreeParams.multiSelect) {
+            _.tree.treeview('uncheckAll', { silent: true });
+        } else {
+            tmpNode = _.tree.treeview('getSelected');
+
+            if (tmpNode) {
+                _.tree.treeview('unselectNode', [tmpNode, {
+                    silent: true
+                }]);
+            }
+        }
+
+        for (var i = 0; i < this.defaultVals.length; i++) {
+            tmpNode = _.getNodeById(this.defaultVals[i])
+            if (tmpNode) {
+                if (_.settings.bootstrapTreeParams.multiSelect) {
+                    _.tree.treeview('checkNode', [tmpNode, {
+                        silent: true
+                    }]);
+
+                } else {
+                    _.tree.treeview('selectNode', [tmpNode, {
+                        silent: true
+                    }]);
+                }
+            }
+        }
 
         this.renderItems(true);
     }
@@ -2289,8 +2316,8 @@
         var nodes = _.tree.treeview('getAllNodes');
         if (nodes && nodes.length > 0) {
             for (var i = nodes.length - 1; i >= 0; i--) {
-                tmpNode = nodes[i];
-                if (tmpNode.id == id) {
+                if (nodes[i].id == id) {
+                    tmpNode = nodes[i];
                     break;
                 }
             }
@@ -2360,7 +2387,7 @@
                 } else if (!$.isFunction(_this[options]) || options.charAt(0) === '_') {
                     logError('No such method : ' + options);
                 } else {
-                    result = _this[options].apply(_this, args);
+                    result = _this[options].call(_this, args);
                 }
             } else if (typeof(options) === 'object') {
                 if (!_this) {

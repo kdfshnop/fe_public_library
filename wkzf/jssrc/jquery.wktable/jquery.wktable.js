@@ -131,20 +131,22 @@ opitons:{
     //获得列对象的自定义属性，排除插件使用的字段
     function getCustomProperties(col) {
         return Object.getOwnPropertyNames(col).filter(function(p) {
-            return p != "text" && p != "field" && p != "subColumns" && p != "value" && p != "sortable" && p != "sortField";
+            return p != "text" && p != "field" && p != "subColumns" && p != "value" && p != "sortable" && p != "sortField" && p!= "ascSort" && p!="descSort";
         });
     }
 
     function showEmptyMessage() {
-        this.$table.hide();
+        //this.$table.hide();
         this.$navigation.hide();
         this.$empty.show();
+        this.$tbody.hide();
     }
 
     function showTable() {
         this.$table.show();
         this.$navigation.show();
         this.$empty.hide();
+        this.$tbody.show();
     }
 
     //把列对象的自定义属性以字符串的形式返回
@@ -237,7 +239,7 @@ opitons:{
         //清空表体
         this.$tbody.empty();
         var str = ""; //保存表体字符串
-
+        items = items || [];
         items.forEach(function(item, index) {
             if (item[self.options.uniqueId] != undefined) {
                 str += "<tr data-id='" + item[self.options.uniqueId] + "'>"
@@ -296,12 +298,12 @@ opitons:{
             if (pi == self.pageInfo.pageIndex) { //如果点击的是当前页码，不做处理
                 return;
             }
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi);
         });
         $('.next', this.$navigation).click(function(e) {
             var pi = self.pageInfo.pageIndex;
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi + 1);
             e.preventDefault();
         });
@@ -312,27 +314,27 @@ opitons:{
         });
         $('.page-size-select', this.$navigation).change(function() {
             self.pageInfo.pageSize = $(this).val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(1);
         });
         $('.go', this.$navigation).click(function() {
             var pi = $(this).prev().val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi);
         });
         $('.refresh', this.$navigation).click(function() {
             //var pi = $(this).prev().val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.refresh();
         });
         $('.less', this.$navigation).click(function(e) {
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex - half);
             e.preventDefault();
         });
         $('.more', this.$navigation).click(function(e) {
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex + half);
             e.preventDefault();
@@ -373,7 +375,8 @@ opitons:{
                 $this.addClass(self.options.sortClasses.sortAscClass);
             }
 
-            self.goto(1);
+            //self.goto(1);
+            self.refresh();
         });
     }
 
@@ -505,11 +508,13 @@ opitons:{
         var pageIndexParamName = this.options.pageInfoMapping.pageIndex;
         var pageSizeParamName = this.options.pageInfoMapping.pageSize;
         var sortParamName = this.options.pageInfoMapping.sort;
-        var sortTypeParamName = this.options.pageInfoMapping.sortType;
-        obj[pageIndexParamName] = pi;
-        obj[pageSizeParamName] = ps;
+        var sortTypeParamName = this.options.pageInfoMapping.sortType;        
+        if(self.options.tableNavigation.displayTableNavigation){
+            obj[pageIndexParamName] = pi;
+            obj[pageSizeParamName] = ps;
+        }
         obj[sortParamName] = this.sort;
-        obj[sortTypeParamName] = this.sortType;
+            obj[sortTypeParamName] = this.sortType;
         var params = $.extend({}, this.options.params, obj);
 
         //发送请求
@@ -544,6 +549,7 @@ opitons:{
 
     //本地获取数据
     function localFetch(pageIndex) {
+        var self = this;
         //收集分页和排序参数
         var pi = pageIndex || this.pageInfo.pageIndex + 1;
         var ps = this.pageInfo.pageSize;
@@ -553,19 +559,29 @@ opitons:{
         var data = this.options.data.filter(function(ele) { //先过滤
             var properties = Object.getOwnPropertyNames(params);
             return properties.length === 0 || properties.filter(function(p) {
-                return ele[p] == params[p] || params[p] == null || params[p] == '';
+                return params[p] == null || params[p] == '' || ele[p] == params[p] || (ele[p] && (ele[p].toString()).indexOf((params[p]||"").toString())>-1);
             }).length === properties.length;
         });
         var total = data.length;
-        var pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);
+        var pageTotal = Math.ceil(this.pageInfo.total / this.pageInfo.pageSize);        
+
+        var defaultAscSort = function(a, b) { //排序
+            return a[sort].toString().localeCompare(b[sort].toString());            
+        };
+        var defaultDescSort = function(a, b) { //排序
+            return b[sort].toString().localeCompare(a[sort].toString());            
+        };
         if (sort !== '' && sort != undefined) {
-            data = data.sort(function(a, b) { //排序
-                if (sortType === "desc") {
-                    return b[sort].toString().localCompare(a[sort].toString());
-                } else {
-                    return a[sort].toString().localCompare(b[sort].toString());
-                }
-            });
+            var column = this.options.columns.filter(function(col){
+                return col.sortField == sort || col.field == sort;
+            })[0];
+            var ascSort = column.ascSort || defaultAscSort;
+            var descSort = column.descSort || defaultDescSort;
+            if(sortType ==="desc"){
+                data = data.sort(descSort);
+            }else{
+                data = data.sort(ascSort);
+            }
         }
         data = data.filter(function(ele, ind) { //分页
             return ind >= (pi - 1) * ps && ind < pi * ps;
@@ -608,7 +624,7 @@ opitons:{
             pageIndex = 1;
         }
 
-        this.pageInfo.pageIndex = pageIndex - 1;        
+        this.pageInfo.pageIndex = pageIndex - 1;
         fetch.call(this, pageIndex);
     };
 
@@ -650,7 +666,7 @@ opitons:{
 
     //查询
     DataTable.prototype.search = function(params) {
-        this.setOptions({ params: params });
+        this.setOptions({ params: params });        
         this.goto(1);
     }
 
@@ -758,7 +774,7 @@ opitons:{
         }, //查询参数中分页参数的映射
         uniqueId: "id",
         autoRequestAtTheFirstTime: true,
-        dataStringify:true//
+        dataStringify: true //
     };
 
     function Plugin(option, _relatedTarget) {
