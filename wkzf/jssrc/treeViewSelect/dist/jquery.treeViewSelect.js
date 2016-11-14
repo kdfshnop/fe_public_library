@@ -1994,6 +1994,22 @@
         $itemLisGroup.empty();
         _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
+        for (var i = 0; i < _.defaultVals.length; i++) {
+            tmpNode = _.getNodeById(this.defaultVals[i])
+            if (tmpNode) {
+                if (_.settings.bootstrapTreeParams.multiSelect) {
+                    _.tree.treeview('checkNode', [tmpNode, {
+                        silent: true
+                    }]);
+
+                } else {
+                    _.tree.treeview('selectNode', [tmpNode, {
+                        silent: true
+                    }]);
+                }
+            }
+        }
+
         if (_.settings.bootstrapTreeParams.multiSelect) {
             checkedNodes = _.tree.treeview('getChecked');
             listNodes = checkedNodes;
@@ -2016,7 +2032,7 @@
                 getParentNodes(_.tree, listNodes[i], pNodesArr);
                 listNodes[i].level = pNodesArr.length + 1;
                 //解决 $.extend() 中 对象循环指向导致的栈溢出，采取对象深复制
-                listNodes[i].parents=$.parseJSON(JSON.stringify(pNodesArr)) ;
+                // listNodes[i].parents=$.parseJSON(JSON.stringify(pNodesArr)) ;
 
                 //生成选中项
                 $selectedItem = _.genTreeSelectItem(listNodes[i]);
@@ -2065,7 +2081,8 @@
                         }]);
                     }
                 }
-                _.clicked = true;
+                
+                _.defaultVals=[];
 
                 _.renderItems();
 
