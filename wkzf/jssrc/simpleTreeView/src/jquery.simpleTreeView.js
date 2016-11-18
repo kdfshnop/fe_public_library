@@ -28,7 +28,7 @@
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             设置ajax请求的timeout 时间
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            timeout: 3000,
+            timeout: 60000,
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             异步请求报文
@@ -410,6 +410,8 @@
             this.element.append(this.searchInput);
         }
 
+        this.defaultVals = this.element.attr("data-id") ? this.element.attr("data-id").split(',') : [];
+
         this.element.append(this.tree);
 
         this.setTree();
@@ -426,6 +428,8 @@
         tConfig.enableDownCascade = this.settings.enableDownCascade;
 
         this.tree.treeview(tConfig);
+
+        this.setDefaults(this.defaultVals);
 
         this.bindTreeEvents();
     }
@@ -479,6 +483,8 @@
 
         } else {
             _.tree.on('nodeSelected', function(event, node) {
+
+                _.defaultVals = [];
                 _.renderItems();
             });
         }
@@ -487,7 +493,7 @@
     SimpleTreeView.prototype.renderItems = function() {
         var _ = this;
 
-        var checkedNodes, listNodes, totalWidth, pNodesArr, nodeIds, tmpNode;
+        var checkedNodes, listNodes;
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             checkedNodes = _.tree.treeview('getChecked');
@@ -588,8 +594,8 @@
         var nodes = _.tree.treeview('getAllNodes');
         if (nodes && nodes.length > 0) {
             for (var i = nodes.length - 1; i >= 0; i--) {
-                tmpNode = nodes[i];
-                if (tmpNode.id == id) {
+                if (nodes[i].id == id) {
+                    tmpNode = nodes[i];
                     break;
                 }
             }
@@ -597,6 +603,56 @@
 
         return tmpNode;
     }
+
+    /*-----------------------------------------------------------------------------------------------------------
+    设置默认选择项
+    -----------------------------------------------------------------------------------------------------------*/
+    SimpleTreeView.prototype.setDefaults = function(ids) {
+
+        var _ = this;
+
+        var tmpNode, pNodes = [];
+
+        if (_.defaultVals && _.defaultVals.length) {
+            if (_.settings.bootstrapTreeParams.multiSelect) {
+                $.each(_.defaultVals, function(index, id) {
+                    tmpNode = _.getNodeById(id);
+                    if (tmpNode) {
+                        _.tree.treeview('checkNode', [tmpNode, {
+                            silent: true
+                        }]);
+
+                        getParentNodes(_.tree, tmpNode, pNodes);
+
+                        $.each(pNodes, function(index, node) {
+                            if (!node.state.expanded) {
+                                _.tree.treeview('expandNode', [node, {
+                                    silent: true
+                                }]);
+                            }
+                        });
+                    }
+                });
+            } else {
+                tmpNode = _.getNodeById(_.defaultVals[_.defaultVals.length - 1]);
+                if (tmpNode) {
+                    _.tree.treeview('selectNode', [tmpNode, {
+                        silent: true
+                    }]);
+
+                    getParentNodes(_.tree, tmpNode, pNodes);
+                    $.each(pNodes, function(index, node) {
+                        if (!node.state.expanded) {
+                            _.tree.treeview('expandNode', [node, {
+                                silent: true
+                            }]);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
 
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     滑动到第一个node的位置
