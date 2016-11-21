@@ -1,6 +1,6 @@
 $(function(){
 	$("#tree").simpleTreeView({
-		apiUrl: 'http://dev.01.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/bigDataCity.json',
+		apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/simpleTreeView/data/bigDataCity.json',
 		dataType:'json',
 		enableDownCascade:true,
 		enableUpCascade:true,

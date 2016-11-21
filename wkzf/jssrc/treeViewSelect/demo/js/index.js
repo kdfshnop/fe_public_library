@@ -32,6 +32,10 @@
 	        $('#area').treeViewSelect('setDefaults',['2']);
 	    });
 
+	    $('#btnCheckNodes').on('click',function(){
+	    	$('#area').treeViewSelect('checkNodes',['2adadad']);
+	    })
+
 	    $('#area').on('completed', function(eventType, node) {
 	        // console.log('itemsRendered');
 
