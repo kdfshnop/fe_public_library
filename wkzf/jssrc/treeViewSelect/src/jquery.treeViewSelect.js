@@ -46,11 +46,6 @@
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             showSearch: true,
 
-            /*-----------------------------------------------------------------------------------------------------------
-            是否显示清楚按钮
-            -----------------------------------------------------------------------------------------------------------*/
-            showClear: true,
-
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             placeholder 文本
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -291,7 +286,12 @@
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             设置默认值
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            setDefaults: $.proxy(this.setDefaults, this)
+            setDefaults: $.proxy(this.setDefaults, this),
+
+            /*-----------------------------------------------------------------------------------------------------------
+            选中指定节点
+            -----------------------------------------------------------------------------------------------------------*/
+            checkNodes: $.proxy(this.checkNodes, this),
         };
     }
 
@@ -529,7 +529,7 @@
                     _.treeContainer.addClass('hide');
                 }
 
-                _.defaultVals=[];
+                _.defaultVals = [];
                 _.renderItems();
 
                 return false;
@@ -737,12 +737,13 @@
 
                 event.stopPropagation();
             });
-
-            //添加重置筛选条件 
-            if (_.showClear) {
-                _.element.find('.treeviewselect-listOpGroup ul').prepend($clearItem);
-            }
         }
+
+        if (listNodes.length) {
+            _.element.find('.treeviewselect-listOpGroup ul').prepend($clearItem);
+        }
+
+
 
         $('[data-toggle="tooltip"]').tooltip('destroy');
         $('[data-toggle="tooltip"]').tooltip();
@@ -932,14 +933,11 @@
     TreeViewSelect.prototype.setDefaults = function(vals) {
         var _ = this;
         var tmpNode;
-        if (!vals || !vals.length) {
-            return;
-        }
+        var isMultiSelect = _.settings.bootstrapTreeParams.multiSelect;
 
-        this.defaultVals = vals;
+        _.defaultVals = vals;
 
-
-        if (_.settings.bootstrapTreeParams.multiSelect) {
+        if (isMultiSelect) {
             _.tree.treeview('uncheckAll', { silent: true });
         } else {
             tmpNode = _.tree.treeview('getSelected');
@@ -951,10 +949,10 @@
             }
         }
 
-        for (var i = 0; i < this.defaultVals.length; i++) {
-            tmpNode = _.getNodeById(this.defaultVals[i])
+        for (var i = 0; i < _.defaultVals.length; i++) {
+            tmpNode = _.getNodeById(_.defaultVals[i])
             if (tmpNode) {
-                if (_.settings.bootstrapTreeParams.multiSelect) {
+                if (isMultiSelect) {
                     _.tree.treeview('checkNode', [tmpNode, {
                         silent: true
                     }]);
@@ -968,6 +966,50 @@
         }
 
         this.renderItems(true);
+    }
+
+    /*-----------------------------------------------------------------------------------------------------------
+    选中指定节点
+    -----------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.checkNodes = function(ids) {
+        var _ = this;
+        var tmpNode;
+        var isMultiSelect = _.settings.bootstrapTreeParams.multiSelect;
+
+        if (isMultiSelect) {
+            _.tree.treeview('uncheckAll', { silent: true });
+        } else {
+            _.defaultVals = [];
+            tmpNode = _.tree.treeview('getSelected');
+            if (tmpNode) {
+                _.tree.treeview('unselectNode', [tmpNode, {
+                    silent: true
+                }]);
+            }
+        }
+
+        if (ids && ids.length) {
+            if (isMultiSelect) {
+                $.each(ids, function(index, id) {
+                    tmpNode = _.getNodeById(id);
+                    if (tmpNode) {
+                        if (isMultiSelect) {
+                            _.tree.treeview('checkNode', [tmpNode, {
+                                silent: true
+                            }]);
+
+                        }
+                    }
+                });
+            } else {
+                tmpNode = _.getNodeById(ids[ids.length - 1]);
+                _.tree.treeview('selectNode', [tmpNode, {
+                    silent: true
+                }]);
+            }
+        }
+
+        _.renderItems();
     }
 
 
