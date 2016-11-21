@@ -517,7 +517,7 @@
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
-
+                _.defaultVals = [];
                 _.renderItems();
 
                 return false;
