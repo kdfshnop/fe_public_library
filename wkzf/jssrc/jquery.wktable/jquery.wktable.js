@@ -61,6 +61,7 @@ opitons:{
     //构造函数
     var DataTable = function(element, options) {
             this.options = options;
+            this.isReady = false;
             this.pageInfo = {
                 pageIndex: this.options.pageIndex,
                 pageSize: this.options.pageSize,
@@ -615,6 +616,7 @@ opitons:{
 
         //绘制成功触发ready回调
         this.options.ready && this.options.ready.call(this, data.items);
+        this.isReady = true;
     };
     /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     公有方法
