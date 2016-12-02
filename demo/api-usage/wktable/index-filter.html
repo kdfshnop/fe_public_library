@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <link href="../../../bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />    
     <link href="../../../wkzf/js/util/jQuery.wktable/wktable.min.css" rel="stylesheet" />
+
     <style type="text/css">
         .wktable-th{
             position:relative;
@@ -82,6 +83,7 @@
         <table id="remoteTable" class='table'></table>
     </div>
     <script src="../../../wkzf/js/lib/jQuery/jquery-2.0.3.min.js"></script>
+    <script src="../../../bootstrap/3.3.4/js/bootstrap.min.js">   </script>
     <script src="../../../wkzf/jssrc/jquery.wktable/jquery.wktable.js"></script> 
     <script src="../../../wkzf/jssrc/jquery.wktable/jquery.wktable.filter.js"></script>   
     <script>
@@ -162,13 +164,13 @@
                 pageSizeSet:[20,30]
             },
             data:[
-                {name:"mks",age:12,country:'China'},
-                {name:"sum",age:24,country:'China'},
+                {name:"小红",age:12,country:'China'},
+                {name:"小名",age:24,country:'China'},
                 {name:"john",age:122,country:'China'},
-                {name:"tim",age:13,country:'China'},
-                {name:"mars",age:12,country:'China'},
-                {name:"mks",age:12,country:'England'},
-                {name:"sum",age:24,country:'China'},
+                {name:"夏利",age:13,country:'China'},
+                {name:"马克思",age:12,country:'China'},
+                {name:"人民币",age:12,country:'England'},
+                {name:"你好",age:24,country:'China'},
                 {name:"john",age:122,country:'China'},
                 {name:"tim",age:13,country:'China'},
                 {name:"mars",age:12,country:'China'},
@@ -199,7 +201,8 @@
                 index:2
             },{
                 index:3,
-                type:'text'
+                type:'text',
+                text:'年龄'
             }],
             mapping:{/*
                     此处演示了自定义Filter。有两点要注意的：
@@ -268,7 +271,7 @@
                 type:'text'
             },{
                 index:5,
-                type:'select',
+                type:'text',
                 selects:[{
                     value:"1",
                     text:"male"
