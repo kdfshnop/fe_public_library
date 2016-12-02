@@ -523,6 +523,11 @@
             var obj = privateMethod.TopOrBottom($element, id);
             privateMethod.ControlSortArrow($element, obj);
         },
+        //手动更新data
+        refresh: function(data) {
+            this.options.data = data;
+            this.init();
+        }
     };
 
     /*-----------------------------------------------------------------------------------------------------------
