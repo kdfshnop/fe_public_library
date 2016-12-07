@@ -32,10 +32,12 @@
                         return;
                     }
                     var icon = $(this).find('.icon-18');
-                    if (icon.hasClass('icon-18-unchecked')) {
+                    if (icon.hasClass('icon-18-unchecked')) {//选中
                         icon.removeClass('icon-18-unchecked');
-                    } else {
+                        $(this).addClass('selected');
+                    } else {//取消选中
                         icon.addClass('icon-18-unchecked');
+                        $(this).removeClass('selected');
                     }
 
                     calculateCheckAll(self.$table);
@@ -46,12 +48,14 @@
                 //全选
                 wktable.$table.on('click', 'thead .icon-18', function() {
                     var $this = $(this);
-                    if ($this.hasClass('icon-18-unchecked')) {
+                    if ($this.hasClass('icon-18-unchecked')) {//选中
                         $this.removeClass('icon-18-unchecked');
                         self.$table.find('tbody .icon-18').removeClass('icon-18-unchecked');
-                    } else {
+                        self.$table.find('tbody tr').addClass('selected');
+                    } else {//取消选中
                         $this.addClass('icon-18-unchecked');
                         self.$table.find('tbody .icon-18').addClass('icon-18-unchecked');
+                        self.$table.find('tbody tr').removeClass('selected');
                     }
 
                     cb&&cb();

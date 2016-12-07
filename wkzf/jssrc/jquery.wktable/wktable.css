@@ -19,6 +19,10 @@ wktable默认样式
     background: #efefef;
 }
 
+.wktable tr.selected{
+    background-color: rgba(249, 250, 233, 0.6);//#4081d6,f5fafe
+}
+
 .wktable thead th {
     font-weight: 500;
     padding: 10px 5px;

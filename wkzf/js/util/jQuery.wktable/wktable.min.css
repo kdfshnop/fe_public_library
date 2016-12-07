@@ -1,5 +1,6 @@
 .wktable{background-color:transparent;border-spacing:0;border-collapse:collapse;font-size:12px;font-family:microsoft yahei,simsun;padding:0 15px;position:relative;width:100%;max-width:100%;margin-bottom:20px}
 .wktable thead{background:#efefef}
+.wktable tr.selected{background-color:rgba(249,250,233,.6);://#4081d6,f5fafe}
 .wktable thead th{font-weight:500;padding:10px 5px;text-align:left}
 .wktable tbody tr td{border-bottom:1px solid #eee;padding:5px}
 .wktable tbody tr td a{color:#337ab7;text-decoration:none}
