@@ -30,6 +30,7 @@
                 text:"--请选择--"
             }
         }],
+        itemsMapping:'items',
         data:[{//本地数据
             id:1,
             text:"china",
@@ -53,7 +54,7 @@
     }
 */
 + function() {
-    function getDataByLevel(data, level, id, result) {
+    function getDataByLevel(data, level, id, result,options) {
         if (level === 0) {
             if (data) {
                 for (var i = 0; i < data.length; i++) {
@@ -67,13 +68,14 @@
         }
         if (data && data.length > 0) {
             for (var i = 0; i < data.length; i++) {
-                if (data[i] && data[i].items) {
-                    getDataByLevel(data[i].items, level - 1, id, result);
+                if (data[i] && data[i][options.itemsMapping]) {
+                    getDataByLevel(data[i][options.itemsMapping], level - 1, id, result,options);
                 }
             }
         }
     }
     $.cascadingSelect2 = function(options) {
+        options.itemsMapping = options.itemsMapping || "items";
         if (!options.data) {
             $.each(options.selects, function(index, select) { //遍历配置中的selects
                 var dataValue = $(select.ele).data('value');
@@ -109,7 +111,7 @@
                                 params.page = params.page || 1;
 
                                 return {
-                                    results: data.items,
+                                    results: data[options.itemsMapping],
                                     pagination: {
                                         more: false,
                                     }
@@ -219,9 +221,9 @@
                 }).on('change', function() {
                     var id = $(select.ele).val();
                     var result = [];
-                    getDataByLevel(options.data, index, id, result);
+                    getDataByLevel(options.data, index, id, result,options);
                     if (result.length > 0) {
-                        result = result[0].items;
+                        result = result[0][options.itemsMapping];
                     }
                     var nextSelect = options.selects[index + 1];
                     if (nextSelect) {

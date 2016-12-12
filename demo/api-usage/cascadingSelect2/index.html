@@ -7,7 +7,7 @@
     <script type="text/javascript" src="/fe_public_library/wkzf/js/lib/jQuery/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" src="/fe_public_library/wkzf/js/util/select2/4.0.1/dist/js/select2.min.js"></script>
     <script type="text/javascript" src="/fe_public_library/wkzf/js/util/select2/4.0.1/dist/js/i18n/zh-CN.js"></script>
-    <script type="text/javascript" src="/fe_public_library/wkzf/jssrc/cascadingSelect2.js"></script>
+    <script type="text/javascript" src="/fe_public_library/wkzf/js/cascadingSelect2.min.js"></script>
     <style type="text/css">
     select {
         width: 200px;
@@ -269,7 +269,8 @@ $(function() {
         }, {
             ele: '#class', //select元素，jQuery对象
         }],
-        data:[{id:1,text:"一年级",items:[{id:1,text:"一班"},{id:1,text:"二班"},{id:1,text:"三班"},{id:1,text:"四班"}]},{id:2,text:"二年级",items:[{id:1,text:"一班"},{id:1,text:"二班"},{id:1,text:"三班"}]},{id:3,text:"三年级",items:[{id:1,text:"一班"}]},{id:4,text:"四年级",items:[{id:1,text:"一班"},{id:1,text:"二班"}]},{id:5,text:"五年级",items:[{id:1,text:"一班"}]}]
+        itemsMapping:"nodes",
+        data:[{id:1,text:"一年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"},{id:1,text:"三班"},{id:1,text:"四班"}]},{id:2,text:"二年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"},{id:1,text:"三班"}]},{id:3,text:"三年级",nodes:[{id:1,text:"一班"}]},{id:4,text:"四年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"}]},{id:5,text:"五年级",nodes:[{id:1,text:"一班"}]}]
     });
 });
 </script>
