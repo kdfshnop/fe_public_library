@@ -1390,9 +1390,9 @@
             dataType: "jsonp",
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            设置ajax请求的timeout 时间
+            设置ajax请求的timeout 时间,默认为1分钟
             -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-            timeout: 3000,
+            timeout: 60000,
 
             /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
             异步请求报文
@@ -1642,9 +1642,19 @@
             getChecked: $.proxy(this.getChecked, this),
 
             /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            获取指定节点的父节点
+            --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+            getParents: $.proxy(this.getParents, this),
+
+            /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             设置默认值
             --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
             setDefaults: $.proxy(this.setDefaults, this),
+
+            /*-----------------------------------------------------------------------------------------------------------
+            选中指定节点
+            -----------------------------------------------------------------------------------------------------------*/
+            checkNodes: $.proxy(this.checkNodes, this),
         };
     }
 
@@ -1870,9 +1880,7 @@
 
         if (_.settings.bootstrapTreeParams.multiSelect) {
             _.tree.on('nodeChecked nodeUnchecked', function(event, node) {
-
-                _.clicked=true;
-
+                _.defaultVals = [];
                 _.renderItems();
 
                 return false;
@@ -1883,8 +1891,8 @@
                 if (!_.settings.showTree) {
                     _.treeContainer.addClass('hide');
                 }
-                _.clicked=true;
 
+                _.defaultVals = [];
                 _.renderItems();
 
                 return false;
@@ -1901,6 +1909,11 @@
         //如果默认是显示树形控件的，则无需绑定点击事件
         if (_.settings.showTree) {
             return;
+        }
+
+
+        if (_.element.hasClass('tree-disabled')) {
+            return false;
         }
 
         //绑定点击事件
@@ -1988,25 +2001,24 @@
         var $itemLisGroup, $clearItem, $selectedItem, $ellipsisItem;
         var hiddenNodeStrs = '';
 
-        console.log('renderItems');
-        if (isDefault) {
-            if (this.defaultVals && this.defaultVals.length > 0) {
-                if (this.defaultVals && this.defaultVals.length > 0) {
-                    for (var i = 0; i < this.defaultVals.length; i++) {
-                        tmpNode = _.getNodeById(this.defaultVals[i]);
-                        if (tmpNode) {
-                            if (_.settings.bootstrapTreeParams.multiSelect) {
-                                _.tree.treeview('checkNode', [tmpNode, {
-                                    silent: true
-                                }]);
+        $clearItem = $(_.template.clearItem);
+        $ellipsisItem = $(_.template.ellipsisItem);
+        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
+        $itemLisGroup.empty();
+        _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
 
-                            } else {
-                                _.tree.treeview('selectNode', [tmpNode, {
-                                    silent: true
-                                }]);
-                            }
-                        }
-                    }
+        for (var i = 0; i < _.defaultVals.length; i++) {
+            tmpNode = _.getNodeById(this.defaultVals[i])
+            if (tmpNode) {
+                if (_.settings.bootstrapTreeParams.multiSelect) {
+                    _.tree.treeview('checkNode', [tmpNode, {
+                        silent: true
+                    }]);
+
+                } else {
+                    _.tree.treeview('selectNode', [tmpNode, {
+                        silent: true
+                    }]);
                 }
             }
         }
@@ -2021,13 +2033,6 @@
             listNodes = _.tree.treeview('getSelected');
         }
 
-
-        $clearItem = $(_.template.clearItem);
-        $ellipsisItem = $(_.template.ellipsisItem);
-        $itemLisGroup = _.element.find('.treeviewselect-listGroup ul');
-        $itemLisGroup.empty();
-        _.element.find('.treeviewselect-listOpGroup .treeviewselect-clear').remove();
-
         if (listNodes && listNodes.length > 0) {
             //隐藏placeholder
             _.placeholder.hide();
@@ -2039,6 +2044,8 @@
                 //取出指定节点的父节点的数量，并给节点赋值，父节点的数量就是节点的level 值
                 getParentNodes(_.tree, listNodes[i], pNodesArr);
                 listNodes[i].level = pNodesArr.length + 1;
+                //解决 $.extend() 中 对象循环指向导致的栈溢出，采取对象深复制
+                //listNodes[i].parents=$.parseJSON(JSON.stringify(pNodesArr)) ;
 
                 //生成选中项
                 $selectedItem = _.genTreeSelectItem(listNodes[i]);
@@ -2087,7 +2094,8 @@
                         }]);
                     }
                 }
-                _.clicked=true;
+
+                _.defaultVals = [];
 
                 _.renderItems();
 
@@ -2097,10 +2105,13 @@
 
                 event.stopPropagation();
             });
+        }
 
-            //添加重置筛选条件        
+        if (!_.element.hasClass('tree-disabled') && listNodes.length) {
             _.element.find('.treeviewselect-listOpGroup ul').prepend($clearItem);
         }
+
+
 
         $('[data-toggle="tooltip"]').tooltip('destroy');
         $('[data-toggle="tooltip"]').tooltip();
@@ -2284,22 +2295,101 @@
         return idArray;
     }
 
+    /*-----------------------------------------------------------------------------------------------------------
+    获取指定节点的所有的父节点
+    -----------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.getParents = function(node) {
+        var _ = this;
+        var pNodesArr = [];
+
+        getParentNodes(_.tree, node, pNodesArr);
+
+        return pNodesArr;
+    }
+
     /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     设置默认值
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     TreeViewSelect.prototype.setDefaults = function(vals) {
-        if (this.clicked) {
-            return;
+        var _ = this;
+        var tmpNode;
+        var isMultiSelect = _.settings.bootstrapTreeParams.multiSelect;
+
+        _.defaultVals = vals;
+
+        if (isMultiSelect) {
+            _.tree.treeview('uncheckAll', { silent: true });
+        } else {
+            tmpNode = _.tree.treeview('getSelected');
+
+            if (tmpNode) {
+                _.tree.treeview('unselectNode', [tmpNode, {
+                    silent: true
+                }]);
+            }
         }
 
-        if (!vals || !vals.length) {
-            return;
-        }
+        for (var i = 0; i < _.defaultVals.length; i++) {
+            tmpNode = _.getNodeById(_.defaultVals[i])
+            if (tmpNode) {
+                if (isMultiSelect) {
+                    _.tree.treeview('checkNode', [tmpNode, {
+                        silent: true
+                    }]);
 
-        this.clicked=false;
-        this.defaultVals = vals;
+                } else {
+                    _.tree.treeview('selectNode', [tmpNode, {
+                        silent: true
+                    }]);
+                }
+            }
+        }
 
         this.renderItems(true);
+    }
+
+    /*-----------------------------------------------------------------------------------------------------------
+    选中指定节点
+    -----------------------------------------------------------------------------------------------------------*/
+    TreeViewSelect.prototype.checkNodes = function(ids) {
+        var _ = this;
+        var tmpNode;
+        var isMultiSelect = _.settings.bootstrapTreeParams.multiSelect;
+
+        if (isMultiSelect) {
+            _.tree.treeview('uncheckAll', { silent: true });
+        } else {
+            _.defaultVals = [];
+            tmpNode = _.tree.treeview('getSelected');
+            if (tmpNode) {
+                _.tree.treeview('unselectNode', [tmpNode, {
+                    silent: true
+                }]);
+            }
+        }
+
+        if (ids && ids.length) {
+            if (isMultiSelect) {
+                $.each(ids, function(index, id) {
+                    tmpNode = _.getNodeById(id);
+                    if (tmpNode) {
+                        if (isMultiSelect) {
+                            _.tree.treeview('checkNode', [tmpNode, {
+                                silent: true
+                            }]);
+
+                        }
+                    }
+                });
+            } else {
+                tmpNode = _.getNodeById(ids[ids.length - 1]);
+                _.tree.treeview('selectNode', [tmpNode, {
+                    silent: true
+                }]);
+            }
+        }
+
+        _.renderItems();
     }
 
 

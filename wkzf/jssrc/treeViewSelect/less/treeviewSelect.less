@@ -157,4 +157,20 @@ treeViewSelect 样式
             font-size: 14px;
         }
     }
+    
+    &.tree-disabled {
+        cursor: not-allowed;
+        background-color: #eee;
+        &>li {
+            &.treeviewselect-listGroup {
+                &>ul {
+                    &>li {
+                        &.treeviewselect-item {
+                            background-color: #eee;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

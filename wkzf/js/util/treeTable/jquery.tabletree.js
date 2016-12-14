@@ -247,7 +247,11 @@
                 };
                 //增加展开收起按钮
                 if (val.children) {
-                    $tr.find('td:first').prepend('<i class="' + opts.expendIcon + '" style="top:' + opts.iconPosition + 'px"></i>');
+                    if (val.expendRow) {
+                        $tr.find('td:first').prepend('<i class="' + opts.collapseIcon + '" style="top:' + opts.iconPosition + 'px"></i>');
+                    } else {
+                        $tr.find('td:first').prepend('<i class="' + opts.expendIcon + '" style="top:' + opts.iconPosition + 'px"></i>');
+                    }
                 }
                 //缩进处理
                 for (var i = level - 1; i > 0; i--) {
@@ -519,6 +523,11 @@
             var obj = privateMethod.TopOrBottom($element, id);
             privateMethod.ControlSortArrow($element, obj);
         },
+        //手动更新data
+        refresh: function(data) {
+            this.options.data = data;
+            this.init();
+        }
     };
 
     /*-----------------------------------------------------------------------------------------------------------

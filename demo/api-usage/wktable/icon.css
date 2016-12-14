@@ -1,0 +1,28 @@
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1. 项目名称：悟空找房SASS系统前端MVC框架
+ 2. 文件名称：icon.less (自定义图标)
+ 3. 作者：zhaohuagang@lifang.com
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.icon-18 {
+    background: url(./images/icon-18.png) no-repeat;
+    display: inline-block;
+    height: 18px;
+    transition: .1s;
+    width: 18px
+}
+
+.icon-18-checked {
+    background-position: 0 0
+}
+
+.icon-18-unchecked {
+    background-position: 0 -18px
+}
+
+.icon-18-radio-checked {
+    background-position: 0 -36px
+}
+
+.icon-18-radio-unchecked {
+    background-position: 0 -54px
+}

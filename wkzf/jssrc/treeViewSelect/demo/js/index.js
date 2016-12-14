@@ -1,14 +1,16 @@
 	$(function() {
+	    var checkedNode;
+
 	    $('#area').treeViewSelect({
 	        apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/demo/data/3.json',
 	        dataType: 'json',
-	        cascadeText:true,
+	        cascadeText: true,
 	        bootstrapTreeParams: {
 	            multiSelect: true,
-	            enableCascade:false
+	            enableCascade: false
 	        },
-	        successCallback:function(nodes){
-	        	console.log(nodes);
+	        successCallback: function(nodes) {
+	            console.log(nodes);
 	        }
 	    });
 
@@ -29,15 +31,25 @@
 	        //     apiUrl: 'http://dev01.fe.wkzf/fe_public_library/wkzf/jssrc/treeViewSelect/data/city.json',
 	        //     dataType: 'json'
 	        // });
-	        $('#area').treeViewSelect('setDefaults',['2']);
+	        $('#area').treeViewSelect('setDefaults', ['2']);
 	    });
+
+	    $('#btnCheckNodes').on('click', function() {
+	        $('#area').treeViewSelect('checkNodes', ['2adadad']);
+	    })
+
+	    $('#btnGetParents').on('click', function() {
+	        var pNodeArray = $('#area').treeViewSelect('getParents', checkedNode);
+	        
+	        console.log(pNodeArray);
+	    });
+
 
 	    $('#area').on('completed', function(eventType, node) {
 	        // console.log('itemsRendered');
-
+	        checkedNode = node[0];
 	        console.log(node);
 
-	        
 	        // window.location.reload();
 	    });
 	});

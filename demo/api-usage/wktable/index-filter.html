@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link href="../../../bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />    
+    <link href="../../../wkzf/js/util/jQuery.wktable/wktable.min.css" rel="stylesheet" />
+
+    <style type="text/css">
+        .wktable-th{
+            position:relative;
+        }
+        .wktable-filter-checkbox{
+            display:none;
+            position:absolute;
+            background-color:white;
+            border:1px solid rgba(0,0,0,0.15);
+            border-radius: 5px;
+            padding:4px 4px;
+            max-height:400px;            
+            overflow-y:auto;
+            z-index:99;
+        }        
+        .wktable-filter-checkbox li{            
+            list-style-type:none; 
+            padding:3px 8px;
+            margin:2px;
+            white-space: nowrap;
+        }
+        .wktable-filter-checkbox li label{            
+            padding-right:26px;
+            padding-left:8px;
+        }
+        .wktable-filter-checkbox li:hover{
+            background:rgba(200,200,200,0.5);
+            /*color:gray;*/
+        }
+        .wktable-filter-checkbox [type=checkbox]{
+            margin-right:6px;
+        }
+
+        .wktable-filter-select{
+            display:none;
+            position:absolute;
+            background-color:white;
+            border:1px solid rgba(0,0,0,0.15);
+            border-radius: 5px;
+            padding:4px 4px;
+            max-height:400px;            
+            overflow-y:auto;
+            z-index:99;
+        }        
+        .wktable-filter-select li{            
+            list-style-type:none; 
+            padding:3px 8px;
+            margin:2px;
+            white-space: nowrap;
+        }
+        .wktable-filter-select li label{            
+            padding-right:26px;
+            padding-left:8px;
+        }
+        .wktable-filter-select li:hover{
+            background:rgba(200,200,200,0.5);
+            /*color:gray;*/
+        }
+        .wktable-filter-select [type=checkbox]{
+            margin-right:6px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container" style="margin:20px auto;padding:50px">
+        <form id='myform'>
+            <input type="text" name="name" id="name" placeholder="姓名" />            
+            <input type="button" id="btn" value="click" />
+        </form>
+        <br/>
+        <table id="myTable" class="table"></table>
+
+        <table id="remoteTable" class='table'></table>
+    </div>
+    <script src="../../../wkzf/js/lib/jQuery/jquery-2.0.3.min.js"></script>
+    <script src="../../../bootstrap/3.3.4/js/bootstrap.min.js">   </script>
+    <script src="../../../wkzf/jssrc/jquery.wktable/jquery.wktable.js"></script> 
+    <script src="../../../wkzf/jssrc/jquery.wktable/jquery.wktable.filter.js"></script>   
+    <script>
+    function TestFilter(container,filter){
+            console.log(container);
+            console.log(filter);
+    }
+    $(function() {
+        $('#btn').click(function() {
+            var params = {
+                name: $('[name=name]').val(),
+                country: $('[name=country]').val()
+            };
+            $('#myTable').wktable("search", params);
+        });
+
+        $('#myTable').wktable({
+            ready: function() {
+                $('.delete', this.$table).click(function() {
+                    var id= $(this).closest('tr').data('id');
+                    alert('delete '+id );
+                });
+                $('.edit',this.$table).click(function(){                    
+                    prompt('edit?');
+                });
+            },
+            columns: [
+            {
+                text:"序号",
+                field:function(row,index){
+                    return index + 1;
+                }               
+            },
+            {
+                text:"<input type='checkbox' />",
+                field:function(){
+                    return '<input type="checkbox" />';
+                }
+            },
+            {
+                text: "姓名",
+                field: "name",
+                sortable: true
+            }, {
+                text: "年龄",
+                sortable: true,
+                sortField: 'age',
+                field: function(row) {
+                    return row.age;
+                },
+                ascSort:function(a,b){
+                    var m = parseInt(a.age), n = parseInt(b.age);
+                    if(m>n) return 1;
+                    if(m<n) return -1;
+                    return 0;
+                },
+                descSort:function(a,b){
+                    var m = parseInt(a.age), n = parseInt(b.age);
+                    if(m>n) return -1;
+                    if(m<n) return 1;
+                    return 0;
+                }
+            }, {
+                text: '国籍',
+                field: 'country',
+                sortable: true
+            }, {
+                text: "性别",
+                field: "gender"
+            }, {
+                text: "操作",
+                field: function() {
+                    return "<a href='#' class='delete'>删除</a>" + "&nbsp;&nbsp;<a href='#' class='edit'>编辑</a>";
+                }
+            }],
+            tableNavigation:{
+                paginationPageCount:7,
+                pageSizeSet:[20,30]
+            },
+            data:[
+                {name:"小红",age:12,country:'China'},
+                {name:"小名",age:24,country:'China'},
+                {name:"john",age:122,country:'China'},
+                {name:"夏利",age:13,country:'China'},
+                {name:"马克思",age:12,country:'China'},
+                {name:"人民币",age:12,country:'England'},
+                {name:"你好",age:24,country:'China'},
+                {name:"john",age:122,country:'China'},
+                {name:"tim",age:13,country:'China'},
+                {name:"mars",age:12,country:'China'},
+                {name:"mks",age:12,country:'England'},
+                {name:"sum",age:24,country:'China'},
+                {name:"john",age:122,country:'China'},
+                {name:"tim",age:13,country:'China'},
+                {name:"mars",age:12,country:'China'},
+                {name:"mks",age:12,country:'England'},
+                {name:"sum",age:24,country:'China'}
+                
+            ],
+            /*url: '/activity/data.php',*/
+            parse: function(data) { //映射
+                return {
+                    pageInfo: {
+                        pageIndex: data.data.pageIndex,
+                        pageSize: data.data.pageSize,
+                        total: data.data.total
+                    },
+                    items: data.data.contents
+                };
+            }
+        }).setFilter({
+            filters:[{
+                index:4
+            },{
+                index:2
+            },{
+                index:3,
+                type:'text',
+                text:'年龄'
+            }],
+            mapping:{/*
+                    此处演示了自定义Filter。有两点要注意的：
+                    1.自定义的Filter必须是window作用于的函数
+                    2.自定义Filter必须有一个doFilter方法
+                */
+                text:'TextFilter'
+            }
+        });
+
+        $('#remoteTable').wktable({
+            url:"/activity/data.php",
+            columns: [
+            {
+                text:"序号",
+                field:function(row,index){
+                    return index + 1;
+                }               
+            },
+            {
+                text:"<input type='checkbox' />",
+                field:function(){
+                    return '<input type="checkbox" />';
+                }
+            },
+            {
+                text: "姓名",
+                field: function(row){
+                    return "<span style='color:red'>"+row.name+"</span>";
+                },//"name",
+                sortField:"name",
+                sortable: true
+            }, {
+                text: "年龄",
+                sortable: true,
+                sortField: 'age',
+                field: function(row) {
+                    return row.age;
+                }
+            }, {
+                text: '国籍',
+                field: 'country',
+                sortable: true
+            }, {
+                text: "性别",
+                field: "gender"
+            }, {
+                text: "操作",
+                field: function() {
+                    return "<a href='#' class='delete'>删除</a>" + "&nbsp;&nbsp;<a href='#' class='edit'>编辑</a>";
+                }
+            }],
+            tableNavigation:{
+                paginationPageCount:7,
+                pageSizeSet:[50,100]
+                //displayTableNavigation:false
+            }
+
+        }).setFilter({
+            filters:[{
+                index:4
+            },{
+                index:2
+            },{
+                index:3,
+                type:'text'
+            },{
+                index:5,
+                type:'text',
+                selects:[{
+                    value:"1",
+                    text:"male"
+                },{
+                    value:"2",
+                    text:"female"
+                }]
+            }],
+            mapping:{/*
+                    此处演示了自定义Filter。有两点要注意的：
+                    1.自定义的Filter必须是window作用于的函数
+                    2.自定义Filter必须有一个doFilter方法
+                */
+                text:'TextFilter',
+                select:'SelectFilter'
+            }
+        });
+        
+    });
+    </script>
+</body>
+
+</html>

@@ -61,6 +61,7 @@ opitons:{
     //构造函数
     var DataTable = function(element, options) {
             this.options = options;
+            this.isReady = false;
             this.pageInfo = {
                 pageIndex: this.options.pageIndex,
                 pageSize: this.options.pageSize,
@@ -298,12 +299,12 @@ opitons:{
             if (pi == self.pageInfo.pageIndex) { //如果点击的是当前页码，不做处理
                 return;
             }
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi);
         });
         $('.next', this.$navigation).click(function(e) {
             var pi = self.pageInfo.pageIndex;
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi + 1);
             e.preventDefault();
         });
@@ -314,27 +315,27 @@ opitons:{
         });
         $('.page-size-select', this.$navigation).change(function() {
             self.pageInfo.pageSize = $(this).val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(1);
         });
         $('.go', this.$navigation).click(function() {
             var pi = $(this).prev().val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.goto(pi);
         });
         $('.refresh', this.$navigation).click(function() {
             //var pi = $(this).prev().val();
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             self.refresh();
         });
         $('.less', this.$navigation).click(function(e) {
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex - half);
             e.preventDefault();
         });
         $('.more', this.$navigation).click(function(e) {
-            clearHeadSortClass.call(self);
+            //clearHeadSortClass.call(self);
             var half = Math.floor(self.options.tableNavigation.paginationPageCount / 2.0);
             self.goto(self.pageInfo.pageIndex + half);
             e.preventDefault();
@@ -375,7 +376,8 @@ opitons:{
                 $this.addClass(self.options.sortClasses.sortAscClass);
             }
 
-            self.goto(1);
+            //self.goto(1);
+            self.refresh();
         });
     }
 
@@ -516,6 +518,13 @@ opitons:{
             obj[sortTypeParamName] = this.sortType;
         var params = $.extend({}, this.options.params, obj);
 
+        //删除空字符串属性
+        for(var v in params){
+            if(params[v] == null || params[v]==""){
+                delete params[v];
+            }
+        }
+
         //发送请求
         $.ajax({
             url: this.options.url,
@@ -530,6 +539,14 @@ opitons:{
             success: function(data) {
                 hideLoading.call(self);
                 if (data && data.status == 1) {
+                    if(Object.prototype.toString.call(data.data) === "[object String]"){
+                        if(data.data){
+                            var resultData = JSON.parse(data.data);
+                            if(resultData.messageNo == "1502"){
+                                parent.window.location.reload();
+                            }
+                        }
+                    }
                     data = self.options.parse && self.options.parse.call(self, data) || self.parse(data);
                     render.call(self, data);
                 } else {
@@ -607,6 +624,7 @@ opitons:{
 
         //绘制成功触发ready回调
         this.options.ready && this.options.ready.call(this, data.items);
+        this.isReady = true;
     };
     /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     公有方法
