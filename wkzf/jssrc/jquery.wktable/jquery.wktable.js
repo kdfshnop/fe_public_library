@@ -539,6 +539,14 @@ opitons:{
             success: function(data) {
                 hideLoading.call(self);
                 if (data && data.status == 1) {
+                    if(Object.prototype.toString.call(data.data) === "[object String]"){
+                        if(data.data){
+                            var resultData = JSON.parse(data.data);
+                            if(resultData.messageNo == "1502"){
+                                parent.window.location.reload();
+                            }
+                        }
+                    }
                     data = self.options.parse && self.options.parse.call(self, data) || self.parse(data);
                     render.call(self, data);
                 } else {

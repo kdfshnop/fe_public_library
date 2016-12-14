@@ -194,6 +194,15 @@
                         return (field.val() !== $("#owners").val()) ? true : false;
                     },
                     "alertText": "* 车主接待人与经销商接待人不能是同一个人！"
+                },
+                /**
+                 * 正则验证规则补充
+                 * Author: ciaoca@gmail.com
+                 * Date: 2013-10-12
+                 */
+                "chinese":{
+                    "regex":/^[\u4E00-\u9FA5]+$/,
+                    "alertText":"* 只能填写中文汉字"
                 }
             };
             
