@@ -203,6 +203,11 @@
                 "chinese":{
                     "regex":/^[\u4E00-\u9FA5]+$/,
                     "alertText":"* 只能填写中文汉字"
+                },
+                "round":{
+                    "regex":"none",///^-?\d+\.?\d{0,2}$/,
+                    "alertText":"* 只能保留 ",
+                    "alertText2":" 位小数"
                 }
             };
             
