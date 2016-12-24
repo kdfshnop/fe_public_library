@@ -472,6 +472,8 @@ opitons:{
                 }
             });
             $pageSizeSelect.append(str);
+        }else{
+            this.$navigation.find('.page-size-div').hide();
         }
 
         //页跳转
