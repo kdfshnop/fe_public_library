@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Slide - lukang</title>
+
+    <script src="http://www.jq22.com/jquery/1.8.3/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/demo.css">
+    
+    <!-- simple slide -->
+    <script type="text/javascript" src="js/simple.slide.js"></script>
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/simple.slide.css">
+
+</head>
+<body>
+<a href="javascript:;" i="img/1d.jpg" class="Slide One"><img src="img/1.jpg" alt=""></a>
+<a href="javascript:;" i="img/2d.jpg" class="Slide One"><img src="img/2.jpg" alt=""></a>
+<a href="javascript:;" i="img/3d.jpg" class="Slide One"><img src="img/3.jpg" alt=""></a>
+<a href="javascript:;" i="img/4d.jpg" class="Slide One"><img src="img/4.jpg" alt=""></a>
+<a href="javascript:;" i="img/5d.jpg" class="Slide One"><img src="img/5.jpg" alt=""></a>
+<script type="text/javascript">
+    $('.One').simpleSlide();
+</script>
+
+<a href="javascript:;" i="img/1d.jpg" class="Slide Two"><img src="img/1.jpg" alt=""></a>
+<a href="javascript:;" i="img/2d.jpg" class="Slide Two"><img src="img/2.jpg" alt=""></a>
+<a href="javascript:;" i="img/3d.jpg" class="Slide Two"><img src="img/3.jpg" alt=""></a>
+<a href="javascript:;" i="img/4d.jpg" class="Slide Two"><img src="img/4.jpg" alt=""></a>
+<a href="javascript:;" i="img/5d.jpg" class="Slide Two "><img src="img/5.jpg" alt=""></a>
+<script type="text/javascript">
+    $('.Two').simpleSlide({
+        "opacity":0.5,                  //背景透明度
+        "windowAction": "zoomIn",       //窗体进入动画
+        "imageAction": "bounceIn",      //图片进入动画
+        "loadingImage":"img/1.gif"      //加载图片
+    });
+    //动画样式请参考 animate.css
+</script>
+</body>
+</html>
