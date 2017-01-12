@@ -14,25 +14,32 @@
 
 </head>
 <body>
-<a href="javascript:;" i="img/1d.jpg" class="Slide One"><img src="img/1.jpg" alt=""></a>
-<a href="javascript:;" i="img/2d.jpg" class="Slide One"><img src="img/2.jpg" alt=""></a>
-<a href="javascript:;" i="img/3d.jpg" class="Slide One"><img src="img/3.jpg" alt=""></a>
-<a href="javascript:;" i="img/4d.jpg" class="Slide One"><img src="img/4.jpg" alt=""></a>
-<a href="javascript:;" i="img/5d.jpg" class="Slide One"><img src="img/5.jpg" alt=""></a>
+
+<img src="img/1.jpg" alt="" i="img/1d.jpg" class="Slide One">
+<img src="img/2.jpg" alt="" i="http://imgwater.oss.aliyuncs.com/763b1ef8a21940c88c3bf1157daeff4b" class="Slide One">
+<img src="img/3.jpg" alt="" i="img/3d.jpg" class="Slide One">
+<img src="img/4.jpg" alt="" i="img/4d.jpg" class="Slide One">
+<img src="img/5.jpg" alt="" i="img/5d.jpg" class="Slide One">
 <script type="text/javascript">
-    $('.One').simpleSlide();
+    $('.One').simpleSlide({
+		"src":"i",
+		"opacity":0.5,                  //背景透明度
+        "windowAction": "zoomIn",       //窗体进入动画
+        //"imageAction": "bounceIn",      //图片进入动画
+        "loadingImage":"img/1.gif"      //加载图片
+	});
 </script>
 
-<a href="javascript:;" i="img/1d.jpg" class="Slide Two"><img src="img/1.jpg" alt=""></a>
-<a href="javascript:;" i="img/2d.jpg" class="Slide Two"><img src="img/2.jpg" alt=""></a>
-<a href="javascript:;" i="img/3d.jpg" class="Slide Two"><img src="img/3.jpg" alt=""></a>
-<a href="javascript:;" i="img/4d.jpg" class="Slide Two"><img src="img/4.jpg" alt=""></a>
-<a href="javascript:;" i="img/5d.jpg" class="Slide Two "><img src="img/5.jpg" alt=""></a>
+<img src="img/1.jpg" alt="" data-src="img/1d.jpg" class="Slide Two">
+<img src="img/2.jpg" alt="" data-src="img/2d.jpg" class="Slide Two">
+<img src="img/3.jpg" alt="" data-src="img/3d.jpg" class="Slide Two">
+<img src="img/4.jpg" alt="" data-src="img/4d.jpg" class="Slide Two">
+<img src="img/5.jpg" alt="" data-src="img/5d.jpg" class="Slide Two">
 <script type="text/javascript">
     $('.Two').simpleSlide({
         "opacity":0.5,                  //背景透明度
         "windowAction": "zoomIn",       //窗体进入动画
-        "imageAction": "bounceIn",      //图片进入动画
+        //"imageAction": "bounceIn",      //图片进入动画
         "loadingImage":"img/1.gif"      //加载图片
     });
     //动画样式请参考 animate.css

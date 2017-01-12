@@ -1,7 +1,6 @@
 ﻿/*
  *
  * IE 9+ jQuery 1.8.3
- * QQ:109131145
  *
  * */
 
@@ -21,8 +20,8 @@ var _LOOK_INDEX = 0;//设置一个全局变量
             "opacity": 0.8,
             "windowAction": "fadeIn",
             "imageAction": "fadeIn",
-            "loadingImage": "img/1.gif"
-
+            "loadingImage": "img/1.gif",
+			"src":"data-src"
         };
         var _OPTIONS = $.extend(_defaults, options);
 
@@ -36,8 +35,8 @@ var _LOOK_INDEX = 0;//设置一个全局变量
         //遍历把图片地址存储到数组里
         _THIS.each(function (i) {
             var _OBJ = $(this);
-            _OBJ.attr("i") == undefined ? _ALL_IMG_URL[i] = undefined : _ALL_IMG_URL[i] = _OBJ.attr("i");
-            if (_OBJ.attr("i") == undefined) {
+            _OBJ.attr(_ATTR.src) == undefined ? _ALL_IMG_URL[i] = undefined : _ALL_IMG_URL[i] = _OBJ.attr(_ATTR.src);
+            if (_OBJ.attr(_ATTR.src) == undefined) {
                 _I++;
             }
         });
