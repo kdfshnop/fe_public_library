@@ -11,7 +11,7 @@
 + function($) {
     //判断全选状态
     function calculateCheckAll($table) {
-        var checkbox = $table.find('tbody .icon-18'),
+        var checkbox = $table.find('tbody .icon-18:not(.icon-18-check-disabled)'),
             uncheckedbox = $table.find('tbody .icon-18-unchecked');
         if (checkbox.length > 0 && uncheckedbox.length === 0) {
             $table.find('thead .icon-18').removeClass('icon-18-unchecked');
@@ -19,19 +19,22 @@
             $table.find('thead .icon-18').addClass('icon-18-unchecked');
         }
     }
-    $.fn.setCheckAll = function(cb) {
+    $.fn.setCheckAll = function(options) {
 
         return this.each(function() {
             var wktable = $(this).data('wk.table');
             if (wktable) {
                 var self = wktable;
                 //选中
-                wktable.$table.on('click', 'tbody tr', function(e) {
+                wktable.$table.on('click', 'tbody tr', function(e) {                    
                     var $target = $(e.target);
                     if($target.is('button') || $target.is('a')){//点击的是tr中a或button，不影响该行的选中状态
                         return;
                     }
                     var icon = $(this).find('.icon-18');
+                    if(icon.hasClass('icon-18-check-disabled')){
+                        return;
+                    }
                     if (icon.hasClass('icon-18-unchecked')) {//选中
                         icon.removeClass('icon-18-unchecked');
                         $(this).addClass('selected');
@@ -42,7 +45,7 @@
 
                     calculateCheckAll(self.$table);
 
-                    cb&&cb();
+                    //cb&&cb();
                 });
 
                 //全选
@@ -50,15 +53,15 @@
                     var $this = $(this);
                     if ($this.hasClass('icon-18-unchecked')) {//选中
                         $this.removeClass('icon-18-unchecked');
-                        self.$table.find('tbody .icon-18').removeClass('icon-18-unchecked');
-                        self.$table.find('tbody tr').addClass('selected');
+                        self.$table.find('tbody .icon-18:not(.icon-18-check-disabled)').removeClass('icon-18-unchecked').parents().addClass('selected');
+                        //self.$table.find('tbody tr').addClass('selected');
                     } else {//取消选中
                         $this.addClass('icon-18-unchecked');
-                        self.$table.find('tbody .icon-18').addClass('icon-18-unchecked');
-                        self.$table.find('tbody tr').removeClass('selected');
+                        self.$table.find('tbody .icon-18:not(.icon-18-check-disabled)').addClass('icon-18-unchecked').parents().removeClass('selected');
+                        //self.$table.find('tbody tr').removeClass('selected');
                     }
 
-                    cb&&cb();
+                    //cb&&cb();
                 });
 
                 if(wktable.options.ready){
@@ -81,7 +84,7 @@
         var wktable = $(this).data('wk.table');
         if(wktable){
             var trs = [];
-            wktable.$table.find('tbody .icon-18:not(.icon-18-unchecked)').closest('tr').each(function(index,ele){
+            wktable.$table.find('tbody .icon-18:not(.icon-18-unchecked):not(.icon-18-check-disabled)').closest('tr').each(function(index,ele){
                 trs.push(ele);
             });
 

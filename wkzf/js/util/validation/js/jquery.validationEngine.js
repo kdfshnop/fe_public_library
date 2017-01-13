@@ -639,6 +639,9 @@
 					case "min":
 						errorMsg = methods._getErrorMessage(form, field, rules[i], rules, i, options, methods._min);
 						break;
+					case "round":
+						errorMsg = methods._getErrorMessage(form,field,rules[i],rules,i,options,methods._round);
+						break;
 					case "max":
 						errorMsg = methods._getErrorMessage(form, field, rules[i], rules, i, options, methods._max);
 						break;
@@ -1159,6 +1162,15 @@
 				var rule = options.allrules.min;
 				if (rule.alertText2) return rule.alertText + min + rule.alertText2;
 				return rule.alertText + min;
+			}
+		},
+		_round:function(field,rules,i,options){
+			var round = parseInt(rules[i+1]);///^-?\d+\.?\d{0,2}$/
+			var regex = new RegExp("^-?\\d+\\.?\\d{0,"+round+"}$");
+			var val = field.val();
+			if(val && !regex.test(val)){
+				var rule = options.allrules.round;
+				return rule.alertText + round + rule.alertText2;
 			}
 		},
 		/**

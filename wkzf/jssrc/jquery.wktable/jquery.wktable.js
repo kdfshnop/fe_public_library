@@ -472,6 +472,8 @@ opitons:{
                 }
             });
             $pageSizeSelect.append(str);
+        }else{
+            this.$navigation.find('.page-size-div').hide();
         }
 
         //页跳转
@@ -538,6 +540,9 @@ opitons:{
             },
             success: function(data) {
                 hideLoading.call(self);
+                if(data && data.status == 1502){//for node项目
+                    parent.window.location.reload();
+                }
                 if (data && data.status == 1) {
                     if(Object.prototype.toString.call(data.data) === "[object String]"){
                         if(data.data){
