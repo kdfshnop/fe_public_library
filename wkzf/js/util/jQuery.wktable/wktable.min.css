@@ -25,3 +25,5 @@
 .table-navigation .info{font-size:12px;float:right}
 .table-navigation .info span{padding:6px 5px;color:#a94442}
 .no-data{margin-top:-20px}
+.icon-chucuo:before{content:""}
+.icon-chucuo{background:url(./images/no-data.png) no-repeat;padding-left:24px}
