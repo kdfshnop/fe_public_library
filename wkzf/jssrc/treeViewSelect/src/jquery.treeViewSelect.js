@@ -394,6 +394,7 @@
                     data: _.settings.data,
                     success: function(resp) {
                         if (resp && resp.status == '1') {
+                            resp.data = resp.data || [];
                             if (resp.data) {
                                 _.initialized = true;
                                 if (typeof resp.data === "string") {
@@ -407,7 +408,7 @@
                                 if (_.settings.successCallback) {
                                     _.settings.successCallback(_.rendredNodes);
                                 }
-                            }
+                            } 
                         } else {
                             if (_.settings.exceptionCallback) {
                                 _.settings.exceptionCallback();
