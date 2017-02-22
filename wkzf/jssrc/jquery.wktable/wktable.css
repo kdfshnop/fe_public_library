@@ -187,3 +187,12 @@ wktable默认样式
 .no-data{
     margin-top:-20px;
 }
+
+.icon-chucuo:before{
+    content:"";
+}
+
+.icon-chucuo{
+    background:url('./images/no-data.png') no-repeat;
+    padding-left:24px;
+}
