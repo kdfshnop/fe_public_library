@@ -18,7 +18,7 @@
 <body>
 	<h2>远程数据</h2>
 	<hr/>
-    国家：<select id="countryId" data-value="1"></select><br/><br/>
+    国家：<select id="countryId" data-value=""></select><br/><br/>
     城市：<select id="cityId" data-value="1"></select><br/><br/>
     区域：<select id="districtId" data-value="1"></select><br/><br/>
     板块：<select id="townId" data-value="1"></select><br/><br/>
@@ -46,7 +46,7 @@ $(function() {
             paramNameForNext: 'countryId', //查询的参数
             value: null,
             placeholder:{
-                id:"",
+                id:"-1",
                 text:"--请选择s--"
             },
             data:{
@@ -200,7 +200,7 @@ $(function() {
         }],
         data: [{
             id: -1,
-            text: "--请选择--"
+            text: "请选择"
         }, {
             id: 1,
             text: "china",
@@ -270,7 +270,7 @@ $(function() {
             ele: '#class', //select元素，jQuery对象
         }],
         itemsMapping:"nodes",
-        data:[{id:1,text:"一年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"},{id:1,text:"三班"},{id:1,text:"四班"}]},{id:2,text:"二年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"},{id:1,text:"三班"}]},{id:3,text:"三年级",nodes:[{id:1,text:"一班"}]},{id:4,text:"四年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"}]},{id:5,text:"五年级",nodes:[{id:1,text:"一班"}]}]
+        data:[{id:-1,text:"请选择"},{id:1,text:"一年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"},{id:1,text:"三班"},{id:1,text:"四班"}]},{id:2,text:"二年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"},{id:1,text:"三班"}]},{id:3,text:"三年级",nodes:[{id:1,text:"一班"}]},{id:4,text:"四年级",nodes:[{id:1,text:"一班"},{id:1,text:"二班"}]},{id:5,text:"五年级",nodes:[{id:1,text:"一班"}]}]
     });
 });
 </script>
