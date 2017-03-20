@@ -52,19 +52,58 @@
 	margin-top:300px;
 	background-image:url('../img/narrow.png');
 }
-.simpleSlideBox  .up{
-	margin-top:400px;
-	background-image:url('../img/up.png');
-}
-.simpleSlideBox  .down{
-	margin-top:500px;
-	background-image:url('../img/down.png');
-}
-.simpleSlideBox  .left{
-	margin-top:600px;
+.simpleSlideBox .leftArrow{
+	width:200px;
+	height:200px;
+	position:absolute;
+	left:50px;
+	top:50%;
+	margin-top:-100px;
+	background-color#ccc;
+	background-repeat:no-repeat;
+	background-size:50% 50%;
+	background-position:center center;
+	cursor:pointer;
 	background-image:url('../img/left.png');
 }
-.simpleSlideBox  .right{
-	margin-top:700px;
+.simpleSlideBox .rightArrow{
+	width:200px;
+	height:200px;
+	position:absolute;
+	right:50px;
+	top:50%;
+	margin-top:-100px;
+	background-color#ccc;
+	background-repeat:no-repeat;
+	background-size:50% 50%;
+	background-position:center center;
+	cursor:pointer;
 	background-image:url('../img/right.png');
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
