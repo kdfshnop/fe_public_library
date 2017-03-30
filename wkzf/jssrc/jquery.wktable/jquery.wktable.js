@@ -81,6 +81,8 @@ opitons:{
         //初始化table的dom结构，会先清空table的内容
     function init(element) {
         this.$table = $(element);
+        this.$table.wrap('<div class="table-box"></div>');
+
         this.$table.empty();
         this.$thead = $('<thead></thead>');
         this.$tbody = $('<tbody></tbody>');
