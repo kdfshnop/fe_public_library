@@ -694,6 +694,24 @@ opitons:{
         this.goto(1);
     }
 
+    DataTable.prototype.destroy = function(){        
+                
+        this.$empty.remove();
+        this.$navigation.remove();
+        this.$table.empty();
+        this.$table.removeClass('wktable');
+        this.$table.unwrap();
+        this.$table.data('wk.table',null);
+
+        /*delete this.$table;
+        delete this.$thead;
+        delete this.$tbody;
+        delete this.$navigation;
+        delete this.$empty;
+        delete this.$loading;*/
+    };
+
+
     /*
         helper方法extend
         之所以不用jQuery.extend是因为，jQuery.extend对于数组产生的结果不是我们想要的，比如有对象{arr:[1,2,3,6]},如果调用jQuery.extend(true,{},{arr:[1,2,3,6]},{arr:[3]})返回的结果是{arr:[3,2,3,6]}，它把两个对象的数组属性综合一下返回了，而我们想要的是用后一个的数组对象覆盖前一个的数组兑现跟，即返回{arr:[3]}。这里说明一下，这个extend是从jQuery中提取的，做了稍微的修改
