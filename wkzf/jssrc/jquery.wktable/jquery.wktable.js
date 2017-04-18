@@ -9,6 +9,7 @@
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*
 opitons:{
+    className:"",
     columns:[
         {
             text:"姓名",
@@ -72,6 +73,7 @@ opitons:{
             this.sort = this.options.sort;
             this.sortType = this.options.sortType;
             init.call(this, element);
+            this.$table.addClass(options.className);
             renderHeader.call(this);
             this.options.autoRequestAtTheFirstTime && this.goto(1);
         }
@@ -788,6 +790,7 @@ opitons:{
 
     //默认配置
     DataTable.DEFAULTS = {
+        className:"table table-hover",
         method: 'get', //发送请求的method
         contentType: "application/x-www-form-urlencoded; charset=UTF-8",
         data: null, //本地数据
