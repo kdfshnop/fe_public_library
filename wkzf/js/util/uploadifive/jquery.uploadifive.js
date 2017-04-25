@@ -521,7 +521,8 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                                 errorMsg = 'Forbidden File Type';
                                 break;
                             case 'FILE_SIZE_LIMIT_EXCEEDED':
-                                errorMsg = 'File Too Large';
+                                errorMsg = '文件超过最大限制'+(settings.fileSizeLimit/1024)+'kb';
+                                errorType = '文件超过最大限制'+(settings.fileSizeLimit/1024)+'kb';
                                 break;
                             default:
                                 errorMsg = 'Unknown Error';
