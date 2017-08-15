@@ -217,7 +217,7 @@
 
                             $.ajax({
                                 url: url,
-                                data:nextSelect.data||{},
+                                data:typeof nextSelect.data == 'function' && nextSelect.data() || nextSelect.data||{},
                                 success: function(data) {                                    
                                     data = nextSelect.processResults && nextSelect.processResults(data) || data;
                                     var $ele = $(nextSelect.ele);
